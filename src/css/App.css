@@ -2,6 +2,38 @@
   text-align: center;
 }
 
+.hover:hover{
+  color: white;
+}
+
+.window{
+  width: 200px;
+  min-width: 200px;
+  min-height: 200px;
+  height: 300px;
+  position: absolute;
+  background-color: #b4b4b4 ;
+  overflow: auto;
+}
+
+
+
+.frame{
+  width: 300px;
+  position: fixed;
+  height: 400px;
+  padding: 20px;
+  background-color: black;
+}
+
+.topbar{
+  background-color: #3a3939;
+  width: 200px;
+  padding: 10px;
+  color: #cacaca;
+  cursor: pointer;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
