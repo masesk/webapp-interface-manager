@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../css/App.css';
 import { MdClose, MdCropSquare, MdRemove, MdFilterNone } from 'react-icons/md';
+import  {Spinner} from 'react-bootstrap'
 import '../css/boostrap.min.css'
 import * as R from 'ramda'
-function Window({ initTitle, initWidth, initHeight }) {
+function Window({ initTitle, initWidth, initHeight, initUrl, initComponent }) {
     const elemRef = useRef(null)
     const [dimension, setDimension] = useState({ width: initWidth, height: initHeight })
     const [title, setTitle] = useState(initTitle)
@@ -12,6 +13,9 @@ function Window({ initTitle, initWidth, initHeight }) {
     const [dragStartX, setDragStartX] = useState(null)
     const [dragStartLeft, setDragStartLeft] = useState(null)
     const [visible, setVisible] = useState(true)
+    const [url, setURl] = useState(initUrl)
+    const [loading, setLoading] = useState(true)
+    const [comp, setComp] = useState(initComponent)
     const [frameStyle, setFrameStyle] = useState({
         paddingBottom: `${dimension.height + 1.5}px`
     })
@@ -39,9 +43,6 @@ function Window({ initTitle, initWidth, initHeight }) {
             }
         }
     }, [maximized])
-
-
-
 
 
 
@@ -98,13 +99,13 @@ function Window({ initTitle, initWidth, initHeight }) {
         window.removeEventListener('mouseup', stopDragging, false);
     }
 
-    const scrollIfElementBottom = (newTop, newLeft) => {
-        window.scroll({
-            top: newTop,
-            left: newLeft,
+    // const scrollIfElementBottom = (newTop, newLeft) => {
+    //     window.scroll({
+    //         top: newTop,
+    //         left: newLeft,
 
-        });
-    };
+    //     });
+    // };
 
 
 
@@ -133,8 +134,10 @@ function Window({ initTitle, initWidth, initHeight }) {
 
                 </div>
                 <div className="window" style={{ width: `${dimension.width}px`, height: `${dimension.height}px` }}>
-                    Content
-            </div>
+                {comp && comp}
+                {loading && !comp && <Spinner size="lg" animation="border" variant="secondary" className="frameloading" />}
+                <iframe onLoad={()=>setLoading(false)} frameBorder="0" title={title} src={url} className="framestyle" height={`${dimension.height}px`} width={`${dimension.width}px`}/>
+                </div>
             </div>}
         </>
     );
