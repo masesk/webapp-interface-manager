@@ -53,3 +53,15 @@
   margin:auto;
   text-align: center;
 }
+
+.front{
+  z-index: 100;
+}
+
+.normal{
+  z-index: 0;
+}
+
+.back {
+  z-index: -100;
+}

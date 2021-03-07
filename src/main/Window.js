@@ -4,18 +4,15 @@ import { MdClose, MdCropSquare, MdRemove, MdFilterNone } from 'react-icons/md';
 import  {Spinner} from 'react-bootstrap'
 import '../css/boostrap.min.css'
 import * as R from 'ramda'
-function Window({ initTitle, initWidth, initHeight, initUrl, initComponent }) {
-    const elemRef = useRef(null)
+function Window({ initTitle, initWidth, initHeight, initUrl, id, initComponent, children, clickCallback }, ref) {
+    const frameRef = useRef()
+    const windowRef = useRef()
+    const topRef = useRef()
     const [dimension, setDimension] = useState({ width: initWidth, height: initHeight })
     const [title, setTitle] = useState(initTitle)
-    const [dragStartY, setDragStartY] = useState(null)
-    const [dragStartTop, setDragStartTop] = useState(null)
-    const [dragStartX, setDragStartX] = useState(null)
-    const [dragStartLeft, setDragStartLeft] = useState(null)
     const [visible, setVisible] = useState(true)
-    const [url, setURl] = useState(initUrl)
+    const [url, setURL] = useState(initUrl)
     const [loading, setLoading] = useState(true)
-    const [comp, setComp] = useState(initComponent)
     const [frameStyle, setFrameStyle] = useState({
         paddingBottom: `${dimension.height + 1.5}px`
     })
@@ -32,49 +29,80 @@ function Window({ initTitle, initWidth, initHeight, initUrl, initComponent }) {
             if (maximized) {
                 
                 setFrameStyle(R.merge(frameStyle, {
-                    transform: `translateY(0px) translateX(0px)`
-                    , paddingBottom: `${dimension.height + 1.5}px`
+                    transform: "none",
+                    width: "100%",
+                    height: "100%"
                 }))
+
+                windowRef.current.style.width = "100%"
+                windowRef.current.style.height = "100%"
+                topRef.current.style.width = "100%"
+                frameRef.current.style.width = "100%"
+                frameRef.current.style.height = "100%"
 
             }
             else {
-                setFrameStyle(R.merge(frameStyle, { transform: transform, paddingBottom: `${dimension.height + 1.5}px` }))
+                setFrameStyle(R.merge(frameStyle, { 
+                  transform: transform, paddingBottom: `${dimension.height + 1.5}px`,
+                  width: dimension.width,
+                  height: dimension.height 
+                }))
 
             }
         }
     }, [maximized])
 
 
-
-
-    const getWindowScrollY = () => {
-        const doc = document.documentElement;
-        return (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
-    }
-
-    const getWindowScrollX = () => {
-        const doc = document.documentElement;
-        return (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-    }
-
-    const initialiseDrag = event => {
-        stopPropagation(event)
-        if (maximized) {
-            return
+    var active = false;
+    var currentX;
+    var currentY;
+    var initialX;
+    var initialY;
+    var xOffset = 0;
+    var yOffset = 0;
+    function dragStart(e) {
+        clickCallback(id)
+        e.stopPropagation()
+        if (e.type === "touchstart") {
+          initialX = e.touches[0].clientX - xOffset;
+          initialY = e.touches[0].clientY - yOffset;
+        } else {
+          initialX = e.clientX - xOffset;
+          initialY = e.clientY - yOffset;
         }
-        const { target, clientY, clientX } = event;
-        const { offsetTop, offsetLeft } = target;
-        const { top, left } = elemRef.current.getBoundingClientRect();
-        setDragStartTop(top - offsetTop);
-        setDragStartLeft(left - offsetLeft);
-        setDragStartY(clientY)
-        setDragStartX(clientX)
-        window.addEventListener('mousemove', startDragging, false);
-        window.addEventListener('mouseup', stopDragging, false);
 
-    }
-
-
+        active = true;
+      }
+  
+      function dragEnd(e) {
+        initialX = currentX;
+        initialY = currentY;
+        
+        active = false;
+      }
+  
+      function drag(e) {
+        if (active && !maximized) {
+          e.preventDefault();
+        
+          if (e.type === "touchmove") {
+            currentX = e.touches[0].clientX - initialX;
+            currentY = e.touches[0].clientY - initialY;
+          } else {
+            currentX = e.clientX - initialX;
+            currentY = e.clientY - initialY;
+          }
+  
+          xOffset = currentX;
+          yOffset = currentY;
+  
+          setTranslate(currentX, currentY);
+        }
+      }
+  
+      function setTranslate(xPos, yPos) {
+        ref.current.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+      }
 
     const stopPropagation = (event) =>{
         if (event.stopPropagation) event.stopPropagation();
@@ -83,36 +111,11 @@ function Window({ initTitle, initWidth, initHeight, initUrl, initComponent }) {
         event.returnValue = false;
     }
 
-    const startDragging = ({ clientY, clientX }) => {
-        let newTop = dragStartTop + clientY - dragStartY + getWindowScrollY()-30;
-        let newLeft = dragStartLeft + clientX - dragStartX + getWindowScrollX();
-        if (newTop < 0) newTop = 0;
-        if (newLeft < 0) newLeft = 0;
-        elemRef.current.style.transform = `translateY(${newTop}px) translateX(${newLeft}px)`;
-        setTransform(`translateY(${newTop}px) translateX(${newLeft}px)`)
-        //elemRef.current.style.transform = `translateX(${newLeft}px)`;
-        //scrollIfElementBottom(newTop, newLeft);
-    }
-
-    const stopDragging = () => {
-        window.removeEventListener('mousemove', startDragging, false);
-        window.removeEventListener('mouseup', stopDragging, false);
-    }
-
-    // const scrollIfElementBottom = (newTop, newLeft) => {
-    //     window.scroll({
-    //         top: newTop,
-    //         left: newLeft,
-
-    //     });
-    // };
-
-
-
+    
     return (
         <>
-            {visible && <div className="frame" style={frameStyle} ref={elemRef}>
-                <div onMouseDown={initialiseDrag} className="topbar" style={{ width: `${dimension.width}px` }}>
+        {visible && <div className="frame" style={frameStyle} ref={ref}>
+                <div onMouseDown={dragStart} onMouseLeave={dragEnd} onMouseUp={dragEnd} ref={topRef} onMouseMove={drag} className="topbar" style={{ width: `${dimension.width}px` }}>
                     <MdClose onMouseDown={(event) => {stopPropagation(event)}} onClick={() => setVisible(false)} className="hover" size={21} />
                     {maximized ? <MdFilterNone className="hover" size={21} onClick={() => {
                         
@@ -133,16 +136,17 @@ function Window({ initTitle, initWidth, initHeight, initUrl, initComponent }) {
                     <h5 className={"float-right"}>{title}</h5>
 
                 </div>
-                <div className="window" style={{ width: `${dimension.width}px`, height: `${dimension.height}px` }}>
-                {comp && comp}
-                {loading && !comp && <Spinner size="lg" animation="border" variant="secondary" className="frameloading" />}
-                <iframe onLoad={()=>setLoading(false)} frameBorder="0" title={title} src={url} className="framestyle" height={`${dimension.height}px`} width={`${dimension.width}px`}/>
+                <div className="window" ref={windowRef} style={{ width: `${dimension.width}px`, height: `${dimension.height}px` }}>
+                {children && children}
+                {loading && !children && <Spinner size="lg" animation="border" variant="secondary" className="frameloading" />}
+                <iframe ref={frameRef} onLoad={()=>setLoading(false)} frameBorder="0" title={title} src={url} className={"framestyle"} height={`${dimension.height}px`} width={`${dimension.width}px`}/>
                 </div>
             </div>}
+           
         </>
     );
 }
 
-export default Window;
+export default React.forwardRef(Window);
 
 
