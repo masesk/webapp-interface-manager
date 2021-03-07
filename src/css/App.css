@@ -1,0 +1,67 @@
+
+
+.hover:hover{
+  color: white;
+}
+
+.window{
+  min-width: 200px;
+  min-height: 200px;
+  position: absolute;
+  background-color: #b4b4b4 ;
+  overflow: auto;
+  cursor: auto;
+  overflow: hidden;
+}
+
+.header{
+  text-align: center;
+  background-color: rgb(110, 155, 110);
+  border: dashed 1px green;
+  font-weight: bold;
+  text-shadow: 0.4px 1px #302c2c;
+  color: white;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  margin-bottom: 0 !important;
+  padding: 5px;
+}
+
+.frame{
+  position: fixed;
+  padding: 1.5px;
+  background-color: #1a1a1a;
+  cursor: nesw-resize;
+}
+
+.topbar{
+  background-color: #3a3939;
+  padding: 10px;
+  color: #cacaca;
+  cursor: pointer;
+}
+
+.framestyle{
+  top: 0;
+  right: 0;
+  
+}
+
+.frameloading{
+  position:absolute;
+  left:0; right:0;
+  top:0; bottom:0;
+  margin:auto;
+  text-align: center;
+}
+
+.front{
+  z-index: 100;
+}
+
+.normal{
+  z-index: 0;
+}
+
+.back {
+  z-index: -100;
+}
