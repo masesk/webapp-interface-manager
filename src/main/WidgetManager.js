@@ -35,15 +35,16 @@ const Widget = () => {
 
   const clickCallback = (id) => {
     const selectedRef = getRef(id)
-    if(selectedRef === undefined){
-      return
-    }
     R.forEach(key => {
+      const keyRef = getRef(key)
+      if(R.isNil(R.path(["current", "style"], keyRef))){
+        return
+      }
       if(key === id){
-        getRef(key).current.style.zIndex = 1;
+        keyRef.current.style.zIndex = 1;
       }
       else{
-        getRef(key).current.style.zIndex = 0;
+        keyRef.current.style.zIndex = 0;
       }
     }, R.append(addWidgetWindow.id, R.keys(windows)))
   }
@@ -55,10 +56,10 @@ const Widget = () => {
 
     <>
       <Header />
-      <Window cls={"normal"} initTitle={addWidgetWindow.title}
-        initUrl={addWidgetWindow.url}
+      <Window initTitle={addWidgetWindow.title}
         id={addWidgetWindow.id}
-        initWidth={addWidgetWindow.width} ref={setRef(addWidgetWindow.id)} initHeight={addWidgetWindow.height} windows={windows}
+        initWidth={addWidgetWindow.width} ref={setRef(addWidgetWindow.id)} 
+        initHeight={addWidgetWindow.height}
         clickCallback={clickCallback}>
         <AddWidget updateWindow={updateWindow}/>
       </Window>
