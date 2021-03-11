@@ -28,8 +28,8 @@
 
 .frame{
   position: fixed;
-  padding: 1.5px;
-  background-color: #1a1a1a;
+  padding: 3px;
+  background-color: #242424;
   cursor: nesw-resize;
 }
 
@@ -64,4 +64,12 @@
 
 .back {
   z-index: -100;
+}
+
+.flex-width{
+  width: 100%
+}
+
+.flex-height{
+  height: 100%;
 }
