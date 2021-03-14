@@ -1,6 +1,8 @@
 import React, {useRef} from 'react';
 import { Form, Button } from 'react-bootstrap'
-const AddWidget = ({updateWindow}) =>{
+import { connect } from 'react-redux'
+import { createWindow } from "../redux/actions";
+const AddWidget = ({createWindow}) =>{
     const title = useRef();
     const url = useRef();
     const id = useRef();
@@ -20,11 +22,14 @@ const AddWidget = ({updateWindow}) =>{
             <Form.Control ref={url} placeholder="Widget URL" />
           </Form.Group>
           <Button variant="secondary"
-            onClick={e => updateWindow(id.current.value, title.current.value, url.current.value)}
+            onClick={ e => createWindow(id.current.value, title.current.value, 800, 500, url.current.value, true)}
           >
             Submit
       </Button>
         </Form >)
 }
 
-export default AddWidget;
+export default connect(
+  null,
+  { createWindow }
+)(AddWidget)

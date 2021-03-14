@@ -1,0 +1,3 @@
+export const SHOW_WINDOW = "SHOW_WINDOW"
+export const CREATE_WINDOW = "CREATE_WINDOW"
+export const HIDE_WINDOW = "HIDE_WINDOW"

@@ -1,75 +1,71 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import '../css/App.css';
 import Window from './Window'
 import Header from './Header'
 import * as R from 'ramda'
 import useDynamicRefs from 'use-dynamic-refs';
 import AddWidget from './AddWidget'
+import { connect } from 'react-redux'
 
-const Widget = () => {
-  const [windows, setWindows] = useState({})
-  const [getRef, setRef] =  useDynamicRefs();
+const Widget = ({ windows }) => {
+  const [getRef, setRef] = useDynamicRefs();
 
 
-  const updateWindow = (id, title, url) => {
-    if(R.isEmpty(id) || R.isEmpty(title) || R.isEmpty(url)){
-      return
-    }
-    setWindows(R.assoc(id, {
-      id: id,
-      title: title,
-      width: 800,
-      height: 500,
-      url: url,
-    }, windows))
-
-  }
 
 
   const addWidgetWindow = {
     id: "addwidget",
     title: "Add Widget",
     width: 800,
-    height: 500
+    height: 500,
+    showing: true
   }
 
   const clickCallback = (id) => {
-    const selectedRef = getRef(id)
     R.forEach(key => {
       const keyRef = getRef(key)
-      if(R.isNil(R.path(["current", "style"], keyRef))){
+      if (R.isNil(R.path(["current", "style"], keyRef))) {
         return
       }
-      if(key === id){
+      if (key === id) {
         keyRef.current.style.zIndex = 1;
       }
-      else{
+      else {
         keyRef.current.style.zIndex = 0;
       }
-    }, R.append(addWidgetWindow.id, R.keys(windows)))
+    }, R.append(R.keys(windows)))
   }
 
+  useEffect(() => {
+    console.log(windows)
+  }, [windows])
 
 
 
   return (
 
     <>
-      <Header />
-      <Window initTitle={addWidgetWindow.title}
-        id={addWidgetWindow.id}
-        initWidth={addWidgetWindow.width} ref={setRef(addWidgetWindow.id)} 
-        initHeight={addWidgetWindow.height}
-        clickCallback={clickCallback}>
-        <AddWidget updateWindow={updateWindow}/>
-      </Window>
+      <Header windows={windows} />
+      {R.pathEq(["addwidget", "showing"], true, windows) &&
+        <Window initTitle={addWidgetWindow.title}
+          id={addWidgetWindow.id}
+          initWidth={addWidgetWindow.width} ref={setRef(addWidgetWindow.id)}
+          initHeight={addWidgetWindow.height}
+          clickCallback={clickCallback}
+        >
+          <AddWidget />
+        </Window>
+      }
       {
         R.compose(
           R.map(([key, windowKey]) => {
+            if (R.equals(windowKey, "addwidget")) {
+              return null
+            }
             const window = R.prop(windowKey, windows)
-            return <Window ref={setRef(windowKey)} key={key} 
+            return <Window ref={setRef(windowKey)} key={window.id}
               id={window.id}
-              initComponent={window.component} initTitle={window.title}
+              initTitle={window.title}
               initUrl={window.url} initWidth={window.width} clickCallback={clickCallback}
               initHeight={window.height} />
           }),
@@ -82,6 +78,12 @@ const Widget = () => {
   );
 }
 
-export default React.forwardRef(Widget);
+
+const mapStateToProps = state => {
+  const { windows } = state
+  return { windows: R.filter(R.propEq("showing", true), windows) }
+};
+
+export default connect(mapStateToProps)(Widget);
 
 
