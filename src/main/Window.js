@@ -4,25 +4,23 @@ import { MdClose, MdCropSquare, MdRemove, MdFilterNone } from 'react-icons/md';
 import { Spinner } from 'react-bootstrap'
 import '../css/boostrap.min.css'
 import * as R from 'ramda'
-import { hideWindow } from "../redux/actions";
-
+import { hideWindow, updateIndex } from "../redux/actions";
 
 import { connect } from "react-redux";
-//import { VISIBILITY_FILTERS } from "../constants";
 
-function Window({ initTitle, initWidth, initHeight, initUrl, id, children, clickCallback, hideWindow}, ref) {
+function Window({ title, width, height, url, id, children, updateIndex, hideWindow, zIndex}) {
   const frameRef = useRef()
   const windowRef = useRef()
   const topRef = useRef()
-  const [dimension, setDimension] = useState({ width: initWidth, height: initHeight })
-  const [title, setTitle] = useState(initTitle)
-
-  const [url, setURL] = useState(initUrl)
+  const ref = useRef()
+  const [dimension, setDimension] = useState({ width: width, height: height })
   const [loading, setLoading] = useState(true)
-  const [frameStyle, setFrameStyle] = useState({
-    paddingBottom: `${dimension.height + 4}px`
-  })
+  const [frameStyle, setFrameStyle] = useState(
+    {zIndex: zIndex, width: width + 6, paddingBottom: `${height + 4}px`}
+  )
   const [maximized, setMaximized] = useState(false)
+
+  const max = useRef(false)
 
   const isInitialMount = useRef(true);
   const saveDimensions = useRef({})
@@ -32,6 +30,7 @@ function Window({ initTitle, initWidth, initHeight, initUrl, id, children, click
   const initialY = useRef()
   const xOffset = useRef(0)
   const yOffset = useRef(0)
+  const active = useRef(false)
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -66,13 +65,25 @@ function Window({ initTitle, initWidth, initHeight, initUrl, id, children, click
   }, [maximized])
 
   useEffect(() => {
-    
+    setFrameStyle(R.merge(frameStyle, {
+      zIndex: zIndex
+    }))
+  }, [zIndex])
+
+  useEffect(()=> {
+    window.addEventListener('resize', ()=>{
+        if(max.current){
+          setDimension({ width: window.parent.innerWidth, height: window.parent.innerHeight - 75 })
+        }
+      
+    });
   }, [])
 
 
-  var active = false;
+  active.current = false;
   function dragStart(e) {
-    clickCallback(id)
+    ref.current.style.zIndex = 999
+    active.current = true;
     e.stopPropagation()
     if (e.type === "touchstart") {
       initialX.current = e.touches[0].clientX - xOffset.current;
@@ -82,18 +93,19 @@ function Window({ initTitle, initWidth, initHeight, initUrl, id, children, click
       initialY.current = e.clientY - yOffset.current;
     }
 
-    active = true;
   }
+  
 
-  function dragEnd(e) {
+  const dragEnd = (e) => {
     initialX.current = currentX.current;
     initialY.current = currentY.current;
 
-    active = false;
+    active.current = false;
+    updateIndex(id)
   }
 
-  function drag(e) {
-    if (active && !maximized) {
+  const drag = (e) => {
+    if (active.current && !maximized) {
       e.preventDefault();
 
       if (e.type === "touchmove") {
@@ -111,8 +123,9 @@ function Window({ initTitle, initWidth, initHeight, initUrl, id, children, click
     }
   }
 
-  function setTranslate(xPos, yPos) {
+  const setTranslate = (xPos, yPos) => {
     ref.current.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+    
   }
 
   const stopPropagation = (event) => {
@@ -126,16 +139,17 @@ function Window({ initTitle, initWidth, initHeight, initUrl, id, children, click
   return (
     <>
        <div className="frame" style={frameStyle} ref={ref}>
-        <div onMouseDown={dragStart} onMouseLeave={dragEnd} onMouseUp={dragEnd} ref={topRef} onMouseMove={drag} className="topbar" style={{ width: `${dimension.width}px` }}>
-          <MdClose onMouseDown={(event) => { stopPropagation(event) }} onClick={()=> {hideWindow(id); console.log("should be hiding")}} className="hover" size={21} />
+        <div onMouseDown={dragStart} onMouseUp={dragEnd} ref={topRef} onMouseMove={drag} className="topbar" style={{ width: `${dimension.width}px`}}>
+          <MdClose onMouseDown={(event) => { stopPropagation(event) }} onClick={()=> {hideWindow(id)}} className="hover" size={21} />
           {maximized ? <MdFilterNone className="hover" size={21} onClick={() => {
-
+            max.current = false
             setMaximized(!maximized)
             setDimension({ width: saveDimensions.current.width, height: saveDimensions.current.height })
 
           }
           } />
             : <MdCropSquare onClick={() => {
+              max.current = true
               saveDimensions.current = { width: dimension.width, height: dimension.height }
               setMaximized(!maximized)
               setDimension({ width: window.parent.innerWidth - 7, height: window.parent.innerHeight - 75 })
@@ -153,7 +167,6 @@ function Window({ initTitle, initWidth, initHeight, initUrl, id, children, click
           <iframe ref={frameRef} onLoad={() => setLoading(false)} frameBorder="0" title={title} src={url} className={"framestyle"} height={`${dimension.height}px`} width={`${dimension.width}px`} />
         </div>
       </div>
-
     </>
   );
 }
@@ -174,7 +187,7 @@ const connectAndForwardRef = (
   },
 )(React.forwardRef(component));
 
-const ConnectedWindow = connectAndForwardRef(null, {hideWindow})(Window)
+const ConnectedWindow = connectAndForwardRef(null, {hideWindow, updateIndex})(Window)
 
 export default ConnectedWindow;
 

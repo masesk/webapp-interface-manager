@@ -1,16 +1,8 @@
-import { CREATE_WINDOW, SHOW_WINDOW, HIDE_WINDOW } from "../actionTypes";
+import { CREATE_WINDOW, SHOW_WINDOW, HIDE_WINDOW, UPDATE_INDEX } from "../actionTypes";
 import * as R from 'ramda'
+import {BUILT_IN_APPS} from '../../constants'
 
-const initialState = {
-
-  "addwidget": {
-    id: "addwidget",
-    title: "Add Widget",
-    width: 800,
-    height: 500,
-    showing: false
-  }
-};
+const initialState = BUILT_IN_APPS;
 
 export default function(state = initialState, action) {
   switch (action.type) {
@@ -30,9 +22,23 @@ export default function(state = initialState, action) {
         width: action.payload.width,
         height: action.payload.height,
         url: action.payload.url,
-        showing: true
+        showing: true,
+        zIndex: 1
       }
       return R.assoc(action.payload.id, window, state)
+    }
+    case UPDATE_INDEX:{
+      const {id} = action.payload
+      const result = R.map(window => {
+        if(R.propEq("id", id, window)){
+          return R.assoc("zIndex", 1, window)
+        }
+        else{
+          return R.assoc("zIndex", 0, window)
+        }
+      }, state)
+      return result
+
     }
     default:
       return state;

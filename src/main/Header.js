@@ -2,9 +2,9 @@ import React from 'react'
 import { Dropdown, Button } from 'react-bootstrap'
 import * as R from 'ramda'
 import { connect } from 'react-redux'
-import { showWindow } from '../redux/actions'
+import { showWindow, toggleShowing } from '../redux/actions'
 
-function Header({windows, showWindow}) {
+const Header = ({windows, showWindow, toggleShowing}) => {
     return (
         <div className="header">
             <div className="header-apps-button">
@@ -33,7 +33,7 @@ function Header({windows, showWindow}) {
             </div>
             <div className="header-apps-button">
 
-                <Button variant="secondary">Settings</Button>
+                <Button onClick={()=> toggleShowing(true)} variant="secondary">Settings</Button>
 
             </div>
         </div>
@@ -48,5 +48,5 @@ const mapStateToProps = state => {
 
 export default connect(
     mapStateToProps,
-    { showWindow }
+    { showWindow, toggleShowing }
   )(Header)
