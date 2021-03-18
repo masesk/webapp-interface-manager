@@ -2,7 +2,7 @@
 Global Widget Manager (GWM) allows the users to show multiple displays served locally or on the web.
 GWM also supports React components; allowing users to add their render components directly to the widget manager.
 
-![Presentation](./capture.png)
+![Presentation](./capture.jpg)
 
 ## Features
 * Add widgets based on their URL.
