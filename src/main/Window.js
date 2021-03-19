@@ -4,11 +4,11 @@ import { MdClose, MdCropSquare, MdRemove, MdFilterNone } from 'react-icons/md';
 import { Spinner } from 'react-bootstrap'
 import '../css/boostrap.min.css'
 import * as R from 'ramda'
-import { hideWindow, updateIndex } from "../redux/actions";
+import { hideWindow, updateIndex, minimizeWindow } from "../redux/actions";
 
 import { connect } from "react-redux";
 
-function Window({ title, width, height, url, id, children, updateIndex, hideWindow, zIndex}) {
+function Window({ title, width, height, url, id, children, minimized, updateIndex, hideWindow, minimizeWindow, zIndex}) {
   const frameRef = useRef()
   const windowRef = useRef()
   const topRef = useRef()
@@ -38,20 +38,20 @@ function Window({ title, width, height, url, id, children, updateIndex, hideWind
     } else {
       if (maximized) {
 
-        setFrameStyle(R.merge(frameStyle, {
+        setFrameStyle(f => R.merge(f, {
           transform: "none",
           width: "100%",
-          height: "100%"
+          height: "calc(100% - 40px)"
         }))
 
         windowRef.current.style.width = "100%"
-        windowRef.current.style.height = "100%"
+        windowRef.current.style.height = "calc(100% - 40px)"
         topRef.current.style.width = "100%"
         setTranslate(0, 0)
 
       }
       else {
-        setFrameStyle(R.merge(frameStyle, {
+        setFrameStyle(f => R.merge(f, {
           transform: "none",
           width: null,
           height: null,
@@ -65,10 +65,23 @@ function Window({ title, width, height, url, id, children, updateIndex, hideWind
   }, [maximized])
 
   useEffect(() => {
-    setFrameStyle(R.merge(frameStyle, {
+    setFrameStyle(f => R.merge(f, {
       zIndex: zIndex
     }))
   }, [zIndex])
+
+  useEffect(()=> {
+    if(minimized){
+      setFrameStyle(f => R.merge(f, {
+        display: "none"
+      }))
+    }
+    else{
+      setFrameStyle(f=> R.merge(f, {
+        display: "block"
+      }))
+    }
+  }, [minimized])
 
   useEffect(()=> {
     window.addEventListener('resize', ()=>{
@@ -82,7 +95,7 @@ function Window({ title, width, height, url, id, children, updateIndex, hideWind
 
   active.current = false;
   function dragStart(e) {
-    ref.current.style.zIndex = 999
+    ref.current.style.zIndex = 500
     active.current = true;
     e.stopPropagation()
     if (e.type === "touchstart") {
@@ -157,7 +170,7 @@ function Window({ title, width, height, url, id, children, updateIndex, hideWind
             }} className="hover" size={21} />
 
           }
-          <MdRemove className="hover" size={21} />
+          <MdRemove onClick={()=>{minimizeWindow(id)}} className="hover" size={21} />
           <h5 className={"float-right"}>{title}</h5>
 
         </div>
@@ -187,7 +200,7 @@ const connectAndForwardRef = (
   },
 )(React.forwardRef(component));
 
-const ConnectedWindow = connectAndForwardRef(null, {hideWindow, updateIndex})(Window)
+const ConnectedWindow = connectAndForwardRef(null, {hideWindow, updateIndex, minimizeWindow})(Window)
 
 export default ConnectedWindow;
 

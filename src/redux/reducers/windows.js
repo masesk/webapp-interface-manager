@@ -1,4 +1,4 @@
-import { CREATE_WINDOW, SHOW_WINDOW, HIDE_WINDOW, UPDATE_INDEX } from "../actionTypes";
+import { CREATE_WINDOW, SHOW_WINDOW, HIDE_WINDOW, UPDATE_INDEX, MINIMIZE_WINDOW } from "../actionTypes";
 import * as R from 'ramda'
 import {BUILT_IN_APPS} from '../../constants'
 
@@ -8,12 +8,18 @@ export default function(state = initialState, action) {
   switch (action.type) {
     case SHOW_WINDOW: {
       const {id} = action.payload
-      return R.assocPath([id, "showing"], true, state)
+      return R.compose(
+        R.assocPath([id, "showing"], true),
+        R.assocPath([id, "minimized"], false)
+      )(state)
     }
 
     case HIDE_WINDOW: {
       const {id} = action.payload
-      return R.assocPath([id, "showing"], false, state)
+      return R.compose(
+        R.assocPath([id, "showing"], false),
+        R.assocPath([id, "minimized"], false)
+      )(state)
     }
     case CREATE_WINDOW:{
       const window = {
@@ -39,6 +45,12 @@ export default function(state = initialState, action) {
       }, state)
       return result
 
+    }
+    case MINIMIZE_WINDOW:{
+      const {id} = action.payload
+      return R.compose(
+        R.assocPath([id, "minimized"], true)
+      )(state)
     }
     default:
       return state;

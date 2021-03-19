@@ -16,6 +16,7 @@ const StaticWindow = ({ windows, children, id }, ref) => {
           ref={ref}
           height={R.path([id, "height"], windows)}
           zIndex={R.path([id, "zIndex"], windows)}
+          minimized={R.path([id, "minimized"], windows)}
         >
           {children}
         </Window>

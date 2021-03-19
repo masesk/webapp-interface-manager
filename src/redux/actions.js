@@ -1,4 +1,4 @@
-import {SHOW_WINDOW, CREATE_WINDOW, HIDE_WINDOW, TOGGLE_SETTINGS, UPDATE_INDEX } from "./actionTypes";
+import {SHOW_WINDOW, CREATE_WINDOW, HIDE_WINDOW, TOGGLE_SETTINGS, UPDATE_INDEX, MINIMIZE_WINDOW } from "./actionTypes";
 
 
 export const hideWindow = id => ({
@@ -25,6 +25,11 @@ export const toggleShowing = (showing) => ({
 
 export const updateIndex = (id) => ({
   type: UPDATE_INDEX,
+  payload: {id}
+})
+
+export const minimizeWindow = (id) => ({
+  type: MINIMIZE_WINDOW,
   payload: {id}
 })
 
