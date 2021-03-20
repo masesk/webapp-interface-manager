@@ -93,10 +93,9 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
   }, [])
 
 
-  active.current = false;
   function dragStart(e) {
-    ref.current.style.zIndex = 500
     active.current = true;
+    ref.current.style.zIndex = 1
     e.stopPropagation()
     if (e.type === "touchstart") {
       initialX.current = e.touches[0].clientX - xOffset.current;
@@ -104,6 +103,9 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
     } else {
       initialX.current = e.clientX - xOffset.current;
       initialY.current = e.clientY - yOffset.current;
+    }
+    if(zIndex !== 1){
+      updateIndex(id)
     }
 
   }
@@ -114,7 +116,7 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
     initialY.current = currentY.current;
 
     active.current = false;
-    updateIndex(id)
+    //updateIndex(id)
   }
 
   const drag = (e) => {

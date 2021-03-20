@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Form, Button } from 'react-bootstrap'
 import { connect } from 'react-redux'
-import { createWindow } from "../redux/actions";
+import { createWindow, updateIndex } from "../redux/actions";
 import * as R from 'ramda'
 const AddWidget = ({ createWindow }) => {
   const title = useRef();
@@ -54,6 +54,7 @@ const AddWidget = ({ createWindow }) => {
             return
           }
           createWindow(id.current.value, title.current.value, 800, 500, url.current.value, true)
+          updateIndex(id.current.value)
           }
         }
       >
