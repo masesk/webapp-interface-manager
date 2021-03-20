@@ -8,15 +8,15 @@ const StaticWindow = ({ windows, children, id }, ref) => {
     
     return(
         <>
-        {R.pathEq([id, "showing"], true, windows) &&
+        {R.pathEq(["apps", id, "showing"], true, windows) &&
         <Window 
-          title={R.path([id, "title"], windows)}
-          id={R.path([id, "id"], windows)}
-          width={R.path([id, "width"], windows)}
+          title={R.path(["apps",id, "title"], windows)}
+          id={R.path(["apps", id, "id"], windows)}
+          width={R.path(["apps", id, "width"], windows)}
           ref={ref}
-          height={R.path([id, "height"], windows)}
-          zIndex={R.path([id, "zIndex"], windows)}
-          minimized={R.path([id, "minimized"], windows)}
+          height={R.path(["apps", id, "height"], windows)}
+          zIndex={R.findIndex(R.equals(id))(R.prop("order", windows))}
+          minimized={R.path(["apps", id, "minimized"], windows)}
         >
           {children}
         </Window>

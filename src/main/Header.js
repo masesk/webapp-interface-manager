@@ -18,11 +18,10 @@ const Header = ({windows, showWindow, toggleShowing}) => {
                         {
                         R.compose(
                         R.map(([key, windowKey]) => {
-                          
-                            return   <Dropdown.Item key={windowKey} onClick={ () => showWindow(windowKey)}>{R.prop("title", R.prop(windowKey, windows))}</Dropdown.Item>
+                            return   <Dropdown.Item key={windowKey} onClick={ () => showWindow(windowKey)}>{R.prop("title", R.prop(windowKey, windows.apps))}</Dropdown.Item>
                         }),
                         R.toPairs,
-                        )(R.keys(windows))
+                        )(R.keys(windows.apps))
                     }
                     </Dropdown.Menu>
                 </Dropdown>

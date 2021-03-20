@@ -79,16 +79,16 @@ const Settings = ({ windows, settings, toggleShowing }) => {
 }
 
 const mapStateToProps = state => {
-    const windows = R.prop("windows", state)
+    const windows = R.path(["windows", "apps"], state)
     if(R.isNil(windows)){
-        return
+        return state
     }
     const win_array = R.compose(
         R.values,
         R.map((item) => {return item})
        )(windows)
     
-    return R.assoc("windows", win_array, state)
+    return R.assoc(["windows", "apps"], win_array, state)
 };
 
 export default connect(

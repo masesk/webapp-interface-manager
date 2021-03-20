@@ -26,7 +26,7 @@ const mapStateToProps = state => {
         R.map((item) => {return item})
        )(windows)
     
-    return R.assoc("windows", win_array, state)
+    return R.assocPath(["windows", "apps"], win_array, state)
 };
 
 export default connect(
