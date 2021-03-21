@@ -61,7 +61,7 @@ const Settings = ({ windows, settings, toggleShowing }) => {
                 <Modal.Body>
                     <BootstrapTable
                         keyField="id"
-                        data={windows}
+                        data={windows.apps}
                         columns={columns}
                     />
                 </Modal.Body>
@@ -87,8 +87,7 @@ const mapStateToProps = state => {
         R.values,
         R.map((item) => {return item})
        )(windows)
-    
-    return R.assoc(["windows", "apps"], win_array, state)
+    return R.assocPath(["windows", "apps"], win_array, state)
 };
 
 export default connect(
