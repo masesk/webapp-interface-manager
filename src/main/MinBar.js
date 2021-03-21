@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { showWindow, hideWindow } from '../redux/actions'
 import * as R from 'ramda'
-import {AiOutlineCloseSquare} from 'react-icons/ai'
+import {AiOutlineCloseCircle} from 'react-icons/ai'
 
 
 
@@ -10,7 +10,7 @@ const MinBar = ({ children, id, showWindow, className, hideWindow }) => {
 
     return (
         <div className={"noselect min-bar " + className} onClick={()=> showWindow(id)}>
-            <div className="min-bar-close"> <AiOutlineCloseSquare onClick={e=>{hideWindow(id); e.stopPropagation();}} size={20}/></div>
+            <div className="min-bar-close"> <AiOutlineCloseCircle onClick={e=>{hideWindow(id); e.stopPropagation();}} size={20}/></div>
             <div className="min-bar-title">{children}</div>
         </div>
 
