@@ -8,7 +8,7 @@ import { hideWindow, updateIndex, minimizeWindow } from "../redux/actions";
 
 import { connect } from "react-redux";
 
-function Window({ title, width, height, url, id, children, minimized, updateIndex, hideWindow, minimizeWindow, zIndex}) {
+function Window({ title, width, height, url, id, children, minimized, updateIndex, hideWindow, minimizeWindow, zIndex }) {
   const frameRef = useRef()
   const windowRef = useRef()
   const topRef = useRef()
@@ -16,7 +16,10 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
   const [dimension, setDimension] = useState({ width: width, height: height })
   const [loading, setLoading] = useState(true)
   const [frameStyle, setFrameStyle] = useState(
-    {zIndex: zIndex, width: width + 6, paddingBottom: `${height + 4}px`}
+    { 
+      pointerEvents: "none",
+      top: 0,
+      position: "absolute", zIndex: zIndex, width: width, paddingBottom: `${height + 4}px`, paddingTop: `50px` }
   )
   const [maximized, setMaximized] = useState(false)
 
@@ -55,7 +58,7 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
           transform: "none",
           width: null,
           height: null,
-          paddingBottom : `${dimension.height + 4}px`
+          paddingBottom: `${dimension.height + 4}px`
 
         }))
         setTranslate(currentX.current, currentY.current)
@@ -70,25 +73,28 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
     }))
   }, [zIndex])
 
-  useEffect(()=> {
-    if(minimized){
+  useEffect(() => {
+    if (minimized) {
       setFrameStyle(f => R.merge(f, {
         display: "none"
       }))
     }
-    else{
-      setFrameStyle(f=> R.merge(f, {
+    else {
+      setFrameStyle(f => R.merge(f, {
         display: "block"
       }))
     }
   }, [minimized])
 
-  useEffect(()=> {
-    window.addEventListener('resize', ()=>{
-        if(max.current){
-          setDimension({ width: window.parent.innerWidth, height: window.parent.innerHeight - 75 })
-        }
-      
+
+
+  useEffect(() => {
+    //setTranslate(0, 0)
+    window.addEventListener('resize', () => {
+      if (max.current) {
+        setDimension({ width: window.parent.innerWidth, height: window.parent.innerHeight - 75 })
+      }
+
     });
   }, [])
 
@@ -106,19 +112,19 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
     updateIndex(id)
 
   }
-  
+
 
   const dragEnd = (e) => {
     initialX.current = currentX.current;
     initialY.current = currentY.current;
 
     active.current = false;
-    //updateIndex(id)
+    stopPropagation(e)
   }
 
   const drag = (e) => {
     if (active.current && !maximized) {
-      e.preventDefault();
+      stopPropagation(e)
 
       if (e.type === "touchmove") {
         currentX.current = e.touches[0].clientX - initialX.current;
@@ -137,22 +143,36 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
 
   const setTranslate = (xPos, yPos) => {
     ref.current.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
-    
+
   }
 
-  const stopPropagation = (event) => {
-    if (event.stopPropagation) event.stopPropagation();
-    if (event.preventDefault) event.preventDefault();
-    event.cancelBubble = true;
-    event.returnValue = false;
+
+
+  const stopPropagation = (e) => {
+    if (e.stopPropagation) e.stopPropagation();
+    if (e.preventDefault) e.preventDefault();
+    e.cancelBubble = true;
+    e.returnValue = false;
+    return false;
   }
 
 
   return (
     <>
-       <div className="frame" style={frameStyle} ref={ref}>
-        <div onMouseDown={dragStart} onMouseUp={dragEnd} ref={topRef} onMouseMove={drag} className="topbar" style={{ width: `${dimension.width}px`}}>
-          <MdClose onMouseDown={(event) => { stopPropagation(event) }} onClick={()=> {hideWindow(id)}} className="hover" size={21} />
+      <div className="frame" onMouseMove={drag} style={frameStyle} ref={ref}>
+        <div className="frame-border" style={
+          R.compose(
+            R.assoc("paddingTop", 4),
+            R.assoc("paddingLeft", 4),
+            R.assoc("paddingRight", 4),
+            R.assoc("width", (maximized ?  R.prop("width", frameStyle) : null)),
+            R.assoc("top", null),
+            R.assoc("pointerEvents", "all")
+          )(frameStyle)
+          
+          }>
+        <div onMouseDown={dragStart} onMouseUp={dragEnd} ref={topRef} onMouseMove={drag} className="topbar" style={{ width: `${dimension.width}px` }}>
+          <MdClose onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(id) }} className="hover" size={21} />
           {maximized ? <MdFilterNone className="hover" size={21} onClick={() => {
             max.current = false
             setMaximized(!maximized)
@@ -169,7 +189,7 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
             }} className="hover" size={21} />
 
           }
-          <MdRemove onClick={()=>{minimizeWindow(id)}} className="hover" size={21} />
+          <MdRemove onClick={() => { minimizeWindow(id) }} className="hover" size={21} />
           <h5 className={"float-right"}>{title}</h5>
 
         </div>
@@ -177,6 +197,7 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
           {children && children}
           {loading && !children && <Spinner size="lg" animation="border" variant="secondary" className="frameloading" />}
           <iframe ref={frameRef} onLoad={() => setLoading(false)} frameBorder="0" title={title} src={url} className={"framestyle"} height={`${dimension.height}px`} width={`${dimension.width}px`} />
+        </div>
         </div>
       </div>
     </>
@@ -199,7 +220,7 @@ const connectAndForwardRef = (
   },
 )(React.forwardRef(component));
 
-const ConnectedWindow = connectAndForwardRef(null, {hideWindow, updateIndex, minimizeWindow})(Window)
+const ConnectedWindow = connectAndForwardRef(null, { hideWindow, updateIndex, minimizeWindow })(Window)
 
 export default ConnectedWindow;
 

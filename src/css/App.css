@@ -1,4 +1,7 @@
 
+body{
+  overflow: hidden;
+}
 
 .hover:hover{
   color: white;
@@ -29,6 +32,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 50px;
 }
 
 .header-logo{
@@ -43,10 +47,13 @@
 }
 
 .frame{
+
+  
+}
+
+.frame-border{
   position: fixed;
-  padding: 3px;
-  background-color: #242424;
-  cursor: nwse-resize;
+  background-color: #1a1a1a;
 }
 
 .topbar{
@@ -116,6 +123,17 @@
   height: 35px;
 }
 
+.min-bar-close{
+  float: left;
+  justify-content: center;
+  text-align: middle;
+}
+
+.min-bar-title{
+  text-align: right;
+  padding-right: 5px
+}
+
 .showing{
   color:white;
   background-color: rgb(88, 88, 88);
@@ -130,4 +148,14 @@
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
+}
+
+
+.nohighlight{
+    -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
