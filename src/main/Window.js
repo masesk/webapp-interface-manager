@@ -16,10 +16,11 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
   const [dimension, setDimension] = useState({ width: width, height: height })
   const [loading, setLoading] = useState(true)
   const [frameStyle, setFrameStyle] = useState(
-    { 
+    {
       pointerEvents: "none",
       top: 0,
-      position: "absolute", zIndex: zIndex, width: width, paddingBottom: `${height + 4}px`, paddingTop: `50px` }
+      position: "absolute", zIndex: zIndex, width: `${width + 600}px`, paddingBottom: `${height + 500}px`, paddingTop: `300px`, paddingLeft: "300px"
+    }
   )
   const [maximized, setMaximized] = useState(false)
 
@@ -42,9 +43,15 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
       if (maximized) {
 
         setFrameStyle(f => R.merge(f, {
+
           transform: "none",
+          top: 50,
           width: "100%",
-          height: "calc(100% - 40px)"
+          height: "100%",
+          paddingBottom: 0,
+          paddingTop: 0,
+          paddingLeft: 0
+
         }))
 
         windowRef.current.style.width = "100%"
@@ -54,14 +61,19 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
 
       }
       else {
+        console.log("current is", currentX.current, ",", currentY.current)
+        setTranslate(currentX.current, currentY.current)
         setFrameStyle(f => R.merge(f, {
-          transform: "none",
-          width: null,
+          top: 0,
           height: null,
-          paddingBottom: `${dimension.height + 4}px`
+          position: "absolute",
+          width: `${width + 600}px`,
+          paddingBottom: `${height + 500}px`,
+          paddingTop: `300px`,
+          paddingLeft: "300px",
+
 
         }))
-        setTranslate(currentX.current, currentY.current)
 
       }
     }
@@ -89,7 +101,7 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
 
 
   useEffect(() => {
-    //setTranslate(0, 0)
+    setTranslate(0, 0)
     window.addEventListener('resize', () => {
       if (max.current) {
         setDimension({ width: window.parent.innerWidth, height: window.parent.innerHeight - 75 })
@@ -110,6 +122,9 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
       initialY.current = e.clientY - yOffset.current;
     }
     updateIndex(id)
+    setFrameStyle(
+      R.assoc("pointerEvents", "auto", frameStyle)
+    )
 
   }
 
@@ -120,6 +135,9 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
 
     active.current = false;
     stopPropagation(e)
+    setFrameStyle(
+      R.assoc("pointerEvents", "none", frameStyle)
+    )
   }
 
   const drag = (e) => {
@@ -165,39 +183,40 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
             R.assoc("paddingTop", 4),
             R.assoc("paddingLeft", 4),
             R.assoc("paddingRight", 4),
-            R.assoc("width", (maximized ?  R.prop("width", frameStyle) : null)),
+            R.assoc("width", (maximized ? R.prop("width", frameStyle) : null)),
             R.assoc("top", null),
-            R.assoc("pointerEvents", "all")
+            R.assoc("paddingBottom", `${height + 5}px`),
+            R.assoc("pointerEvents", "auto")
           )(frameStyle)
-          
-          }>
-        <div onMouseDown={dragStart} onMouseUp={dragEnd} ref={topRef} onMouseMove={drag} className="topbar" style={{ width: `${dimension.width}px` }}>
-          <MdClose onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(id) }} className="hover" size={21} />
-          {maximized ? <MdFilterNone className="hover" size={21} onClick={() => {
-            max.current = false
-            setMaximized(!maximized)
-            setDimension({ width: saveDimensions.current.width, height: saveDimensions.current.height })
 
-          }
-          } />
-            : <MdCropSquare onClick={() => {
-              max.current = true
-              saveDimensions.current = { width: dimension.width, height: dimension.height }
+        }>
+          <div onMouseDown={dragStart} onMouseUp={dragEnd} ref={topRef} onMouseMove={drag} className="topbar" style={{ width: `${dimension.width}px` }}>
+            <MdClose onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(id) }} className="hover" size={21} />
+            {maximized ? <MdFilterNone className="hover" size={21} onClick={() => {
+              max.current = false
               setMaximized(!maximized)
-              setDimension({ width: window.parent.innerWidth - 7, height: window.parent.innerHeight - 75 })
+              setDimension({ width: saveDimensions.current.width, height: saveDimensions.current.height })
 
-            }} className="hover" size={21} />
+            }
+            } />
+              : <MdCropSquare onClick={() => {
+                max.current = true
+                saveDimensions.current = { width: dimension.width, height: dimension.height }
+                setMaximized(!maximized)
+                setDimension({ width: window.parent.innerWidth - 7, height: window.parent.innerHeight - 75 })
 
-          }
-          <MdRemove onClick={() => { minimizeWindow(id) }} className="hover" size={21} />
-          <h5 className={"float-right"}>{title}</h5>
+              }} className="hover" size={21} />
 
-        </div>
-        <div className="window" ref={windowRef} style={{ width: `${dimension.width}px`, height: `${dimension.height}px` }}>
-          {children && children}
-          {loading && !children && <Spinner size="lg" animation="border" variant="secondary" className="frameloading" />}
-          <iframe ref={frameRef} onLoad={() => setLoading(false)} frameBorder="0" title={title} src={url} className={"framestyle"} height={`${dimension.height}px`} width={`${dimension.width}px`} />
-        </div>
+            }
+            <MdRemove onClick={() => { minimizeWindow(id) }} className="hover" size={21} />
+            <h5 className={"float-right"}>{title}</h5>
+
+          </div>
+          <div className="window" ref={windowRef} style={{ width: `${dimension.width}px`, height: `${dimension.height}px` }}>
+            {children && children}
+            {loading && !children && <Spinner size="lg" animation="border" variant="secondary" className="frameloading" />}
+            {!children && <iframe ref={frameRef} onLoad={() => setLoading(false)} frameBorder="0" title={title} src={url} className={"framestyle"} height={`${dimension.height}px`} width={`${dimension.width}px`} />}
+          </div>
         </div>
       </div>
     </>
