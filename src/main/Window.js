@@ -47,7 +47,7 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
           transform: "none",
           top: 50,
           width: "100%",
-          height: "100%",
+          height: "calc(100% - 30px)",
           paddingBottom: 0,
           paddingTop: 0,
           paddingLeft: 0
@@ -55,7 +55,6 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
         }))
 
         windowRef.current.style.width = "100%"
-        windowRef.current.style.height = "calc(100% - 40px)"
         topRef.current.style.width = "100%"
         setTranslate(0, 0)
 
@@ -104,7 +103,7 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
     setTranslate(0, 0)
     window.addEventListener('resize', () => {
       if (max.current) {
-        setDimension({ width: window.parent.innerWidth, height: window.parent.innerHeight - 75 })
+        setDimension({ width: window.parent.innerWidth, height: window.parent.innerHeight - 137 })
       }
 
     });
@@ -203,7 +202,7 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
                 max.current = true
                 saveDimensions.current = { width: dimension.width, height: dimension.height }
                 setMaximized(!maximized)
-                setDimension({ width: window.parent.innerWidth - 7, height: window.parent.innerHeight - 75 })
+                setDimension({ width: window.parent.innerWidth - 7, height: window.parent.innerHeight -  137})
 
               }} className="hover" size={21} />
 
