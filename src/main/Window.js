@@ -211,7 +211,7 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
             <h5 className={"float-right"}>{title}</h5>
 
           </div>
-          <div className="window" ref={windowRef} style={{ width: `${dimension.width}px`, height: `${dimension.height}px` }}>
+          <div className="window" ref={windowRef} style={{ width: `${dimension.width}px`, height: `${dimension.height}px`, pointerEvents: R.propEq("pointerEvents", "all", frameStyle) ? "none" : "all" }}>
             {children && children}
             {loading && !children && <Spinner size="lg" animation="border" variant="secondary" className="frameloading" />}
             {!children && <iframe ref={frameRef} onLoad={() => setLoading(false)} frameBorder="0" title={title} src={url} className={"framestyle"} height={`${dimension.height}px`} width={`${dimension.width}px`} />}
