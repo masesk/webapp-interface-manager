@@ -10,6 +10,7 @@ const AddWidget = ({ createWindow }) => {
   const [titleError, setTitleError] = useState(false)
   const [idError, setIdError] = useState(false)
   const [urlError, setUrlError] = useState(false)
+  const [single, setSingle] = useState(false)
   return (
     <Form className="p-5">
       <Form.Group>
@@ -34,6 +35,10 @@ const AddWidget = ({ createWindow }) => {
           URL cannot be empty
             </Form.Control.Feedback>
       </Form.Group>
+      <Form.Group>
+      <Form.Label>Single Instance</Form.Label>
+            <Form.Check checked={single} onChange={e => setSingle(!single)} type="checkbox" label="Allow Single Instance of the App?" />
+            </Form.Group>
       <Button variant="secondary"
         onClick={e => {
           let error = false
@@ -53,7 +58,7 @@ const AddWidget = ({ createWindow }) => {
             console.log("error")
             return
           }
-          createWindow(id.current.value, title.current.value, 800, 500, url.current.value, true)
+          createWindow(id.current.value, title.current.value, 800, 500, url.current.value, single)
           updateIndex(id.current.value)
           }
         }

@@ -99,7 +99,7 @@ body{
   width: 100%;
   z-index: 999;
   align-items: center;
-  border-top: solid 2px rgb(20, 20, 20);
+  border-top: solid 2px rgb(44, 44, 44);
   background: rgb(28,29,28);
   background: -moz-linear-gradient(0deg, rgba(28,29,28,1) 0%, rgba(68,71,69,1) 100%);
   background: -webkit-linear-gradient(0deg, rgba(28,29,28,1) 0%, rgba(68,71,69,1) 100%);
@@ -176,4 +176,29 @@ body{
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+
+.full-modal {
+  padding: 0 !important; 
+}
+.full-modal  .modal-dialog {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  margin: 0;
+}
+.full-modal .modal-content {
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  color: white;
+  background: #272727;
+}
+.full-modal .modal-body {
+  overflow-y: auto;
+}
+
+.table-bordered{
+  color: rgb(209, 209, 209)
 }

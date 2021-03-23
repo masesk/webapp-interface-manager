@@ -1,16 +1,16 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { showWindow, hideWindow } from '../redux/actions'
+import { uminimizeUpdateIndex, hideWindow, updateIndex, hideWindowId, unminimizeWindow } from '../redux/actions'
 import * as R from 'ramda'
 import {AiOutlineCloseCircle} from 'react-icons/ai'
 
 
 
-const MinBar = ({ children, id, showWindow, className, hideWindow }) => {
+const MinBar = ({ children, index, uminimizeUpdateIndex,hideWindowId, unminimizeWindow, className, hideWindow }) => {
 
     return (
-        <div className={"noselect min-bar " + className} onClick={()=> showWindow(id)}>
-            <div className="min-bar-close"> <AiOutlineCloseCircle onClick={e=>{hideWindow(id); e.stopPropagation();}} size={20}/></div>
+        <div className={"noselect min-bar " + className} onClick={()=> {uminimizeUpdateIndex(index) }}>
+            <div className="min-bar-close"> <AiOutlineCloseCircle onClick={e=>{hideWindowId(index); e.stopPropagation();}} size={20}/></div>
             <div className="min-bar-title">{children}</div>
         </div>
 
@@ -33,5 +33,5 @@ const mapStateToProps = state => {
 
 export default connect(
     mapStateToProps,
-    { showWindow, hideWindow }
+    { unminimizeWindow, hideWindowId, uminimizeUpdateIndex, hideWindow, updateIndex }
 )(MinBar)

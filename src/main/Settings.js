@@ -8,7 +8,7 @@ import {AiOutlineDelete} from 'react-icons/ai'
 import * as R from 'ramda'
 
 const columns = [{
-    dataField: 'id',
+    dataField: 'appid',
     text: 'ID'
 }, {
     dataField: 'title',
@@ -46,13 +46,14 @@ const Settings = ({ windows, settings, toggleShowing }) => {
     const handleClose = () => toggleShowing(false);
     return (
         <>
-
+            <div>
             <Modal
                 show={settings.showing}
                 onHide={handleClose}
                 backdrop="static"
                 keyboard={false}
                 size="lg"
+                className="full-modal"
                 variant="secondary"
             >
                 <Modal.Header closeButton>
@@ -60,7 +61,7 @@ const Settings = ({ windows, settings, toggleShowing }) => {
                 </Modal.Header>
                 <Modal.Body>
                     <BootstrapTable
-                        keyField="id"
+                        keyField="appid"
                         data={windows.apps}
                         columns={columns}
                     />
@@ -72,6 +73,7 @@ const Settings = ({ windows, settings, toggleShowing }) => {
                     <Button variant="primary">Save</Button>
                 </Modal.Footer>
             </Modal>
+            </div>
         </>
 
     )

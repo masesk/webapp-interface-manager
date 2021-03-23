@@ -1,19 +1,19 @@
-import {SHOW_WINDOW, CREATE_WINDOW, HIDE_WINDOW, TOGGLE_SETTINGS, UPDATE_INDEX, MINIMIZE_WINDOW } from "./actionTypes";
+import {SHOW_WINDOW, CREATE_WINDOW, HIDE_WINDOW, TOGGLE_SETTINGS, UPDATE_INDEX, MINIMIZE_WINDOW, UNMINIMIZE_WINDOW, UNMINIMIZE_UPDATE_INDEX, HIDE_WINDOW_ID } from "./actionTypes";
 
 
-export const hideWindow = id => ({
+export const hideWindow = index => ({
   type: HIDE_WINDOW,
-  payload: {id}
+  payload: {index}
 })
 
-export const showWindow = id => ({
+export const showWindow = appid => ({
   type: SHOW_WINDOW,
-  payload: {id}
+  payload: {appid}
 })
 
-export const createWindow = (id, title, width, height, url, showing) => ({
+export const createWindow = (appid, title, width, height, url, single) => ({
   type: CREATE_WINDOW,
-  payload: {id, title, width, height, url, showing}
+  payload: {appid, title, width, height, url, single}
 })
 
 
@@ -23,15 +23,32 @@ export const toggleShowing = (showing) => ({
 })
 
 
-export const updateIndex = (id) => ({
+export const updateIndex = (index) => ({
   type: UPDATE_INDEX,
-  payload: {id}
+  payload: {index}
 })
 
-export const minimizeWindow = (id) => ({
+export const minimizeWindow = (index) => ({
   type: MINIMIZE_WINDOW,
-  payload: {id}
+  payload: {index}
 })
+
+export const unminimizeWindow = (index) => ({
+  type: UNMINIMIZE_WINDOW,
+  payload: {index}
+})
+
+export const uminimizeUpdateIndex = (viewid) => ({
+  type: UNMINIMIZE_UPDATE_INDEX,
+  payload: {viewid}
+})
+
+export const hideWindowId = (viewid) => ({
+  type: HIDE_WINDOW_ID,
+  payload: {viewid}
+})
+
+
 
 
 

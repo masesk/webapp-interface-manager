@@ -8,7 +8,7 @@ import { hideWindow, updateIndex, minimizeWindow } from "../redux/actions";
 
 import { connect } from "react-redux";
 
-function Window({ title, width, height, url, id, children, minimized, updateIndex, hideWindow, minimizeWindow, zIndex }) {
+function Window({ title, width, height, url, appid, children, minimized, updateIndex, hideWindow, minimizeWindow, zIndex, index }) {
   const frameRef = useRef()
   const windowRef = useRef()
   const topRef = useRef()
@@ -60,7 +60,6 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
 
       }
       else {
-        console.log("current is", currentX.current, ",", currentY.current)
         setTranslate(currentX.current, currentY.current)
         setFrameStyle(f => R.merge(f, {
           top: 0,
@@ -120,7 +119,7 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
       initialX.current = e.clientX - xOffset.current;
       initialY.current = e.clientY - yOffset.current;
     }
-    updateIndex(id)
+    updateIndex(index)
     setFrameStyle(
       R.assoc("pointerEvents", "auto", frameStyle)
     )
@@ -190,7 +189,7 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
 
         }>
           <div onMouseDown={dragStart} onMouseUp={dragEnd} ref={topRef} onMouseMove={drag} className="topbar" style={{ width: `${dimension.width}px` }}>
-            <MdClose onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(id) }} className="hover" size={21} />
+            <MdClose onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(index) }} className="hover" size={21} />
             {maximized ? <MdFilterNone className="hover" size={21} onClick={() => {
               max.current = false
               setMaximized(!maximized)
@@ -207,7 +206,7 @@ function Window({ title, width, height, url, id, children, minimized, updateInde
               }} className="hover" size={21} />
 
             }
-            <MdRemove onClick={() => { minimizeWindow(id) }} className="hover" size={21} />
+            <MdRemove onClick={() => { minimizeWindow(index) }} className="hover" size={21} />
             <h5 className={"float-right"}>{title}</h5>
 
           </div>
