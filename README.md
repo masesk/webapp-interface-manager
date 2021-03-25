@@ -105,7 +105,7 @@ export const BUILT_IN_APPS = {
 {/* Add all static windows/apps below */}
  <StaticWindow appid="mynewapp">
     <MyCustomReactComponent/>
- </Static App>
+ </StaticWindow>
 ```
 
 ## Modify
