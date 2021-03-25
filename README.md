@@ -130,8 +130,9 @@ Run the command
 ```
 npm run build
 ```
-This will generate a directory named `dist`. The contents of the dist can be contain the newly generate WAIM; with all the custom configurations from `src\constants.js` and all your custom React components. 
+This will generate a directory named `build`. The contents of the dist can be contain the newly generate WAIM; with all the custom configurations from `src\constants.js` and all your custom React components. 
 
 ## Try
 Try out the latest release:
 [https://masesk.github.io/webapp-interface-manager](https://masesk.github.io/webapp-interface-manager)
+
