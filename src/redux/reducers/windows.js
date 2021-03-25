@@ -49,14 +49,36 @@ export default function (state = initialState, action) {
       appView++
       opened[appid] = true
       return R.compose(
-        R.assoc("view", R.append({ appid, viewid: appView, zIndex: appView}, state.view))
+        R.assoc("view", R.append({ appid, viewid: appView, zIndex: appView }, state.view))
       )(state)
     }
 
     case HIDE_WINDOW: {
       const { index } = action.payload
+
       delete opened[R.path(["view", index, "appid"], state)]
-      return R.assoc("view", R.remove(index, 1, R.prop("view", state)), state)
+      const zIndex = R.path(["view", Number(index), "zIndex"], state)
+      const viewid = R.path(["view", Number(index), "viewid"], state)
+      const length = R.length(state.view)
+      const instance = R.compose(
+        R.map(([index, win]) => {
+          const fviewid = R.prop("viewid", win)
+          const fzIndex = R.prop("zIndex", win)
+          if (R.equals(fviewid, viewid)) {
+            return R.assoc("zIndex", Number(length), win)
+          }
+          else {
+            if (Number(fzIndex) > zIndex) {
+              return R.assoc("zIndex", Number(fzIndex) - 1, win)
+            }
+            else {
+              return R.assoc("zIndex", fzIndex, win)
+            }
+          }
+        }),
+        R.toPairs,
+      )(state.view)
+      return R.assoc("view", R.remove(index, 1, instance), state)
     }
     case CREATE_WINDOW: {
       const window = {
@@ -78,21 +100,21 @@ export default function (state = initialState, action) {
       const length = R.length(state.view)
       const index = R.findIndex(R.propEq("viewid", viewid))(R.prop("view", state));
       const zIndex = R.path(["view", Number(index), "zIndex"], state)
-      if(R.pathEq(["view", Number(index), "zIndex"], length, state)){
+      if (R.pathEq(["view", Number(index), "zIndex"], length, state)) {
         return state
       }
       const instance = R.compose(
         R.map(([index, win]) => {
           const fviewid = R.prop("viewid", win)
           const fzIndex = R.prop("zIndex", win)
-          if(R.equals(fviewid, viewid)){
+          if (R.equals(fviewid, viewid)) {
             return R.assoc("zIndex", Number(length), win)
           }
-          else{
-            if(Number(fzIndex) > zIndex){
-              return R.assoc("zIndex", Number(fzIndex)-1, win)
+          else {
+            if (Number(fzIndex) > zIndex) {
+              return R.assoc("zIndex", Number(fzIndex) - 1, win)
             }
-            else{
+            else {
               return R.assoc("zIndex", fzIndex, win)
             }
           }
@@ -123,23 +145,23 @@ export default function (state = initialState, action) {
       const index = R.findIndex(R.propEq("viewid", viewid))(R.prop("view", state));
       const zIndex = R.path(["view", Number(index), "zIndex"], state)
 
-      
+
       const min = updateIn(["view", Number(index), "minimized"], false, state)
-      if(R.pathEq(["view", Number(index), "zIndex"], length, state)){
+      if (R.pathEq(["view", Number(index), "zIndex"], length, state)) {
         return min
       }
-      const  instance = R.compose(
+      const instance = R.compose(
         R.map(([index, win]) => {
           const fviewid = R.prop("viewid", win)
           const fzIndex = R.prop("zIndex", win)
-          if(R.equals(fviewid, viewid)){
+          if (R.equals(fviewid, viewid)) {
             return R.assoc("zIndex", Number(length), win)
           }
-          else{
-            if(Number(fzIndex) > zIndex){
-              return R.assoc("zIndex", Number(fzIndex)-1, win)
+          else {
+            if (Number(fzIndex) > zIndex) {
+              return R.assoc("zIndex", Number(fzIndex) - 1, win)
             }
-            else{
+            else {
               return R.assoc("zIndex", fzIndex, win)
             }
           }
@@ -154,7 +176,27 @@ export default function (state = initialState, action) {
       const { viewid } = action.payload
       const index = R.findIndex(R.propEq("viewid", viewid))(R.prop("view", state));
       delete opened[R.path(["view", index, "appid"], state)]
-      return R.assoc("view", R.remove(index, 1, R.prop("view", state)), state)
+      const zIndex = R.path(["view", Number(index), "zIndex"], state)
+      const length = R.length(state.view)
+      const instance = R.compose(
+        R.map(([index, win]) => {
+          const fviewid = R.prop("viewid", win)
+          const fzIndex = R.prop("zIndex", win)
+          if (R.equals(fviewid, viewid)) {
+            return R.assoc("zIndex", Number(length), win)
+          }
+          else {
+            if (Number(fzIndex) > zIndex) {
+              return R.assoc("zIndex", Number(fzIndex) - 1, win)
+            }
+            else {
+              return R.assoc("zIndex", fzIndex, win)
+            }
+          }
+        }),
+        R.toPairs,
+      )(state.view)
+      return R.assoc("view", R.remove(index, 1, instance),state)
     }
     case DELETE_WINDOW: {
       const { appid } = action.payload
