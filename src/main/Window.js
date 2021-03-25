@@ -8,7 +8,7 @@ import { hideWindow, updateIndex, minimizeWindow } from "../redux/actions";
 
 import { connect } from "react-redux";
 
-function Window({ title, width, height, url, appid, children, minimized, updateIndex, hideWindow, minimizeWindow, zIndex, index }) {
+function Window({ title, width, height, url, appid, children, minimized, updateIndex, hideWindow, minimizeWindow, zIndex, index, viewid }) {
   const frameRef = useRef()
   const windowRef = useRef()
   const topRef = useRef()
@@ -99,10 +99,12 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
 
 
   useEffect(() => {
-    setTranslate(0, 0)
+    setTranslate(-300, -250)
+    xOffset.current = -300
+    yOffset.current = -250
     window.addEventListener('resize', () => {
       if (max.current) {
-        setDimension({ width: window.parent.innerWidth, height: window.parent.innerHeight - 137 })
+        setDimension({ width: window.parent.innerWidth - 7, height: window.parent.innerHeight - 137 })
       }
 
     });
@@ -119,7 +121,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
       initialX.current = e.clientX - xOffset.current;
       initialY.current = e.clientY - yOffset.current;
     }
-    updateIndex(index)
+    updateIndex(viewid)
     setFrameStyle(
       R.assoc("pointerEvents", "auto", frameStyle)
     )
@@ -210,10 +212,10 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
             <h5 className={"float-right"}>{title}</h5>
 
           </div>
-          <div className="window" ref={windowRef} style={{ width: `${dimension.width}px`, height: `${dimension.height}px`, pointerEvents: (R.propEq("pointerEvents", "auto", frameStyle) ? "none" : "auto") }}>
+          <div className="window" ref={windowRef} style={{ width: `${dimension.width}px`, height: `${dimension.height}px`, pointerEvents: (R.propEq("pointerEvents", "auto", frameStyle) ? "none" : "auto"), overflow: (R.isNil(children) ? "hidden" : "auto")  }}>
             {children && children}
             {loading && !children && <Spinner size="lg" animation="border" variant="secondary" className="frameloading" />}
-            {!children && <iframe ref={frameRef} onLoad={() => setLoading(false)} frameBorder="0" title={title} src={url} className={"framestyle"} height={`${dimension.height}px`} width={`${dimension.width}px`}/>}
+            {!children && <iframe key={viewid}  ref={frameRef} onLoad={() => setLoading(false)} frameBorder="0" title={title} src={url} className={"framestyle"} height={`${dimension.height}px`} width={`${dimension.width}px`}/>}
           </div>
         </div>
       </div>

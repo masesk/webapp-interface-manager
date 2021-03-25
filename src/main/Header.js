@@ -28,7 +28,7 @@ const Header = ({windows, showWindow, toggleShowing}) => {
 
             </div>
             <div className="header-logo">
-                <span>GWM</span>
+                <span>WAIM</span>
             </div>
             <div className="header-apps-button">
 

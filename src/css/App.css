@@ -8,13 +8,10 @@ body{
 }
 
 .window{
-  min-width: 200px;
-  min-height: 200px;
   position: absolute;
   background-color: #b4b4b4 ;
   overflow: auto;
   cursor: auto;
-  overflow: hidden;
 }
 
 .header{
@@ -188,6 +185,10 @@ body{
   height: 100%;
   margin: 0;
 }
+
+.full-modal .modal-header .close{
+  color:white !important;
+}
 .full-modal .modal-content {
   height: 100%;
   border: 0;
@@ -200,5 +201,5 @@ body{
 }
 
 .table-bordered{
-  color: rgb(209, 209, 209)
+  color: rgb(209, 209, 209) !important;
 }

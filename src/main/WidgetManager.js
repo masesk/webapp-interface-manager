@@ -1,21 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../css/App.css';
 import Window from './Window'
 import Header from './Header'
 import * as R from 'ramda'
 import AddWidget from '../apps/AddWidget'
 import { connect } from 'react-redux'
+import {loadApps} from '../redux/actions'
 import Settings from './Settings'
 import StaticWindow from './StaticWindow'
 import {BUILT_IN_APPS} from '../constants'
 import MinBar from './MinBar';
 import Test from '../apps/Test';
 
-const WidgetManager = ({ windows }) => {
+const WidgetManager = ({ windows, loadApps }) => {
+  useState(()=>{
+    loadApps()
+  }, [])
   return (
 
     <>
       <Header windows={windows} />
+        {/* Add all static windows/apps below */}
         <StaticWindow appid="test" >
           <Test />
         </StaticWindow>
@@ -28,6 +33,7 @@ const WidgetManager = ({ windows }) => {
           R.map(([index, win]) => {
             const appid = R.prop("appid", win)
             const key = R.prop("viewid", win)
+            const zIndex = R.prop("zIndex", win)
             if (R.has(appid, BUILT_IN_APPS)) {
               return null
             }
@@ -36,10 +42,11 @@ const WidgetManager = ({ windows }) => {
               appid={window.appid}
               title={window.title}
               url={window.url}
-              key={key}
               width={window.width}
-              zIndex={index}
+              zIndex={zIndex}
               index={index}
+              key={key}
+              viewid={key}
               minimized={R.prop("minimized", win)}
               height={window.height} />
           }),
@@ -60,7 +67,7 @@ const WidgetManager = ({ windows }) => {
           }),
           R.toPairs,
 
-        )(R.sortBy(R.prop("viewid" ))(windows.view))
+        )(windows.view)
       }
       </div>
 
@@ -73,6 +80,6 @@ const mapStateToProps = state => {
   return state
 };
 
-export default connect(mapStateToProps)(WidgetManager);
+export default connect(mapStateToProps, {loadApps})(WidgetManager);
 
 

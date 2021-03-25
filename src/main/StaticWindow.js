@@ -14,6 +14,7 @@ const StaticWindow = ({ windows, children, appid }, ref) => {
         
           const fappid = R.prop("appid", win)
           const key = R.prop("viewid", win)
+          const zIndex = R.prop("zIndex", win)
           if (R.equals(appid, fappid)) {
             const window = R.path(["apps", appid], windows)
             return <Window 
@@ -21,9 +22,11 @@ const StaticWindow = ({ windows, children, appid }, ref) => {
               title={window.title}
               width={window.width}
               key={key}
-              zIndex={index}
+              zIndex={zIndex}
+              viewid={key}
               index={index}
               minimized={R.prop("minimized", win)}
+              url={window.url}
               height={window.height}>{children}</Window>
           }
 
