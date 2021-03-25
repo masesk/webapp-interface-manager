@@ -74,7 +74,7 @@ export const BUILT_IN_APPS = {
 
 ```
  {/* Add all static windows/apps below */}
- <StaticWindow id="mynewapp"/>
+ <StaticWindow appid="mynewapp"/>
 ```
 #### In browser
 After running the widget manager, navigate to the top left and open `Add Widget` window to add new widget providing `appid`, `title`, `url`, `width`, `height`, `deletable`, and `single` from the UI selection.
@@ -103,7 +103,7 @@ export const BUILT_IN_APPS = {
 2. Add a new StaticWindow component to `WidgetManager.js`, referencing the `appid` and including your custom component as its child component
 ```
 {/* Add all static windows/apps below */}
- <StaticWindow id="mynewapp">
+ <StaticWindow appid="mynewapp">
     <MyCustomReactComponent/>
  </Static App>
 ```
@@ -131,3 +131,7 @@ Run the command
 npm run build
 ```
 This will generate a directory named `dist`. The contents of the dist can be contain the newly generate WAIM; with all the custom configurations from `src\constants.js` and all your custom React components. 
+
+## Try
+Try out the latest release:
+[https://masesk.github.io/webapp-interface-manager](https://masesk.github.io/webapp-interface-manager)
