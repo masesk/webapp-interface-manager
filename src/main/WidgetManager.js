@@ -3,85 +3,83 @@ import '../css/App.css';
 import Window from './Window'
 import Header from './Header'
 import * as R from 'ramda'
-import useDynamicRefs from 'use-dynamic-refs';
-import AddWidget from './AddWidget'
+import AddWidget from '../apps/AddWidget'
+import { connect } from 'react-redux'
+import {loadApps} from '../redux/actions'
+import Settings from './Settings'
+import StaticWindow from './StaticWindow'
+import {BUILT_IN_APPS} from '../constants'
+import MinBar from './MinBar';
+import Test from '../apps/Test';
 
-const Widget = () => {
-  const [windows, setWindows] = useState({})
-  const [getRef, setRef] =  useDynamicRefs();
-
-
-  const updateWindow = (id, title, url) => {
-    if(R.isEmpty(id) || R.isEmpty(title) || R.isEmpty(url)){
-      return
-    }
-    setWindows(R.assoc(id, {
-      id: id,
-      title: title,
-      width: 800,
-      height: 500,
-      url: url,
-    }, windows))
-
-  }
-
-
-  const addWidgetWindow = {
-    id: "addwidget",
-    title: "Add Widget",
-    width: 800,
-    height: 500
-  }
-
-  const clickCallback = (id) => {
-    const selectedRef = getRef(id)
-    R.forEach(key => {
-      const keyRef = getRef(key)
-      if(R.isNil(R.path(["current", "style"], keyRef))){
-        return
-      }
-      if(key === id){
-        keyRef.current.style.zIndex = 1;
-      }
-      else{
-        keyRef.current.style.zIndex = 0;
-      }
-    }, R.append(addWidgetWindow.id, R.keys(windows)))
-  }
-
-
-
-
+const WidgetManager = ({ windows, loadApps }) => {
+  useState(()=>{
+    loadApps()
+  }, [])
   return (
 
     <>
-      <Header />
-      <Window initTitle={addWidgetWindow.title}
-        id={addWidgetWindow.id}
-        initWidth={addWidgetWindow.width} ref={setRef(addWidgetWindow.id)} 
-        initHeight={addWidgetWindow.height}
-        clickCallback={clickCallback}>
-        <AddWidget updateWindow={updateWindow}/>
-      </Window>
+      <Header windows={windows} />
+        {/* Add all static windows/apps below */}
+        <StaticWindow appid="test" >
+          <Test />
+        </StaticWindow>
+        <StaticWindow appid="addwidget" >
+          <AddWidget />
+        </StaticWindow>
+      
       {
         R.compose(
-          R.map(([key, windowKey]) => {
-            const window = R.prop(windowKey, windows)
-            return <Window ref={setRef(windowKey)} key={key} 
-              id={window.id}
-              initComponent={window.component} initTitle={window.title}
-              initUrl={window.url} initWidth={window.width} clickCallback={clickCallback}
-              initHeight={window.height} />
+          R.map(([index, win]) => {
+            const appid = R.prop("appid", win)
+            const key = R.prop("viewid", win)
+            const zIndex = R.prop("zIndex", win)
+            if (R.has(appid, BUILT_IN_APPS)) {
+              return null
+            }
+            const window = R.path(["apps", appid], windows)
+            return  <Window 
+              appid={window.appid}
+              title={window.title}
+              url={window.url}
+              width={window.width}
+              zIndex={zIndex}
+              index={index}
+              key={key}
+              viewid={key}
+              minimized={R.prop("minimized", win)}
+              height={window.height} />
           }),
           R.toPairs,
-        )(R.keys(windows))
+        )(windows.view)
       }
+      <Settings/>
+      <div className="footer">
+      {
+        
+         R.compose(
+        
+          R.map(([index, win]) => {
+              const appid = R.prop("appid", win)
+              const viewid = R.prop("viewid", win)
+              const window = R.path(["apps", appid], windows)
+              return <MinBar className={R.propEq("minimized", true, win) ? "" : "showing"} index={viewid} key={index} appid={appid}>{R.prop("title", window)}</MinBar>
+          }),
+          R.toPairs,
 
+        )(windows.view)
+      }
+      </div>
 
     </>
   );
 }
 
-export default React.forwardRef(Widget);
+
+const mapStateToProps = state => {
+  return state
+};
+
+export default connect(mapStateToProps, {loadApps})(WidgetManager);
 
 
