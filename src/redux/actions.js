@@ -10,7 +10,8 @@ import {
   HIDE_WINDOW_ID,
   DELETE_WINDOW,
   LOAD_APPS,
-  RESET_DEFAULT
+  RESET_DEFAULT,
+  UPDATE_WINDOW
 } from "./actionTypes";
 
 
@@ -24,9 +25,14 @@ export const showWindow = appid => ({
   payload: { appid }
 })
 
-export const createWindow = (appid, title, width, height, url, single, deletable) => ({
+export const createWindow = (appid, title, width, height, url, single, deletable, editable) => ({
   type: CREATE_WINDOW,
-  payload: { appid, title, width, height, url, single, deletable }
+  payload: { appid, title, width, height, url, single, deletable, editable }
+})
+
+export const updateWindow = (appid, title, width, height, url, single, deletable, editable) => ({
+  type: UPDATE_WINDOW,
+  payload: { appid, title, width, height, url, single, deletable, editable }
 })
 
 

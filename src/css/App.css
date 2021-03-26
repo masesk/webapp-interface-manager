@@ -194,7 +194,7 @@ body{
   border: 0;
   border-radius: 0;
   color: white;
-  background: #272727;
+  background: #5a5a5a;
 }
 .full-modal .modal-body {
   overflow-y: auto;
@@ -202,4 +202,21 @@ body{
 
 .table-bordered{
   color: rgb(209, 209, 209) !important;
+}
+
+table {
+  border-spacing: 30px;
+  border-collapse: collapse;
+  border-radius: 10px;
+  border-style: hidden;
+  box-shadow: 0 0 0 1px rgb(58, 58, 58); 
+  background-color: #404346;
+}
+
+td {
+  border: 1px solid #ccc;
+}
+
+tr {
+  border: 1px solid rgb(44, 44, 44);
 }

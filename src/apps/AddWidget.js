@@ -15,6 +15,7 @@ const AddWidget = ({ createWindow }) => {
   const [whError, setWhError] = useState(false)
   const [single, setSingle] = useState(false)
   const [deletable, setDeletable] = useState(true)
+  const [editable, setEditable] = useState(true)
   const [success, setSuccess] = useState(false)
 
   useEffect(() => {
@@ -69,6 +70,10 @@ const AddWidget = ({ createWindow }) => {
         <Form.Label>Deletable</Form.Label>
         <Form.Check checked={deletable} onChange={e => setDeletable(!deletable)} type="checkbox" label="Allow app to be deleted?" />
       </Form.Group>
+      <Form.Group>
+        <Form.Label>Editable</Form.Label>
+        <Form.Check checked={editable} onChange={e => setEditable(!editable)} type="checkbox" label="Allow app to be edited from the settings?" />
+      </Form.Group>
 
       <Button variant="secondary"
         onClick={e => {
@@ -93,7 +98,7 @@ const AddWidget = ({ createWindow }) => {
           if (error) {
             return
           }
-          createWindow(id.current.value, title.current.value, Number(width.current.value), Number(height.current.value), url.current.value, single, deletable)
+          createWindow(id.current.value, title.current.value, Number(width.current.value), Number(height.current.value), url.current.value, single, deletable, editable)
           updateIndex(id.current.value)
           setSuccess(true)
         }

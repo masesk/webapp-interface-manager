@@ -4,7 +4,8 @@ export const BUILT_IN_APPS = {
         title: "Add Widget",
         width: 800,
         height: 600,
-        single: true
+        single: true,
+        editable: false
     },
 
     test: {
@@ -12,6 +13,7 @@ export const BUILT_IN_APPS = {
         title: "Test App",
         width: 1000,
         height: 300,
-        deletable: true
+        deletable: true,
+        editable: true
     }
 }

@@ -39,7 +39,7 @@ For each new app in `src/constants.js`, provide:
 
 * `title`: title of the app. Shown to the user in the menus and at the bottom and top bars.
 
-* `wdith`: width of the window that displays the url or React component.
+* `width`: width of the window that displays the url or React component.
 
 * `height`: height of the window that displays the url or React component.
 
@@ -111,17 +111,17 @@ export const BUILT_IN_APPS = {
 ## Modify
 
 ### Header
-* Change `WAIM` to any text or image in `src\main\Header.js`.
-* Change the header green background in `src\css\App.css`. Refer to `.header` class.
+* Change `WAIM` to any text or image in `src/main/Header.js`.
+* Change the header green background in `src/css/App.css`. Refer to `.header` class.
 
 ### Footer
-* Change the footer colors in `src\css\App.css`. Refer to class `.footer`.
-* Change the minimize bar in `src\main\MinBar.js`
-* Change the minimize bar colors in `src\css\App.css`. Refer to `.min-bar`, `.min-bar-close` and `.min-bar-title` classes.
+* Change the footer colors in `src/css/App.css`. Refer to class `.footer`.
+* Change the minimize bar in `src/main/MinBar.js`
+* Change the minimize bar colors in `src/css/App.css`. Refer to `.min-bar`, `.min-bar-close` and `.min-bar-title` classes.
 
 ### Window
-* Change the window structure and buttons from `src\main\Window.js`
-* Change the window layout and colors from `src\css\App.css`. Refer to `.window`.
+* Change the window structure and buttons from `src/main/Window.js`
+* Change the window layout and colors from `src/css/App.css`. Refer to `.window`.
 
 
 ## Build
@@ -130,7 +130,7 @@ Run the command
 ```
 npm run build
 ```
-This will generate a directory named `build`. The contents of the dist can be contain the newly generate WAIM; with all the custom configurations from `src\constants.js` and all your custom React components. 
+This will generate a directory named `build`. The `build` directory will contain the newly generate WAIM; with all the custom configurations from `src/constants.js` and all your custom React components. 
 
 ## Try
 Try out the latest release:

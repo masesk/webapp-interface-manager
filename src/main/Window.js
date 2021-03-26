@@ -102,6 +102,8 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
     setTranslate(-300, -250)
     xOffset.current = -300
     yOffset.current = -250
+    currentX.current = -300
+    currentY.current = -250
     window.addEventListener('resize', () => {
       if (max.current) {
         setDimension({ width: window.parent.innerWidth - 7, height: window.parent.innerHeight - 137 })
