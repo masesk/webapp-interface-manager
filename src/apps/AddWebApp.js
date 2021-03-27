@@ -24,7 +24,7 @@ const AddWebApp = ({ createWindow }) => {
   return (
     <Form className="p-5">
       <Form.Group>
-        <Form.Label>appName ID</Form.Label>
+        <Form.Label>App ID</Form.Label>
         <Form.Control ref={id} placeholder="App ID" isInvalid={idError} onChange={e => {setIdError(false); setSuccess(false)}} />
         <Form.Control.Feedback type="invalid">
           ID cannot be empty or a duplicate
