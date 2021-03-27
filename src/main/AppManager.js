@@ -3,17 +3,29 @@ import '../css/App.css';
 import Window from './Window'
 import Header from './Header'
 import * as R from 'ramda'
-import AddWidget from '../apps/AddWidget'
+import AddWebApp from '../apps/AddWebApp'
 import { connect } from 'react-redux'
 import {loadApps} from '../redux/actions'
 import Settings from './Settings'
 import StaticWindow from './StaticWindow'
 import {BUILT_IN_APPS} from '../constants'
 import MinBar from './MinBar';
-import Test from '../apps/Test';
+import Sender from '../apps/Sender';
+import Receiver from '../apps/Receiver';
 
-const WidgetManager = ({ windows, loadApps }) => {
+const AppManager = ({ windows, loadApps }) => {
   useState(()=>{
+    window.messageHandler = {}
+    window.messageHandler.publish = (channelName, data) => {
+      const event = new Event(channelName, { bubbles: true, cancelable: false })
+      event.data = data
+      window.dispatchEvent(event)
+    }
+    window.messageHandler.listen =  (channelName, callback) => {
+      window.addEventListener(channelName, (event) => {
+        callback(event.data)
+      }, false);
+    }
     loadApps()
   }, [])
   return (
@@ -21,11 +33,14 @@ const WidgetManager = ({ windows, loadApps }) => {
     <>
       <Header windows={windows} />
         {/* Add all static windows/apps below */}
-        <StaticWindow appid="test" >
-          <Test />
+        <StaticWindow appid="sender" >
+          <Sender />
         </StaticWindow>
-        <StaticWindow appid="addwidget" >
-          <AddWidget />
+        <StaticWindow appid="receiver" >
+          <Receiver />
+        </StaticWindow>
+        <StaticWindow appid="addwebapp" >
+          <AddWebApp />
         </StaticWindow>
       
       {
@@ -80,6 +95,6 @@ const mapStateToProps = state => {
   return state
 };
 
-export default connect(mapStateToProps, {loadApps})(WidgetManager);
+export default connect(mapStateToProps, {loadApps})(AppManager);
 
 

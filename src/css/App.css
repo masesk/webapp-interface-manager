@@ -14,6 +14,8 @@ body{
   cursor: auto;
 }
 
+
+
 .header{
   text-align: center;
   background: rgb(20,82,28);
@@ -43,14 +45,10 @@ body{
   float: left;
 }
 
-.frame{
-
-  
-}
-
 .frame-border{
   position: fixed;
   background-color: #1a1a1a;
+  resize: both;
 }
 
 .topbar{
@@ -126,6 +124,7 @@ body{
 }
 
 .min-bar{
+  
   cursor: pointer;
   padding: 5px;
   border-radius: 3px;
@@ -133,10 +132,11 @@ body{
   background-color: rgb(221, 221, 221);
   color: rgb(49, 49, 49);
   margin-left: 3px;
-  min-width: 150px;
+  min-width: 140px;
   text-align: center;
   height: 35px;
 }
+
 
 .min-bar-close{
   float: left;
@@ -144,9 +144,12 @@ body{
   text-align: middle;
 }
 
+
+
 .min-bar-title{
   text-align: right;
-  padding-right: 5px
+  min-width: 160px;
+  margin-left: 5px;
 }
 
 .showing{
@@ -194,7 +197,7 @@ body{
   border: 0;
   border-radius: 0;
   color: white;
-  background: #272727;
+  background: #5a5a5a;
 }
 .full-modal .modal-body {
   overflow-y: auto;
@@ -202,4 +205,33 @@ body{
 
 .table-bordered{
   color: rgb(209, 209, 209) !important;
+}
+
+table {
+  border-spacing: 30px;
+  border-collapse: collapse;
+  border-radius: 10px;
+  border-style: hidden;
+  box-shadow: 0 0 0 1px rgb(58, 58, 58); 
+  background-color: #404346;
+}
+
+td {
+  border: 1px solid #ccc;
+}
+
+tr {
+  border: 1px solid rgb(44, 44, 44);
+}
+
+
+.resize-arrow{
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  cursor: se-resize	;
+}
+
+.stroke{
+  stroke: url(#2a2a2a) !important;
 }

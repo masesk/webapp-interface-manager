@@ -3,7 +3,7 @@ import { Form, Button, Col } from 'react-bootstrap'
 import { connect } from 'react-redux'
 import { createWindow, updateIndex } from "../redux/actions";
 import * as R from 'ramda'
-const AddWidget = ({ createWindow }) => {
+const AddWebApp = ({ createWindow }) => {
   const title = useRef();
   const url = useRef();
   const id = useRef();
@@ -15,6 +15,7 @@ const AddWidget = ({ createWindow }) => {
   const [whError, setWhError] = useState(false)
   const [single, setSingle] = useState(false)
   const [deletable, setDeletable] = useState(true)
+  const [editable, setEditable] = useState(true)
   const [success, setSuccess] = useState(false)
 
   useEffect(() => {
@@ -23,15 +24,15 @@ const AddWidget = ({ createWindow }) => {
   return (
     <Form className="p-5">
       <Form.Group>
-        <Form.Label>Widget ID</Form.Label>
-        <Form.Control ref={id} placeholder="Widget ID" isInvalid={idError} onChange={e => {setIdError(false); setSuccess(false)}} />
+        <Form.Label>App ID</Form.Label>
+        <Form.Control ref={id} placeholder="App ID" isInvalid={idError} onChange={e => {setIdError(false); setSuccess(false)}} />
         <Form.Control.Feedback type="invalid">
           ID cannot be empty or a duplicate
             </Form.Control.Feedback>
       </Form.Group>
       <Form.Group>
-        <Form.Label>Widget Title</Form.Label>
-        <Form.Control ref={title} placeholder="Widget Title Name" isInvalid={titleError} onChange={e => {setTitleError(false); setSuccess(false)}} />
+        <Form.Label>App Title</Form.Label>
+        <Form.Control ref={title} placeholder="App Title Name" isInvalid={titleError} onChange={e => {setTitleError(false); setSuccess(false)}} />
         <Form.Control.Feedback type="invalid">
           Title cannot be empty
             </Form.Control.Feedback>
@@ -55,15 +56,20 @@ const AddWidget = ({ createWindow }) => {
       </Form.Group>
 
       <Form.Group>
-        <Form.Label>Widget URL</Form.Label>
-        <Form.Control ref={url} placeholder="Widget URL" required isInvalid={urlError} onChange={e => {setUrlError(false); setSuccess(false)}} />
+        <Form.Label>App URL</Form.Label>
+        <Form.Control ref={url} placeholder="App URL" required isInvalid={urlError} onChange={e => {setUrlError(false); setSuccess(false)}} />
         <Form.Control.Feedback type="invalid">
           URL cannot be empty
             </Form.Control.Feedback>
       </Form.Group>
       <Form.Group>
+        <Form.Label>Editable</Form.Label>
+        <Form.Check checked={editable} onChange={e => setEditable(!editable)} type="checkbox" label="Allow app to be edited from the settings? This
+        cannot be undone and the options will not be editable." />
+      </Form.Group>
+      <Form.Group>
         <Form.Label>Single Instance</Form.Label>
-        <Form.Check checked={single} onChange={e => setSingle(!single)} type="checkbox" label="Allow Single Instance of the App?" />
+        <Form.Check checked={single} onChange={e => setSingle(!single)} type="checkbox" label="Only a single instance of the application will run." />
       </Form.Group>
       <Form.Group>
         <Form.Label>Deletable</Form.Label>
@@ -93,7 +99,7 @@ const AddWidget = ({ createWindow }) => {
           if (error) {
             return
           }
-          createWindow(id.current.value, title.current.value, Number(width.current.value), Number(height.current.value), url.current.value, single, deletable)
+          createWindow(id.current.value, title.current.value, Number(width.current.value), Number(height.current.value), url.current.value, single, deletable, editable)
           updateIndex(id.current.value)
           setSuccess(true)
         }
@@ -102,7 +108,7 @@ const AddWidget = ({ createWindow }) => {
         Submit
       </Button>
       {success && <Form.Group><Form.Label className="text-success">
-        Widget successfully created
+        App successfully created
             </Form.Label></Form.Group>}
 
     </Form >)
@@ -111,4 +117,4 @@ const AddWidget = ({ createWindow }) => {
 export default connect(
   null,
   { createWindow }
-)(AddWidget)
+)(AddWebApp)

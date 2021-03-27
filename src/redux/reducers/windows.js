@@ -9,7 +9,8 @@ import {
   HIDE_WINDOW_ID,
   DELETE_WINDOW,
   LOAD_APPS,
-  RESET_DEFAULT
+  RESET_DEFAULT,
+  UPDATE_WINDOW
 } from "../actionTypes";
 import * as R from 'ramda'
 import { BUILT_IN_APPS } from '../../constants'
@@ -49,7 +50,7 @@ export default function (state = initialState, action) {
       appView++
       opened[appid] = true
       return R.compose(
-        R.assoc("view", R.append({ appid, viewid: appView, zIndex: appView }, state.view))
+        R.assoc("view", R.append({ appid, viewid: appView, zIndex: Number(R.length(R.prop("view", state)) + 1) }, state.view))
       )(state)
     }
 
@@ -81,14 +82,16 @@ export default function (state = initialState, action) {
       return R.assoc("view", R.remove(index, 1, instance), state)
     }
     case CREATE_WINDOW: {
+      const payload = action.payload;
       const window = {
-        appid: action.payload.appid,
-        title: action.payload.title,
-        width: action.payload.width,
-        height: action.payload.height,
-        url: action.payload.url,
-        single: action.payload.single,
-        deletable: action.payload.deletable
+        appid: payload.appid,
+        title: R.propOr("No Title", "title", payload),
+        width: R.propOr(500, "width", payload),
+        height: R.propOr(500, "height", payload),
+        url: R.propOr("", "url", payload),
+        single: R.propOr(false, "single", payload),
+        deletable: R.propOr(true, "deletable", payload),
+        editable: R.propOr(true, "editable", payload)
       }
       return R.compose(
         save,
@@ -168,7 +171,6 @@ export default function (state = initialState, action) {
         }),
         R.toPairs
       )(min.view)
-      console.log("instance is: ", instance)
       return R.assoc("view", instance, state)
     }
 
@@ -196,17 +198,62 @@ export default function (state = initialState, action) {
         }),
         R.toPairs,
       )(state.view)
-      return R.assoc("view", R.remove(index, 1, instance),state)
+      return R.assoc("view", R.remove(index, 1, instance), state)
     }
+
+
+    case UPDATE_WINDOW: {
+      const payload = action.payload;
+      const window = {
+        appid: payload.appid,
+        title: R.propOr("No Title", "title", payload),
+        width: R.propOr(500, "width", payload),
+        height: R.propOr(500, "height", payload),
+        url: R.propOr("", "url", payload),
+        single: R.propOr(false, "single", payload),
+        deletable: R.propOr(true, "deletable", payload),
+        editable: R.propOr(true, "editable", payload)
+      }
+      delete opened[payload.appid]
+
+      const removed = R.compose(
+        save,
+        R.assocPath(["apps", payload.appid], window),
+        R.assoc("view", R.filter(view => {
+          return !R.propEq("appid", payload.appid, view)
+        }, state.view)
+        ))(state)
+
+
+      const sorted = R.reverse(R.sortBy(R.prop("zIndex"), removed.view))
+      let lengthIndex = sorted.length
+      return R.assoc("view", R.compose(
+        R.map(([index, win]) => {
+          return R.assoc("zIndex", lengthIndex--, win)
+        }),
+        R.toPairs,
+      )(sorted), removed)
+
+    }
+
     case DELETE_WINDOW: {
       const { appid } = action.payload
-      return R.compose(
+      const removed = R.compose(
         save,
         R.dissocPath(["apps", appid]),
         R.assoc("view", R.filter(view => {
           return !R.propEq("appid", appid, view)
         }, state.view)
         ))(state)
+
+      const sorted = R.reverse(R.sortBy(R.prop("zIndex"), removed.view))
+      let lengthIndex = sorted.length
+      return R.assoc("view", R.compose(
+        R.map(([index, win]) => {
+          return R.assoc("zIndex", lengthIndex--, win)
+        }),
+        R.toPairs,
+      )(sorted), removed)
 
     }
     case LOAD_APPS: {
