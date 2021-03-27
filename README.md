@@ -20,6 +20,21 @@ WAIM also supports React components; allowing users to add their render componen
 * User autherization and app access levels.
 * Remote, OS-level, application UI rendering as a app.
 
+
+## Support
+
+### Supported Browsers:
+* **FireFox (v87+)**
+* **Chrome (v89+)**
+* **MS Edge (v89+)**
+
+### Supported OS
+* **Windows 10**
+* **Ubuntu 18.04**
+* **Ubuntu 20.04**
+
+**NOTE**: Does not support mobile devices and Safari web browsers.
+
 ## Install
 
 ```
@@ -134,7 +149,7 @@ export const BUILT_IN_APPS = {
 * To grab the instance, use `window.messageHandler`, which contains 2 functions:
     * `publish("channelName", data)`
     * `listen("channelName", callback)`. In this instance, `callback` is a function that contains 1 parameter: the data sent by the publisher.
-* Applications residing on a different host (as iframes) will not be able to use this feature.
+* Applications residing on a different domain (as iframes) will not be able to use this feature.
 
 
 ## Build
