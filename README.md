@@ -1,4 +1,4 @@
-# webapp-interace-manager
+# webapp-interface-manager
 Web Application Inteface Manager (WAIM) allows the users to show multiple displays served locally or on the web.
 WAIM also supports React components; allowing users to add their render components directly to the app manager.
 
