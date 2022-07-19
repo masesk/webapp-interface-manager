@@ -5,13 +5,16 @@ import Header from './Header'
 import * as R from 'ramda'
 import AddWebApp from '../apps/AddWebApp'
 import { connect } from 'react-redux'
-import {loadApps} from '../redux/actions'
+import {loadApps, showWindow} from '../redux/actions'
 import Settings from './Settings'
 import StaticWindow from './StaticWindow'
 import {BUILT_IN_APPS} from '../constants'
 import MinBar from './MinBar';
 import Sender from '../apps/Sender';
 import Receiver from '../apps/Receiver';
+import Box from '@mui/material/Box';
+import SplitPane, { Pane } from 'react-split-pane';
+
 
 const AppManager = ({ windows, loadApps }) => {
   useState(()=>{
@@ -30,7 +33,13 @@ const AppManager = ({ windows, loadApps }) => {
   }, [])
   return (
 
-    <>
+    <Box
+    
+    sx={{
+      bgcolor: 'background.default',
+      minHeight: "100vh"
+    }}
+    >
       <Header windows={windows} />
         {/* Add all static windows/apps below */}
         <StaticWindow appid="sender" >
@@ -85,8 +94,13 @@ const AppManager = ({ windows, loadApps }) => {
         )(windows.view)
       }
       </div>
-
-    </>
+      <Box sx={{minHeight: "inherit"}}>
+      <SplitPane split="vertical" minSize={50} defaultSize={10} paneStyle ={{minHeight: "inherit"}}>
+      <Sender />
+      <Receiver />
+      </SplitPane>
+      </Box>
+    </Box>
   );
 }
 

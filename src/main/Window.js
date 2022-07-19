@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../css/App.css';
-import { MdClose, MdCropSquare, MdRemove, MdFilterNone} from 'react-icons/md';
-import { Spinner } from 'react-bootstrap'
-import '../css/boostrap.min.css'
+import { MdClose, MdCropSquare, MdRemove, MdFilterNone } from 'react-icons/md';
 import * as R from 'ramda'
 import { hideWindow, updateIndex, minimizeWindow } from "../redux/actions";
+import Box from '@mui/material/Box';
 
 import { connect } from "react-redux";
 
@@ -164,7 +163,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
     stopPropagation(e)
     setFrameStyle(R.clone(frameStyle))
     updateIndex(viewid)
-    
+
   }
 
   const expandDragEnd = (e) => {
@@ -187,6 +186,12 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
     resizeDrag.current = false
     dimension.current.width = dimension.current.width + changeX
     dimension.current.height = dimension.current.height + changeY
+    if (dimension.current.width < 100) {
+      dimension.current.width = 100
+    }
+    if (dimension.current.height < 100) {
+      dimension.current.height = 100
+    }
     setFrameStyle(f => R.merge(f, {
       width: `${dimension.current.width + 600}px`, paddingBottom: `${dimension.current.height + 500}px`, height: `${dimension.current.height}px`
     }))
@@ -194,7 +199,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
 
 
   const dragEnd = (e) => {
-    if(!active.current){
+    if (!active.current) {
       return
     }
     initialX.current = currentX.current;
@@ -242,21 +247,21 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
   }
 
   let messageHandler = {}
-    messageHandler.publish = (channelName, data) => {
-      const win = R.pathEq(["messageHandler", "publish"], undefined, window) ? window.parent.window : window
-      const event = new Event(channelName, { bubbles: true, cancelable: false })
-      event.data = data
-      win.dispatchEvent(event)
-    }
-    messageHandler.listen =  (channelName, callback) => {
-      const win = R.pathEq(["messageHandler", "publish"], undefined, window) ? window.parent.window : window
-      win.addEventListener(channelName, (event) => {
-        callback(event.data)
-      }, false);
-    }
+  messageHandler.publish = (channelName, data) => {
+    const win = R.pathEq(["messageHandler", "publish"], undefined, window) ? window.parent.window : window
+    const event = new Event(channelName, { bubbles: true, cancelable: false })
+    event.data = data
+    win.dispatchEvent(event)
+  }
+  messageHandler.listen = (channelName, callback) => {
+    const win = R.pathEq(["messageHandler", "publish"], undefined, window) ? window.parent.window : window
+    win.addEventListener(channelName, (event) => {
+      callback(event.data)
+    }, false);
+  }
   return (
     <>
-      <div className="frame" onMouseMove={drag} style={frameStyle} ref={ref}>
+      <Box className="frame" onMouseMove={drag} sx={frameStyle} ref={ref}>
         <div className="frame-border" style={
           R.compose(
             R.assoc("resize", "both"),
@@ -275,44 +280,49 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
             <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" className="stroke" size="35" color="blue" height="35" width="35" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" stroke="#bfbfbf" strokeWidth="2" points="8 20 20 20 20 8"></polyline></svg>
           </div>
           <div onMouseDown={dragStart} onMouseUp={dragEnd} ref={topRef} onMouseMove={drag} className="topbar" style={{ width: `${R.propOr(width, "width", dimension.current)}px` }}>
-            <MdClose onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(index) }} className="hover" size={21} />
-            {maximized ? <MdFilterNone className="hover" size={21} onClick={() => {
-              max.current = false
-              setMaximized(!maximized)
-              dimension.current.width = savedimension.current.width
-              dimension.current.height = savedimension.current.height
+            <Box sx={{ justifyContent: 'space-between' }}>
+              <Box sx={{float: "right"}}>
+                <MdClose onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(index) }} className="hover" size={21} />
+                {maximized ? <MdFilterNone className="hover" size={21} onClick={() => {
+                  max.current = false
+                  setMaximized(!maximized)
+                  dimension.current.width = savedimension.current.width
+                  dimension.current.height = savedimension.current.height
 
-            }
-            } />
-              : <MdCropSquare onClick={() => {
-                max.current = true
-                savedimension.current = { width: dimension.current.width, height: dimension.current.height }
-                setMaximized(!maximized)
-                dimension.current = { width: window.parent.innerWidth - 7, height: window.parent.innerHeight - 137 }
+                }
+                } />
+                  : <MdCropSquare onClick={() => {
+                    max.current = true
+                    savedimension.current = { width: dimension.current.width, height: dimension.current.height }
+                    setMaximized(!maximized)
+                    dimension.current = { width: window.parent.innerWidth - 7, height: window.parent.innerHeight - 137 }
 
-              }} className="hover" size={21} />
+                  }} className="hover" size={21} />
 
-            }
-            <MdRemove onClick={() => { minimizeWindow(index) }} className="hover" size={21} />
-            <h5 className={"float-right"}>{title}</h5>
+                }
+                <MdRemove onClick={() => { minimizeWindow(index) }} className="hover" size={21} />
+              </Box>
+              <Box>
+                {title}
+              </Box>
+            </Box>
 
           </div>
-          <div className="window"  ref={windowRef} style={{ width: `${R.propOr(width, "width", dimension.current)}px`, height: `${R.propOr(height, "height", dimension.current)}px`, pointerEvents: (R.propEq("pointerEvents", "auto", frameStyle) || resizeDrag.current ? "none" : "auto"), overflow: (R.isNil(children) ? "hidden" : "auto") }}>
+          <div className="window" ref={windowRef} style={{ width: `${R.propOr(width, "width", dimension.current)}px`, height: `${R.propOr(height, "height", dimension.current)}px`, pointerEvents: (R.propEq("pointerEvents", "auto", frameStyle) || resizeDrag.current ? "none" : "auto"), overflow: (R.isNil(children) ? "hidden" : "auto") }}>
             {children && children}
-            
-            {loading && !children && <Spinner size="lg" animation="border" variant="secondary" className="frameloading" />}
-            {!children && <iframe key={viewid} ref={frameRef} onLoad={() => 
-              {
-                setLoading(false);
-                try{
-                  frameRef.current.contentWindow.messageHandler = window.messageHandler
-                }catch(e){
-                  console.error(e)
-                }
-              }} frameBorder="0" title={title} src={url} className={"framestyle"} height={`${R.propOr(height, "height", dimension.current)}px`} width={`${R.propOr(width, "width", dimension.current)}px`} />}
+
+            {loading && !children && <h1 size="lg" animation="border" variant="secondary" className="frameloading" />}
+            {!children && <iframe key={viewid} ref={frameRef} onLoad={() => {
+              setLoading(false);
+              try {
+                frameRef.current.contentWindow.messageHandler = window.messageHandler
+              } catch (e) {
+                console.error(e)
+              }
+            }} frameBorder="0" title={title} src={url} className={"framestyle"} height={`${R.propOr(height, "height", dimension.current)}px`} width={`${R.propOr(width, "width", dimension.current)}px`} />}
           </div>
         </div>
-      </div>
+      </Box>
     </>
   );
 }

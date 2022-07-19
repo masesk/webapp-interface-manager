@@ -1,10 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Button, Modal, Row, Col, Container, Form } from 'react-bootstrap'
 import { connect } from 'react-redux'
 import { toggleShowing, deleteWindow, resetDefault, updateWindow } from '../redux/actions'
 import { AiOutlineDelete, AiOutlineEdit, AiOutlineCheck } from 'react-icons/ai'
 import * as R from 'ramda'
-
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Container } from '@mui/material'
 
 
 
@@ -15,10 +22,16 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
     const [editableRow, setEditableRow] = useState(-1)
 
 
+    const [expanded, setExpanded] = React.useState(false);
+
+    const handleChange = (panel) => (event, isExpanded) => {
+        setExpanded(isExpanded ? panel : false);
+    };
+
     const renderButtons = (appid, index) => {
         return (
             <>
-                {
+                {/* {
                      R.pathEq(["apps", appid, "editable"], true, windows) && 
                      <Button style={{ marginRight: 5 }} onClick={() => {
                                 if(!R.equals(appid, editableRow)){
@@ -38,7 +51,7 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
                 {
                     R.pathEq(["apps", appid, "deletable"], true, windows) &&
                     <Button onClick={() => setAppName(appid)} variant="secondary" target="_blank" rel="noopener noreferrer"><AiOutlineDelete size={20} /></Button>
-                }
+                } */}
             </>
         );
 
@@ -84,7 +97,101 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
 
     return (
         <>
-            <div>
+
+            <Modal
+                open={false}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                sx={{
+                    minHeight: "100vh",
+                    bgcolor: "background.default"
+                }}
+
+            >
+                <Container sx={{
+                    position: 'absolute', left: '50%', top: '50%',
+                    transform: 'translate(-50%, -50%)'
+                }}>
+                    <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1bh-content"
+                            id="panel1bh-header"
+                        >
+                            <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                                General settings
+                            </Typography>
+                            <Typography sx={{ color: 'text.secondary' }}>I am an accordion</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Typography>
+                                Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat.
+                                Aliquam eget maximus est, id dignissim quam.
+                            </Typography>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel2bh-content"
+                            id="panel2bh-header"
+                        >
+                            <Typography sx={{ width: '33%', flexShrink: 0 }}>Users</Typography>
+                            <Typography sx={{ color: 'text.secondary' }}>
+                                You are currently not an owner
+                            </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Typography>
+                                Donec placerat, lectus sed mattis semper, neque lectus feugiat lectus,
+                                varius pulvinar diam eros in elit. Pellentesque convallis laoreet
+                                laoreet.
+                            </Typography>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel3bh-content"
+                            id="panel3bh-header"
+                        >
+                            <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                                Advanced settings
+                            </Typography>
+                            <Typography sx={{ color: 'text.secondary' }}>
+                                Filtering has been entirely disabled for whole web server
+                            </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Typography>
+                                Nunc vitae orci ultricies, auctor nunc in, volutpat nisl. Integer sit
+                                amet egestas eros, vitae egestas augue. Duis vel est augue.
+                            </Typography>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel4bh-content"
+                            id="panel4bh-header"
+                        >
+                            <Typography sx={{ width: '33%', flexShrink: 0 }}>Personal data</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Typography>
+                                Nunc vitae orci ultricies, auctor nunc in, volutpat nisl. Integer sit
+                                amet egestas eros, vitae egestas augue. Duis vel est augue.
+                            </Typography>
+                        </AccordionDetails>
+                    </Accordion>
+                </Container>
+
+
+            </Modal>
+
+
+            {/* <div>
                 <Modal
                     show={settings.showing}
                     onHide={handleClose}
@@ -189,7 +296,7 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
                         <Button variant="danger" onClick={handleResetDefault}>Reset</Button>
                     </Modal.Footer>
                 </Modal>
-            </div>
+            </div> */}
         </>
 
     )
