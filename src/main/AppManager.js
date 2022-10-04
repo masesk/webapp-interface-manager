@@ -1,57 +1,56 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../css/App.css';
 import Window from './Window'
 import Header from './Header'
 import * as R from 'ramda'
 import AddWebApp from '../apps/AddWebApp'
 import { connect } from 'react-redux'
-import {loadApps, showWindow} from '../redux/actions'
+import { loadApps, selectLayout, showWindow } from '../redux/actions'
 import Settings from './Settings'
 import StaticWindow from './StaticWindow'
-import {BUILT_IN_APPS} from '../constants'
+import { BUILT_IN_APPS } from '../constants'
 import MinBar from './MinBar';
 import Sender from '../apps/Sender';
 import Receiver from '../apps/Receiver';
-import Box from '@mui/material/Box';
-import SplitPane, { Pane } from 'react-split-pane';
+import SplitPane from 'react-split-pane';
+import TwoColumnLayout from './TwoColumnLayout';
+import { VERTICAL_2COLUM } from '../redux/constants';
 
 
-const AppManager = ({ windows, loadApps }) => {
-  useState(()=>{
+const AppManager = ({ windows, loadApps, layout }) => {
+  useEffect(() => {
     window.messageHandler = {}
     window.messageHandler.publish = (channelName, data) => {
       const event = new Event(channelName, { bubbles: true, cancelable: false })
       event.data = data
       window.dispatchEvent(event)
     }
-    window.messageHandler.listen =  (channelName, callback) => {
+    window.messageHandler.listen = (channelName, callback) => {
       window.addEventListener(channelName, (event) => {
         callback(event.data)
       }, false);
     }
     loadApps()
+    console.log(layout)
   }, [])
+
+
   return (
 
-    <Box
-    
-    sx={{
-      bgcolor: 'background.default',
-      minHeight: "100vh"
-    }}
-    >
+
+      <>
       <Header windows={windows} />
-        {/* Add all static windows/apps below */}
-        <StaticWindow appid="sender" >
-          <Sender />
-        </StaticWindow>
-        <StaticWindow appid="receiver" >
-          <Receiver />
-        </StaticWindow>
-        <StaticWindow appid="addwebapp" >
-          <AddWebApp />
-        </StaticWindow>
-      
+      {/* Add all static windows/apps below */}
+      <StaticWindow appid="sender" >
+        <Sender />
+      </StaticWindow>
+      <StaticWindow appid="receiver" >
+        <Receiver />
+      </StaticWindow>
+      <StaticWindow appid="addwebapp" >
+        <AddWebApp />
+      </StaticWindow>
+      {(R.equals(layout.selectedLayout, VERTICAL_2COLUM)) && <TwoColumnLayout/>}
       {
         R.compose(
           R.map(([index, win]) => {
@@ -62,7 +61,7 @@ const AppManager = ({ windows, loadApps }) => {
               return null
             }
             const window = R.path(["apps", appid], windows)
-            return  <Window 
+            return <Window
               appid={window.appid}
               title={window.title}
               url={window.url}
@@ -77,30 +76,24 @@ const AppManager = ({ windows, loadApps }) => {
           R.toPairs,
         )(windows.view)
       }
-      <Settings/>
+      <Settings />
       <div className="footer">
-      {
-        
-         R.compose(
-        
-          R.map(([index, win]) => {
+        {
+
+          R.compose(
+
+            R.map(([index, win]) => {
               const appid = R.prop("appid", win)
               const viewid = R.prop("viewid", win)
               const window = R.path(["apps", appid], windows)
               return <MinBar className={R.propEq("minimized", true, win) ? "" : "showing"} index={viewid} key={index} appid={appid}>{R.prop("title", window)}</MinBar>
-          }),
-          R.toPairs,
+            }),
+            R.toPairs,
 
-        )(windows.view)
-      }
+          )(windows.view)
+        }
       </div>
-      <Box sx={{minHeight: "inherit"}}>
-      <SplitPane split="vertical" minSize={50} defaultSize={10} paneStyle ={{minHeight: "inherit"}}>
-      <Sender />
-      <Receiver />
-      </SplitPane>
-      </Box>
-    </Box>
+      </>
   );
 }
 
@@ -109,6 +102,6 @@ const mapStateToProps = state => {
   return state
 };
 
-export default connect(mapStateToProps, {loadApps})(AppManager);
+export default connect(mapStateToProps, { loadApps })(AppManager);
 
 

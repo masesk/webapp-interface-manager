@@ -16,6 +16,7 @@ body{
   background-color: #777777 ;
   overflow: auto;
   cursor: auto;
+  
 }
 
 
@@ -45,8 +46,9 @@ body{
 
 .frame-border{
   position: fixed;
-  background-color: #1a1a1a;
+  background-color: #535353;
   resize: both;
+  box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
 }
 
 .topbar{
@@ -228,6 +230,7 @@ tr {
   right: -4px;
   bottom: -10px;
   cursor: se-resize	;
+  z-index: 1
 }
 
 .stroke{
@@ -236,11 +239,10 @@ tr {
 
 
 
-
 .Resizer {
   background: #000;
-  opacity: 0.2;
-  z-index: 1;
+  opacity: .2;
+  z-index: 0;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
@@ -255,7 +257,7 @@ tr {
 }
 
 .Resizer.horizontal {
-  height: 11px;
+  height: 15px;
   margin: -5px 0;
   border-top: 5px solid rgba(255, 255, 255, 0);
   border-bottom: 5px solid rgba(255, 255, 255, 0);
@@ -268,13 +270,12 @@ tr {
   border-bottom: 5px solid rgba(0, 0, 0, 0.5);
 }
 
-div[data-type="Resizer"] {
+.Resizer.vertical {
   width: 15px;
   margin: 0 -5px;
   border-left: 5px solid rgba(255, 255, 255, 0);
   border-right: 5px solid rgba(255, 255, 255, 0);
   cursor: col-resize;
-  z-index: 0;
 }
 
 .Resizer.vertical:hover {
@@ -282,10 +283,10 @@ div[data-type="Resizer"] {
   border-right: 5px solid rgba(0, 0, 0, 0.5);
 }
 .Resizer.disabled {
-  cursor: not-allowed;
+cursor: not-allowed;
 }
 .Resizer.disabled:hover {
-  border-color: transparent;
+border-color: transparent;
 }
 
 

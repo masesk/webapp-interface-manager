@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import * as R from 'ramda'
 import { connect } from 'react-redux'
-import { showWindow, toggleShowing } from '../redux/actions'
+import { showWindow, toggleShowing, selectLayout } from '../redux/actions'
 import { AiOutlineSetting, AiOutlineBars } from 'react-icons/ai'
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -21,20 +21,22 @@ import Select from '@mui/material/Select';
 import HelpIcon from '@mui/icons-material/Help';
 import Menu from '@mui/material/Menu';
 import AddIcon from '@mui/icons-material/Add';
+import { VERTICAL_2COLUM } from '../redux/constants'
 
 const Item = styled(Paper)(({ theme }) => ({
 }));
-const Header = ({ windows, showWindow, toggleShowing }) => {
+const Header = ({ windows, showWindow, toggleShowing, selectLayout }) => {
   const [value, setValue] = useState('');
   const [dense, setDense] = React.useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const [appsAnchor, setAppsAnchor] = React.useState(null);
+  const [layoutAnchor, setLayoutAnchor] = React.useState(null);
+  const layouts = [
+    {
+      title: "Vertical Split",
+      img: "/img/layouts-2-icon.png",
+      type: VERTICAL_2COLUM
+    }
+  ]
   return (
 
 
@@ -42,18 +44,18 @@ const Header = ({ windows, showWindow, toggleShowing }) => {
       <Box>
         <Button
           id="basic-button"
-          aria-controls={open ? 'basic-menu' : undefined}
+          aria-controls={appsAnchor ? 'basic-menu' : undefined}
           aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-          onClick={(event) => { setAnchorEl(event.currentTarget) }}
+          aria-expanded={appsAnchor ? 'true' : undefined}
+          onClick={(event) => { setAppsAnchor(event.currentTarget) }}
         >
           APPS
         </Button>
         <Menu
           id="basic-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
+          anchorEl={appsAnchor}
+          open={Boolean(appsAnchor)}
+          onClose={()=>{setAppsAnchor(null)}}
           MenuListProps={{
             'aria-labelledby': 'basic-button',
           }}
@@ -61,19 +63,41 @@ const Header = ({ windows, showWindow, toggleShowing }) => {
           {
             R.compose(
               R.map(([key, windowKey]) => {
-                return <MenuItem key={windowKey} onClick={() => { showWindow(windowKey); setAnchorEl(null); }}>{R.prop("title", R.prop(windowKey, windows.apps))}</MenuItem>
+                return <MenuItem key={windowKey} onClick={() => { showWindow(windowKey); setAppsAnchor(null); }}>{R.prop("title", R.prop(windowKey, windows.apps))}</MenuItem>
 
               }),
               R.toPairs,
             )(R.keys(windows.apps))
           }
         </Menu>
+
+
+        <Menu
+          id="basic-menu"
+          anchorEl={layoutAnchor}
+          open={Boolean(layoutAnchor)}
+          onClose={()=>{setLayoutAnchor(null)}}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+        >
+          {
+            R.compose(
+              R.map((layout) => {
+                return <MenuItem key={layout} onClick={() => { console.log(layout.type); selectLayout(layout.type); setLayoutAnchor(null); }}><img src={window.location.origin + "/" + layout.img}></img>: {layout.title}</MenuItem>
+
+              })
+            )(layouts)
+          }
+        </Menu>
+
+
         <Button
           id="basic-button"
-          aria-controls={open ? 'basic-menu' : undefined}
+          aria-controls={layoutAnchor ? 'basic-menu' : undefined}
           aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-          onClick={(event) => { setAnchorEl(event.currentTarget) }}
+          aria-expanded={layoutAnchor ? 'true' : undefined}
+          onClick={(event) => { setLayoutAnchor(event.currentTarget) }}
         >
           Layout
         </Button>
@@ -99,77 +123,6 @@ const Header = ({ windows, showWindow, toggleShowing }) => {
       </Box>
     </Box>
 
-    // <Box className="header" sx={{ bgcolor: 'background.paper', color: 'text.primary', }}>
-    //   <Box sx={{justifyContent: "flex-start"}}>
-
-    //     <ButtonGroup aria-label="outlined primary button group">
-    //       <Tooltip title="Settings">
-    //         <Button variant="outlined">
-    //           <SettingsIcon />
-    //         </Button>
-    //       </Tooltip>
-    //     </ButtonGroup>
-
-    //       {/* <Dropdown onToggle={(isOpened)=> {!isOpened && setValue('')}} as={ButtonGroup}>
-    //                 <Dropdown.Toggle  variant="secondary" id="dropdown-basic">
-    //                     <AiOutlineBars size={20}/>
-    //             </Dropdown.Toggle>
-
-    //                 <Dropdown.Menu className="bg-dark" as={CustomMenu}>
-    //                     {
-    //                     R.compose(
-    //                     R.map(([key, windowKey]) => {
-    //                         return   <Dropdown.Item className="text-white bg-dark" key={windowKey} onClick={ () => showWindow(windowKey)}>{R.prop("title", R.prop(windowKey, windows.apps))}</Dropdown.Item>
-    //                     }),
-    //                     R.toPairs,
-    //                     )(R.keys(windows.apps))
-    //                 }
-    //                 </Dropdown.Menu>
-    //             </Dropdown> */}
-
-    //       <List dense={dense}>
-
-    //         {/* <ListItem
-    //           secondaryAction={
-    //             <IconButton edge="end" aria-label="delete">
-    //               <DeleteIcon />
-    //             </IconButton>
-    //           }
-    //         >
-    //           <ListItemAvatar>
-    //             <Avatar>
-    //               <FolderIcon />
-    //             </Avatar>
-    //           </ListItemAvatar>
-    //           <ListItemText
-    //             primary="Single-line item"
-    //             secondary={secondary ? 'Secondary text' : null}
-    //           />
-    //         </ListItem> */}
-    //       </List>
-
-    //   </Box>
-    //   <div >
-    //     <Typography variant="h7">WAIM</Typography>
-    //   </div>
-    //   <div className="header-apps-button">
-
-
-
-    //     <ButtonGroup aria-label="outlined primary button group">
-    //       <Tooltip title="Settings">
-    //         <Button variant="outlined">
-    //           <SettingsIcon />
-    //         </Button>
-    //       </Tooltip>
-    //     </ButtonGroup>
-    //     <Button onClick={() => toggleShowing(true)} variant="secondary">
-
-    //     </Button>
-
-    //   </div>
-    // </Box>
-
   )
 
 }
@@ -180,5 +133,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { showWindow, toggleShowing }
+  { showWindow, toggleShowing, selectLayout }
 )(Header)

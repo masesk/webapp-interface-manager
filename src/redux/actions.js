@@ -11,7 +11,8 @@ import {
   DELETE_WINDOW,
   LOAD_APPS,
   RESET_DEFAULT,
-  UPDATE_WINDOW
+  UPDATE_WINDOW,
+  SELECT_LAYOUT
 } from "./actionTypes";
 
 
@@ -79,6 +80,13 @@ export const loadApps = () => ({
 
 export const resetDefault = () => ({
   type: RESET_DEFAULT
+})
+
+
+
+export const selectLayout = (layoutType) => ({
+  type: SELECT_LAYOUT,
+  payload: {layoutType}
 })
 
 

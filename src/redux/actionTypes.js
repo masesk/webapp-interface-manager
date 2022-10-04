@@ -11,3 +11,6 @@ export const DELETE_WINDOW = "DELETE_WINDOW"
 export const LOAD_APPS = "LOAD_APPS"
 export const RESET_DEFAULT = "RESET_DEFAULT"
 export const UPDATE_WINDOW = "UPDATE_WINDOW"
+
+
+export const SELECT_LAYOUT = "SELECT_LAYOUT"

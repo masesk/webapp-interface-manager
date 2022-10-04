@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './css/index.css';
 import AppManager from './main/AppManager';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from "react-redux";
@@ -28,7 +27,7 @@ const getDesignTokens = (mode) => ({
     }),
     ...(mode === 'dark' && {
       background: {
-        default: grey[900],
+        default: grey[500],
         paper: grey[800],
       },
     }),

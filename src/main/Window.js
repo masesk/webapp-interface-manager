@@ -265,12 +265,12 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
         <div className="frame-border" style={
           R.compose(
             R.assoc("resize", "both"),
-            R.assoc("paddingTop", 4),
-            R.assoc("paddingLeft", 4),
-            R.assoc("paddingRight", 4),
+            R.assoc("paddingTop", 2),
+            R.assoc("paddingLeft", 2),
+            R.assoc("paddingRight", 2),
             R.assoc("width", (maximized ? dimension.current.width + 10 : null)),
             R.assoc("top", null),
-            R.assoc("height", dimension.current.height + 53),
+            R.assoc("height", dimension.current.height + 48),
             R.assoc("paddingBottom", `${dimension.current.height + 5}px`),
             R.assoc("pointerEvents", (resizeDrag.current ? "none" : "auto"))
           )(frameStyle)
