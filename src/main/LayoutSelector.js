@@ -12,7 +12,7 @@ const LayoutSelector = ({windows, selectLayoutApp, oIndex}) => {
             <Box sx={{p : 2, maxWidth: "300px", textAlign: "center"}}>
                 <Select
                     fullWidth
-                    value={selectedApp}
+                    value={R.find(R.propEq("appid", selectedApp))(windows.view) || R.includes(selectedApp, R.values(R.path(["layout", "selectedApps"], windows))) ? "" : selectedApp}
                     input={<OutlinedInput />}
                 >
                     {
