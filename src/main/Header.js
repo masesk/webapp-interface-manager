@@ -44,7 +44,7 @@ const Header = ({ windows, showWindow, toggleShowing, selectLayout, removeLayout
           id="basic-menu"
           anchorEl={appsAnchor}
           open={Boolean(appsAnchor)}
-          onClose={()=>{setAppsAnchor(null)}}
+          onClose={() => { setAppsAnchor(null) }}
           MenuListProps={{
             'aria-labelledby': 'basic-button',
           }}
@@ -52,8 +52,15 @@ const Header = ({ windows, showWindow, toggleShowing, selectLayout, removeLayout
           {
             R.compose(
               R.map(([key, windowKey]) => {
-                return <MenuItem key={windowKey} onClick={() => { showWindow(windowKey); setAppsAnchor(null); }}>{R.prop("title", R.prop(windowKey, windows.apps))}</MenuItem>
-
+                return (
+                  <>
+                  <Tooltip followCursor title={R.pathEq(["apps", windowKey, "single"], true, windows) && ( R.find(R.propEq("appid", windowKey))(windows.view) || R.includes(windowKey, R.values(R.path(["layout", "selectedApps"], windows)))) ? "Only one instance of app can be opened" : ""}>
+                    <span style={{display: "block"}}>
+                      <MenuItem disabled={R.pathEq(["apps", windowKey, "single"], true, windows) && ( R.find(R.propEq("appid", windowKey))(windows.view) || R.includes(windowKey, R.values(R.path(["layout", "selectedApps"], windows))))} key={windowKey} onClick={() => { showWindow(windowKey); setAppsAnchor(null); }}>{R.prop("title", R.prop(windowKey, windows.apps))}</MenuItem>
+                    </span>
+                  </Tooltip>
+                  </>
+                )
               }),
               R.toPairs,
             )(R.keys(windows.apps))
@@ -65,7 +72,7 @@ const Header = ({ windows, showWindow, toggleShowing, selectLayout, removeLayout
           id="basic-menu"
           anchorEl={layoutAnchor}
           open={Boolean(layoutAnchor)}
-          onClose={()=>{setLayoutAnchor(null)}}
+          onClose={() => { setLayoutAnchor(null) }}
           MenuListProps={{
             'aria-labelledby': 'basic-button',
           }}
@@ -76,7 +83,7 @@ const Header = ({ windows, showWindow, toggleShowing, selectLayout, removeLayout
                 return <MenuItem key={layout} onClick={() => { selectLayout(layout.type); setLayoutAnchor(null); }}><img alt="2 column" src={twoColLogo}></img>: {layout.title}</MenuItem>
 
               })
-              
+
             )(layouts)
           }
           <MenuItem key={"removeLayout"} onClick={() => { removeLayout(); setLayoutAnchor(null); }}>Remove Layout</MenuItem>
@@ -92,16 +99,16 @@ const Header = ({ windows, showWindow, toggleShowing, selectLayout, removeLayout
         >
           Layout
         </Button>
-        
+
 
       </Box>
       <Box> <Typography variant="h7" >WAIM</Typography></Box>
-      
+
       <Box>
 
         <ButtonGroup aria-label="outlined primary button group">
           <Tooltip title="Settings">
-            <Button onClick={()=> {toggleShowing(true)}} variant="outlined">
+            <Button onClick={() => { toggleShowing(true) }} variant="outlined">
               <SettingsIcon />
             </Button>
           </Tooltip>

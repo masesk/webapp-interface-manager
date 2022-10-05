@@ -303,7 +303,7 @@ export default function main(state = initialState, action) {
 
     case SELECT_LAYOUT_APP: {
       const {appid, index} = action.payload
-      if( R.propEq(appid, true, opened) || R.includes(appid, R.values(R.path(["layout", "selectedApps"], state)))){
+      if(R.pathEq(["apps", appid, "single"], true, state) && (R.propEq(appid, true, opened) || R.includes(appid, R.values(R.path(["layout", "selectedApps"], state))))){
         return state
       }
       const newState = R.assocPath(["layout", "selectedApps", index], appid, state)

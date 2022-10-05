@@ -12,14 +12,14 @@ const LayoutSelector = ({windows, selectLayoutApp, oIndex}) => {
             <Box sx={{p : 2, maxWidth: "300px", textAlign: "center"}}>
                 <Select
                     fullWidth
-                    value={R.find(R.propEq("appid", selectedApp))(windows.view) || R.includes(selectedApp, R.values(R.path(["layout", "selectedApps"], windows))) ? "" : selectedApp}
+                    value={R.pathEq(["apps", selectedApp, "single"], true, windows) && ( R.find(R.propEq("appid", selectedApp))(windows.view) || R.includes(selectedApp, R.values(R.path(["layout", "selectedApps"], windows)))) ? "" : selectedApp}
                     input={<OutlinedInput />}
                 >
                     {
                         R.compose(
                             
                             R.map(([key, windowKey]) => { 
-                                if(( R.find(R.propEq("appid", windowKey))(windows.view) || R.includes(windowKey, R.values(R.path(["layout", "selectedApps"], windows))))){
+                                if(R.pathEq(["apps", windowKey, "single"], true, windows) && ( R.find(R.propEq("appid", windowKey))(windows.view) || R.includes(windowKey, R.values(R.path(["layout", "selectedApps"], windows))))){
                                     return <div key={key}></div>
                                 }
                                 return <MenuItem value={windowKey} onClick={()=> setSelectedApp(windowKey)} key={key}>{R.prop("title", R.prop(windowKey, windows.apps))}</MenuItem>
