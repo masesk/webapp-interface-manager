@@ -12,6 +12,7 @@ const TwoColumnLayout = ({ windows, changeLayoutSize2ColVertical }) => {
     const [allowPointerEvents, setAllowPointerEvents] = useState(true)
     const Render1 =  R.path(["appDoms", R.path(["layout", "selectedApps", 0], windows)], windows)
     const Render2 =  R.path(["appDoms", R.path(["layout", "selectedApps", 1], windows)], windows)
+    const paneStyle = {height: "calc(100vh - 90px)", pointerEvents: "auto"}
     return (
         <SplitPane
             split="vertical"
@@ -24,14 +25,14 @@ const TwoColumnLayout = ({ windows, changeLayoutSize2ColVertical }) => {
             {!R.has(0, R.path(["layout", "selectedApps"], windows)) ? <LayoutSelector oIndex={0} /> : R.isNil(Render1) ?
 
                 <PaneFrame allowPointerEvents={allowPointerEvents} key={"frame12col"} url={R.path(["apps", R.path(["layout", "selectedApps", 0], windows), "url"], windows)} title={R.path(["apps", R.path(["layout", "selectedApps", 0], windows), "title"], windows)} />
-                : <div  style={allowPointerEvents ? {height: "100%", pointerEvents: "auto"} : {pointerEvents: "none", height: "100%"}}>{Render1}</div>}
+                : <div  style={allowPointerEvents ? paneStyle : R.assoc("pointerEvents", "none", paneStyle)}>{Render1}</div>}
                 
 
 
             {!R.has(1, R.path(["layout", "selectedApps"], windows)) ? <LayoutSelector oIndex={1} /> : R.isNil(Render2) ?
 
                 <PaneFrame allowPointerEvents={allowPointerEvents} key={"frame22col"}  url={R.path(["apps", R.path(["layout", "selectedApps", 1], windows), "url"], windows)} title={R.path(["apps", R.path(["layout", "selectedApps", 1], windows), "title"], windows)} />
-                : <div height="100%" style={allowPointerEvents ? {pointerEvents: "auto", height: "100%"} : {pointerEvents: "none", height: "100%"}}>{Render2}</div>}
+                : <div height="100%" style={allowPointerEvents ? paneStyle : R.assoc("pointerEvents", "none", paneStyle)}>{Render2}</div>}
 
         </SplitPane>
     )

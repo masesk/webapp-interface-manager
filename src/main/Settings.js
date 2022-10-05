@@ -85,7 +85,7 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
         <>
             
             <Modal
-                open={settings.showing}
+                open={R.propOr(false, "showing", settings)}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
@@ -158,14 +158,13 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
             <Dialog
                 open={showingConfirmReset}
                 sx={{ zIndex: 999 }}
-                keepMounted
                 onClose={() => setShowingConfirmReset(false)}
                 aria-describedby="alert-dialog-slide-description"
             >
                 <DialogTitle>{"Reset to default?"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-slide-description">
-                        Resetting to default will removed all added apps and reset any changes.
+                        Resetting to default will remove all added apps and reset any changes.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -177,7 +176,6 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
             <Dialog
                 open={showingConfirm}
                 sx={{ zIndex: 999 }}
-                keepMounted
                 onClose={() => setShowingConfirm(false)}
                 aria-describedby="alert-dialog-slide-description"
             >

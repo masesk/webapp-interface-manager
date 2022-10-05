@@ -18,7 +18,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
     {
       pointerEvents: "none",
       top: 0,
-      position: "absolute", zIndex: zIndex, width: `${dimension.current.width + 600}px`, paddingBottom: `${dimension.current.height + 500}px`, paddingTop: `300px`, paddingLeft: "300px"
+      position: "fixed", zIndex: zIndex, width: `${dimension.current.width + 600}px`, paddingBottom: `${dimension.current.height + 500}px`, paddingTop: `300px`, paddingLeft: "300px"
     }
   )
   const [maximized, setMaximized] = useState(false)
@@ -96,7 +96,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
         setFrameStyle(f => R.merge(f, {
           top: 0,
           height: `${dimension.current.height + 600}px`,
-          position: "absolute",
+          position: "fixed",
           width: `${dimension.current.width + 600}px`,
           paddingBottom: `${dimension.current.height + 500}px`,
           paddingTop: `300px`,
@@ -152,7 +152,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
   }
 
   const expandDragStart = (e) => {
-    if (e.type === "touchmove") {
+    if (e.type === "touchstart") {
       initialRx.current = e.touches[0].clientX;
       initialRy.current = e.touches[0].clientY;
     } else {
@@ -172,9 +172,9 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
     }
     let changeX;
     let changeY;
-    if (e.type === "touchmove") {
-      changeX = e.touches[0].clientX - initialRx.current
-      changeY = e.touches[0].clientY - initialRy.current
+    if (e.type === "touchend") {
+      changeX = e.changedTouches[0].clientX - initialRx.current
+      changeY = e.changedTouches[0].clientY - initialRy.current
     } else {
       changeX = e.clientX - initialRx.current;
       changeY = e.clientY - initialRy.current;
@@ -240,7 +240,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
 
   const stopPropagation = (e) => {
     if (e.stopPropagation) e.stopPropagation();
-    if (e.preventDefault) e.preventDefault();
+    //if (e.preventDefault) e.preventDefault();
     e.cancelBubble = true;
     e.returnValue = false;
     return false;
@@ -265,10 +265,10 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
         <div className="frame-border" style={
           R.compose(
             R.assoc("resize", "both"),
-            R.assoc("paddingTop", 2),
-            R.assoc("paddingLeft", 2),
-            R.assoc("paddingRight", 2),
-            R.assoc("width", (maximized ? dimension.current.width + 10 : null)),
+            R.assoc("paddingTop", maximized ? 0 : 2),
+            R.assoc("paddingLeft", maximized ? 0 : 2),
+            R.assoc("paddingRight", maximized ? 0 : 2),
+            R.assoc("width", (maximized ? "100%" : null)),
             R.assoc("top", null),
             R.assoc("height", dimension.current.height + 48),
             R.assoc("paddingBottom", `${dimension.current.height + 5}px`),
@@ -276,10 +276,10 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
           )(frameStyle)
 
         }>
-          {!maximized && <div className="resize-arrow" onMouseDown={expandDragStart} onMouseUp={expandDragEnd}>
+          {!maximized && <div className="resize-arrow" onMouseDown={expandDragStart} onMouseUp={expandDragEnd} onTouchStart={expandDragStart} onTouchEnd={expandDragEnd}>
             <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" className="stroke" size="35" color="blue" height="35" width="35" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" stroke="#bfbfbf" strokeWidth="2" points="8 20 20 20 20 8"></polyline></svg>
           </div>}
-          <div onMouseDown={dragStart} onMouseUp={dragEnd} ref={topRef} onMouseMove={drag} className="topbar" style={{ width: `${R.propOr(width, "width", dimension.current)}px` }}>
+          <div onMouseDown={dragStart} onMouseUp={dragEnd} onMouseMove={drag} onTouchStart={dragStart} onTouchEnd={dragEnd} onTouchMove={drag} ref={topRef} className="topbar" style={{ width: maximized ? "100%" : `${R.propOr(width, "width", dimension.current)}px` }}>
             <Box sx={{ justifyContent: 'space-between' }}>
               <Box sx={{float: "right"}}>
                 <MdClose onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(index) }} className="hover" size={21} />
@@ -308,7 +308,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
             </Box>
 
           </div>
-          <div className="window" ref={windowRef} style={{ width: `${R.propOr(width, "width", dimension.current)}px`, height: `${R.propOr(height, "height", dimension.current)}px`, pointerEvents: (R.propEq("pointerEvents", "auto", frameStyle) || resizeDrag.current ? "none" : "auto"), overflow: (R.isNil(children) ? "hidden" : "auto") }}>
+          <div className="window" ref={windowRef} style={{ width: maximized ? "100%" : `${R.propOr(width, "width", dimension.current)}px`, height: `${R.propOr(height, "height", dimension.current)}px`, pointerEvents: (R.propEq("pointerEvents", "auto", frameStyle) || resizeDrag.current ? "none" : "auto"), overflow: (R.isNil(children) ? "hidden" : "auto") }}>
             {children && children}
 
             {loading && !children && <div size="lg" animation="border" variant="secondary" className="frameloading" />}

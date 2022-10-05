@@ -53,13 +53,13 @@ const Header = ({ windows, showWindow, toggleShowing, selectLayout, removeLayout
             R.compose(
               R.map(([key, windowKey]) => {
                 return (
-                  <>
-                  <Tooltip followCursor title={R.pathEq(["apps", windowKey, "single"], true, windows) && ( R.find(R.propEq("appid", windowKey))(windows.view) || R.includes(windowKey, R.values(R.path(["layout", "selectedApps"], windows)))) ? "Only one instance of app can be opened" : ""}>
-                    <span style={{display: "block"}}>
-                      <MenuItem disabled={R.pathEq(["apps", windowKey, "single"], true, windows) && ( R.find(R.propEq("appid", windowKey))(windows.view) || R.includes(windowKey, R.values(R.path(["layout", "selectedApps"], windows))))} key={windowKey} onClick={() => { showWindow(windowKey); setAppsAnchor(null); }}>{R.prop("title", R.prop(windowKey, windows.apps))}</MenuItem>
+                  <div key={key}>
+                  <Tooltip key={`${windowKey}tooltip`} followCursor title={R.pathEq(["apps", windowKey, "single"], true, windows) && ( !R.isNil(R.find(R.propEq("appid", windowKey))(windows.view)) || R.includes(windowKey, R.values(R.path(["layout", "selectedApps"], windows)))) ? "Only one instance of app can be opened" : ""}>
+                    <span key={`${windowKey}span`} style={{display: "block"}}>
+                      <MenuItem key={`${windowKey}menuitem`} disabled={R.pathEq(["apps", windowKey, "single"], true, windows) && ( !R.isNil(R.find(R.propEq("appid", windowKey))(windows.view)) || R.includes(windowKey, R.values(R.path(["layout", "selectedApps"], windows))))} onClick={() => { showWindow(windowKey); setAppsAnchor(null); }}>{R.prop("title", R.prop(windowKey, windows.apps))}</MenuItem>
                     </span>
                   </Tooltip>
-                  </>
+                  </div>
                 )
               }),
               R.toPairs,
@@ -80,7 +80,7 @@ const Header = ({ windows, showWindow, toggleShowing, selectLayout, removeLayout
           {
             R.compose(
               R.map((layout) => {
-                return <MenuItem key={layout} onClick={() => { selectLayout(layout.type); setLayoutAnchor(null); }}><img alt="2 column" src={twoColLogo}></img>: {layout.title}</MenuItem>
+                return <MenuItem key={`${layout.type}menuitem`} onClick={() => { selectLayout(layout.type); setLayoutAnchor(null); }}><img key={`${layout.type}img`} alt="2 column" src={twoColLogo}></img>: {layout.title}</MenuItem>
 
               })
 
