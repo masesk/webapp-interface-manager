@@ -276,9 +276,9 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
           )(frameStyle)
 
         }>
-          <div className="resize-arrow" onMouseDown={expandDragStart} onMouseUp={expandDragEnd}>
+          {!maximized && <div className="resize-arrow" onMouseDown={expandDragStart} onMouseUp={expandDragEnd}>
             <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" className="stroke" size="35" color="blue" height="35" width="35" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" stroke="#bfbfbf" strokeWidth="2" points="8 20 20 20 20 8"></polyline></svg>
-          </div>
+          </div>}
           <div onMouseDown={dragStart} onMouseUp={dragEnd} ref={topRef} onMouseMove={drag} className="topbar" style={{ width: `${R.propOr(width, "width", dimension.current)}px` }}>
             <Box sx={{ justifyContent: 'space-between' }}>
               <Box sx={{float: "right"}}>
