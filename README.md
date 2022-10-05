@@ -95,6 +95,16 @@ export const BUILT_IN_APPS = {
  {/* Add all static windows/apps below */}
  <StaticWindow appid="mynewapp"/>
 ```
+
+3. Add your app component to the DOM list in the `AppManager.js` useEffect
+
+```
+{/* Add all static apps below */}
+addAppDom("mynewapp", <MyNewAppComponent/>)
+```
+
+
+
 #### In browser
 After running the app manager, navigate to the top left and open `Add New Web App` window to add new app providing `appid`, `title`, `url`, `width`, `height`, `deletable`, and `single` from the UI selection.
 

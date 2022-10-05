@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../css/App.css';
-import { MdClose, MdCropSquare, MdRemove, MdFilterNone} from 'react-icons/md';
-import { Spinner } from 'react-bootstrap'
-import '../css/boostrap.min.css'
+import { MdClose, MdCropSquare, MdRemove, MdFilterNone } from 'react-icons/md';
 import * as R from 'ramda'
 import { hideWindow, updateIndex, minimizeWindow } from "../redux/actions";
+import Box from '@mui/material/Box';
 
 import { connect } from "react-redux";
 
@@ -19,7 +18,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
     {
       pointerEvents: "none",
       top: 0,
-      position: "absolute", zIndex: zIndex, width: `${dimension.current.width + 600}px`, paddingBottom: `${dimension.current.height + 500}px`, paddingTop: `300px`, paddingLeft: "300px"
+      position: "fixed", zIndex: zIndex, width: `${dimension.current.width + 600}px`, paddingBottom: `${dimension.current.height + 500}px`, paddingTop: `300px`, paddingLeft: "300px"
     }
   )
   const [maximized, setMaximized] = useState(false)
@@ -97,7 +96,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
         setFrameStyle(f => R.merge(f, {
           top: 0,
           height: `${dimension.current.height + 600}px`,
-          position: "absolute",
+          position: "fixed",
           width: `${dimension.current.width + 600}px`,
           paddingBottom: `${dimension.current.height + 500}px`,
           paddingTop: `300px`,
@@ -153,7 +152,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
   }
 
   const expandDragStart = (e) => {
-    if (e.type === "touchmove") {
+    if (e.type === "touchstart") {
       initialRx.current = e.touches[0].clientX;
       initialRy.current = e.touches[0].clientY;
     } else {
@@ -164,7 +163,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
     stopPropagation(e)
     setFrameStyle(R.clone(frameStyle))
     updateIndex(viewid)
-    
+
   }
 
   const expandDragEnd = (e) => {
@@ -173,9 +172,9 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
     }
     let changeX;
     let changeY;
-    if (e.type === "touchmove") {
-      changeX = e.touches[0].clientX - initialRx.current
-      changeY = e.touches[0].clientY - initialRy.current
+    if (e.type === "touchend") {
+      changeX = e.changedTouches[0].clientX - initialRx.current
+      changeY = e.changedTouches[0].clientY - initialRy.current
     } else {
       changeX = e.clientX - initialRx.current;
       changeY = e.clientY - initialRy.current;
@@ -187,6 +186,12 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
     resizeDrag.current = false
     dimension.current.width = dimension.current.width + changeX
     dimension.current.height = dimension.current.height + changeY
+    if (dimension.current.width < 300) {
+      dimension.current.width = 300
+    }
+    if (dimension.current.height < 300) {
+      dimension.current.height = 300
+    }
     setFrameStyle(f => R.merge(f, {
       width: `${dimension.current.width + 600}px`, paddingBottom: `${dimension.current.height + 500}px`, height: `${dimension.current.height}px`
     }))
@@ -194,7 +199,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
 
 
   const dragEnd = (e) => {
-    if(!active.current){
+    if (!active.current) {
       return
     }
     initialX.current = currentX.current;
@@ -235,84 +240,89 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
 
   const stopPropagation = (e) => {
     if (e.stopPropagation) e.stopPropagation();
-    if (e.preventDefault) e.preventDefault();
+    //if (e.preventDefault) e.preventDefault();
     e.cancelBubble = true;
     e.returnValue = false;
     return false;
   }
 
   let messageHandler = {}
-    messageHandler.publish = (channelName, data) => {
-      const win = R.pathEq(["messageHandler", "publish"], undefined, window) ? window.parent.window : window
-      const event = new Event(channelName, { bubbles: true, cancelable: false })
-      event.data = data
-      win.dispatchEvent(event)
-    }
-    messageHandler.listen =  (channelName, callback) => {
-      const win = R.pathEq(["messageHandler", "publish"], undefined, window) ? window.parent.window : window
-      win.addEventListener(channelName, (event) => {
-        callback(event.data)
-      }, false);
-    }
+  messageHandler.publish = (channelName, data) => {
+    const win = R.pathEq(["messageHandler", "publish"], undefined, window) ? window.parent.window : window
+    const event = new Event(channelName, { bubbles: true, cancelable: false })
+    event.data = data
+    win.dispatchEvent(event)
+  }
+  messageHandler.listen = (channelName, callback) => {
+    const win = R.pathEq(["messageHandler", "publish"], undefined, window) ? window.parent.window : window
+    win.addEventListener(channelName, (event) => {
+      callback(event.data)
+    }, false);
+  }
   return (
     <>
-      <div className="frame" onMouseMove={drag} style={frameStyle} ref={ref}>
+      <Box className="frame" onMouseMove={drag} sx={frameStyle} ref={ref}>
         <div className="frame-border" style={
           R.compose(
             R.assoc("resize", "both"),
-            R.assoc("paddingTop", 4),
-            R.assoc("paddingLeft", 4),
-            R.assoc("paddingRight", 4),
-            R.assoc("width", (maximized ? dimension.current.width + 10 : null)),
+            R.assoc("paddingTop", maximized ? 0 : 2),
+            R.assoc("paddingLeft", maximized ? 0 : 2),
+            R.assoc("paddingRight", maximized ? 0 : 2),
+            R.assoc("width", (maximized ? "100%" : null)),
             R.assoc("top", null),
-            R.assoc("height", dimension.current.height + 53),
+            R.assoc("height", dimension.current.height + 48),
             R.assoc("paddingBottom", `${dimension.current.height + 5}px`),
             R.assoc("pointerEvents", (resizeDrag.current ? "none" : "auto"))
           )(frameStyle)
 
         }>
-          <div className="resize-arrow" onMouseDown={expandDragStart} onMouseUp={expandDragEnd}>
+          {!maximized && <div className="resize-arrow" onMouseDown={expandDragStart} onMouseUp={expandDragEnd} onTouchStart={expandDragStart} onTouchEnd={expandDragEnd}>
             <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" className="stroke" size="35" color="blue" height="35" width="35" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" stroke="#bfbfbf" strokeWidth="2" points="8 20 20 20 20 8"></polyline></svg>
-          </div>
-          <div onMouseDown={dragStart} onMouseUp={dragEnd} ref={topRef} onMouseMove={drag} className="topbar" style={{ width: `${R.propOr(width, "width", dimension.current)}px` }}>
-            <MdClose onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(index) }} className="hover" size={21} />
-            {maximized ? <MdFilterNone className="hover" size={21} onClick={() => {
-              max.current = false
-              setMaximized(!maximized)
-              dimension.current.width = savedimension.current.width
-              dimension.current.height = savedimension.current.height
+          </div>}
+          <div onMouseDown={dragStart} onMouseUp={dragEnd} onMouseMove={drag} onTouchStart={dragStart} onTouchEnd={dragEnd} onTouchMove={drag} ref={topRef} className="topbar" style={{ width: maximized ? "100%" : `${R.propOr(width, "width", dimension.current)}px` }}>
+            <Box sx={{ justifyContent: 'space-between' }}>
+              <Box sx={{float: "right"}}>
+                <MdClose onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(index) }} className="hover" size={21} />
+                {maximized ? <MdFilterNone className="hover" size={21} onClick={() => {
+                  max.current = false
+                  setMaximized(!maximized)
+                  dimension.current.width = savedimension.current.width
+                  dimension.current.height = savedimension.current.height
 
-            }
-            } />
-              : <MdCropSquare onClick={() => {
-                max.current = true
-                savedimension.current = { width: dimension.current.width, height: dimension.current.height }
-                setMaximized(!maximized)
-                dimension.current = { width: window.parent.innerWidth - 7, height: window.parent.innerHeight - 137 }
-
-              }} className="hover" size={21} />
-
-            }
-            <MdRemove onClick={() => { minimizeWindow(index) }} className="hover" size={21} />
-            <h5 className={"float-right"}>{title}</h5>
-
-          </div>
-          <div className="window"  ref={windowRef} style={{ width: `${R.propOr(width, "width", dimension.current)}px`, height: `${R.propOr(height, "height", dimension.current)}px`, pointerEvents: (R.propEq("pointerEvents", "auto", frameStyle) || resizeDrag.current ? "none" : "auto"), overflow: (R.isNil(children) ? "hidden" : "auto") }}>
-            {children && children}
-            
-            {loading && !children && <Spinner size="lg" animation="border" variant="secondary" className="frameloading" />}
-            {!children && <iframe key={viewid} ref={frameRef} onLoad={() => 
-              {
-                setLoading(false);
-                try{
-                  frameRef.current.contentWindow.messageHandler = window.messageHandler
-                }catch(e){
-                  console.error(e)
                 }
-              }} frameBorder="0" title={title} src={url} className={"framestyle"} height={`${R.propOr(height, "height", dimension.current)}px`} width={`${R.propOr(width, "width", dimension.current)}px`} />}
+                } />
+                  : <MdCropSquare onClick={() => {
+                    max.current = true
+                    savedimension.current = { width: dimension.current.width, height: dimension.current.height }
+                    setMaximized(!maximized)
+                    dimension.current = { width: window.parent.innerWidth - 7, height: window.parent.innerHeight - 137 }
+
+                  }} className="hover" size={21} />
+
+                }
+                <MdRemove onClick={() => { minimizeWindow(index) }} className="hover" size={21} />
+              </Box>
+              <Box>
+                {title}
+              </Box>
+            </Box>
+
+          </div>
+          <div className="window" ref={windowRef} style={{ width: maximized ? "100%" : `${R.propOr(width, "width", dimension.current)}px`, height: `${R.propOr(height, "height", dimension.current)}px`, pointerEvents: (R.propEq("pointerEvents", "auto", frameStyle) || resizeDrag.current ? "none" : "auto"), overflow: (R.isNil(children) ? "hidden" : "auto") }}>
+            {children && children}
+
+            {loading && !children && <div size="lg" animation="border" variant="secondary" className="frameloading" />}
+            {!children && <iframe key={viewid} ref={frameRef} onLoad={() => {
+              setLoading(false);
+              try {
+                frameRef.current.contentWindow.messageHandler = window.messageHandler
+              } catch (e) {
+                console.error(e)
+              }
+            }} frameBorder="0" title={title} src={url} className={"framestyle"} height={`${R.propOr(height, "height", dimension.current)}px`} width={`${R.propOr(width, "width", dimension.current)}px`} />}
           </div>
         </div>
-      </div>
+      </Box>
     </>
   );
 }

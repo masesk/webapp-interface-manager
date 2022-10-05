@@ -1,48 +1,57 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import '../css/App.css';
 import Window from './Window'
 import Header from './Header'
 import * as R from 'ramda'
 import AddWebApp from '../apps/AddWebApp'
 import { connect } from 'react-redux'
-import {loadApps} from '../redux/actions'
+import { loadApps, addAppDom } from '../redux/actions'
 import Settings from './Settings'
 import StaticWindow from './StaticWindow'
-import {BUILT_IN_APPS} from '../constants'
+import { BUILT_IN_APPS } from '../constants'
 import MinBar from './MinBar';
 import Sender from '../apps/Sender';
 import Receiver from '../apps/Receiver';
+import TwoColumnLayout from './TwoColumnLayout';
+import { VERTICAL_2COLUM } from '../redux/constants';
 
-const AppManager = ({ windows, loadApps }) => {
-  useState(()=>{
+
+const AppManager = ({ windows, loadApps, addAppDom }) => {
+  useEffect(() => {
     window.messageHandler = {}
     window.messageHandler.publish = (channelName, data) => {
       const event = new Event(channelName, { bubbles: true, cancelable: false })
       event.data = data
       window.dispatchEvent(event)
     }
-    window.messageHandler.listen =  (channelName, callback) => {
+    window.messageHandler.listen = (channelName, callback) => {
       window.addEventListener(channelName, (event) => {
         callback(event.data)
       }, false);
     }
     loadApps()
-  }, [])
+    addAppDom("sender", <Sender/>)
+    addAppDom("receiver", <Receiver/>)
+    addAppDom("addwebapp", <AddWebApp/>)
+  }, [addAppDom, loadApps])
+
+
   return (
 
-    <>
-      <Header windows={windows} />
-        {/* Add all static windows/apps below */}
-        <StaticWindow appid="sender" >
-          <Sender />
-        </StaticWindow>
-        <StaticWindow appid="receiver" >
-          <Receiver />
-        </StaticWindow>
-        <StaticWindow appid="addwebapp" >
-          <AddWebApp />
-        </StaticWindow>
       
+      <>
+      <Header windows={windows} />
+      {/* Add all static windows/apps below */}
+      <StaticWindow appid="sender" >
+        <Sender />
+      </StaticWindow>
+      <StaticWindow appid="receiver" >
+        <Receiver />
+      </StaticWindow>
+      <StaticWindow appid="addwebapp" >
+        <AddWebApp />
+      </StaticWindow>
+      {(R.equals(R.path(["layout", "selectedLayout"], windows), VERTICAL_2COLUM)) && <TwoColumnLayout/>}
       {
         R.compose(
           R.map(([index, win]) => {
@@ -53,7 +62,7 @@ const AppManager = ({ windows, loadApps }) => {
               return null
             }
             const window = R.path(["apps", appid], windows)
-            return  <Window 
+            return <Window
               appid={window.appid}
               title={window.title}
               url={window.url}
@@ -68,25 +77,24 @@ const AppManager = ({ windows, loadApps }) => {
           R.toPairs,
         )(windows.view)
       }
-      <Settings/>
+      <Settings />
       <div className="footer">
-      {
-        
-         R.compose(
-        
-          R.map(([index, win]) => {
+        {
+
+          R.compose(
+
+            R.map(([index, win]) => {
               const appid = R.prop("appid", win)
               const viewid = R.prop("viewid", win)
               const window = R.path(["apps", appid], windows)
               return <MinBar className={R.propEq("minimized", true, win) ? "" : "showing"} index={viewid} key={index} appid={appid}>{R.prop("title", window)}</MinBar>
-          }),
-          R.toPairs,
+            }),
+            R.toPairs,
 
-        )(windows.view)
-      }
+          )(windows.view)
+        }
       </div>
-
-    </>
+      </>
   );
 }
 
@@ -95,6 +103,6 @@ const mapStateToProps = state => {
   return state
 };
 
-export default connect(mapStateToProps, {loadApps})(AppManager);
+export default connect(mapStateToProps, { loadApps, addAppDom })(AppManager);
 
 
