@@ -1,23 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import '../css/App.css';
 import Window from './Window'
 import Header from './Header'
 import * as R from 'ramda'
 import AddWebApp from '../apps/AddWebApp'
 import { connect } from 'react-redux'
-import { loadApps, selectLayout, showWindow } from '../redux/actions'
+import { loadApps, addAppDom } from '../redux/actions'
 import Settings from './Settings'
 import StaticWindow from './StaticWindow'
 import { BUILT_IN_APPS } from '../constants'
 import MinBar from './MinBar';
 import Sender from '../apps/Sender';
 import Receiver from '../apps/Receiver';
-import SplitPane from 'react-split-pane';
 import TwoColumnLayout from './TwoColumnLayout';
 import { VERTICAL_2COLUM } from '../redux/constants';
 
 
-const AppManager = ({ windows, loadApps, layout }) => {
+const AppManager = ({ windows, loadApps, addAppDom }) => {
   useEffect(() => {
     window.messageHandler = {}
     window.messageHandler.publish = (channelName, data) => {
@@ -31,13 +30,15 @@ const AppManager = ({ windows, loadApps, layout }) => {
       }, false);
     }
     loadApps()
-    console.log(layout)
-  }, [])
+    addAppDom("sender", <Sender/>)
+    addAppDom("receiver", <Receiver/>)
+    addAppDom("addwebapp", <AddWebApp/>)
+  }, [addAppDom, loadApps])
 
 
   return (
 
-
+      
       <>
       <Header windows={windows} />
       {/* Add all static windows/apps below */}
@@ -50,7 +51,7 @@ const AppManager = ({ windows, loadApps, layout }) => {
       <StaticWindow appid="addwebapp" >
         <AddWebApp />
       </StaticWindow>
-      {(R.equals(layout.selectedLayout, VERTICAL_2COLUM)) && <TwoColumnLayout/>}
+      {(R.equals(R.path(["layout", "selectedLayout"], windows), VERTICAL_2COLUM)) && <TwoColumnLayout/>}
       {
         R.compose(
           R.map(([index, win]) => {
@@ -102,6 +103,6 @@ const mapStateToProps = state => {
   return state
 };
 
-export default connect(mapStateToProps, { loadApps })(AppManager);
+export default connect(mapStateToProps, { loadApps, addAppDom })(AppManager);
 
 

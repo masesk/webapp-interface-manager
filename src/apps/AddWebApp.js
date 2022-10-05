@@ -27,7 +27,8 @@ const AddWebApp = ({ createWindow }) => {
       sx={{
         p: 5,
         h: "100%",
-        overflow: 'auto'
+        overflow: 'auto',
+        zIndex: 0
       }}
       noValidate
       autoComplete="off"

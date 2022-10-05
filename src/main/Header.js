@@ -1,33 +1,22 @@
-import React, { useState } from 'react'
+import React from 'react'
 import * as R from 'ramda'
 import { connect } from 'react-redux'
-import { showWindow, toggleShowing, selectLayout } from '../redux/actions'
-import { AiOutlineSetting, AiOutlineBars } from 'react-icons/ai'
+import { showWindow, toggleShowing, selectLayout, removeLayout } from '../redux/actions'
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import List from '@mui/material/List';
 import { ButtonGroup, Tooltip } from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings';
 
-import { styled } from '@mui/material/styles';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 
 import HelpIcon from '@mui/icons-material/Help';
 import Menu from '@mui/material/Menu';
-import AddIcon from '@mui/icons-material/Add';
 import { VERTICAL_2COLUM } from '../redux/constants'
+import twoColLogo from '../img/layouts-2-icon.png'
 
-const Item = styled(Paper)(({ theme }) => ({
-}));
-const Header = ({ windows, showWindow, toggleShowing, selectLayout }) => {
-  const [value, setValue] = useState('');
-  const [dense, setDense] = React.useState(false);
+
+const Header = ({ windows, showWindow, toggleShowing, selectLayout, removeLayout }) => {
   const [appsAnchor, setAppsAnchor] = React.useState(null);
   const [layoutAnchor, setLayoutAnchor] = React.useState(null);
   const layouts = [
@@ -84,11 +73,13 @@ const Header = ({ windows, showWindow, toggleShowing, selectLayout }) => {
           {
             R.compose(
               R.map((layout) => {
-                return <MenuItem key={layout} onClick={() => { console.log(layout.type); selectLayout(layout.type); setLayoutAnchor(null); }}><img src={window.location.origin + "/" + layout.img}></img>: {layout.title}</MenuItem>
+                return <MenuItem key={layout} onClick={() => { selectLayout(layout.type); setLayoutAnchor(null); }}><img alt="2 column" src={twoColLogo}></img>: {layout.title}</MenuItem>
 
               })
+              
             )(layouts)
           }
+          <MenuItem key={"removeLayout"} onClick={() => { removeLayout(); setLayoutAnchor(null); }}>Remove Layout</MenuItem>
         </Menu>
 
 
@@ -104,13 +95,13 @@ const Header = ({ windows, showWindow, toggleShowing, selectLayout }) => {
         
 
       </Box>
-      <Box> <Typography variant="h7">WAIM</Typography></Box>
+      <Box> <Typography variant="h7" >WAIM</Typography></Box>
       
       <Box>
 
         <ButtonGroup aria-label="outlined primary button group">
           <Tooltip title="Settings">
-            <Button variant="outlined">
+            <Button onClick={()=> {toggleShowing(true)}} variant="outlined">
               <SettingsIcon />
             </Button>
           </Tooltip>
@@ -133,5 +124,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  { showWindow, toggleShowing, selectLayout }
+  { showWindow, toggleShowing, selectLayout, removeLayout }
 )(Header)

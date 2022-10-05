@@ -186,11 +186,11 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
     resizeDrag.current = false
     dimension.current.width = dimension.current.width + changeX
     dimension.current.height = dimension.current.height + changeY
-    if (dimension.current.width < 100) {
-      dimension.current.width = 100
+    if (dimension.current.width < 300) {
+      dimension.current.width = 300
     }
-    if (dimension.current.height < 100) {
-      dimension.current.height = 100
+    if (dimension.current.height < 300) {
+      dimension.current.height = 300
     }
     setFrameStyle(f => R.merge(f, {
       width: `${dimension.current.width + 600}px`, paddingBottom: `${dimension.current.height + 500}px`, height: `${dimension.current.height}px`
@@ -311,7 +311,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
           <div className="window" ref={windowRef} style={{ width: `${R.propOr(width, "width", dimension.current)}px`, height: `${R.propOr(height, "height", dimension.current)}px`, pointerEvents: (R.propEq("pointerEvents", "auto", frameStyle) || resizeDrag.current ? "none" : "auto"), overflow: (R.isNil(children) ? "hidden" : "auto") }}>
             {children && children}
 
-            {loading && !children && <h1 size="lg" animation="border" variant="secondary" className="frameloading" />}
+            {loading && !children && <div size="lg" animation="border" variant="secondary" className="frameloading" />}
             {!children && <iframe key={viewid} ref={frameRef} onLoad={() => {
               setLoading(false);
               try {

@@ -5,7 +5,6 @@ import * as serviceWorker from './serviceWorker';
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-import { orange } from '@mui/material/colors';
 import CssBaseline from '@mui/material/CssBaseline';
 import { amber, deepOrange, grey, blue, indigo, blueGrey } from '@mui/material/colors';
 
@@ -14,35 +13,53 @@ const getDesignTokens = (mode) => ({
   palette: {
     mode,
     primary: {
-      ...indigo,
+      ...grey,
       ...(mode === 'dark' && {
         main: grey[300],
       }),
     },
     ...(mode === 'light' && {
       background: {
-        default: grey[200],
+        default: grey[300],
         paper: blueGrey[200],
       },
     }),
     ...(mode === 'dark' && {
       background: {
-        default: grey[500],
+        default: grey[700],
         paper: grey[800],
       },
     }),
     text: {
       ...(mode === 'light'
         ? {
-            primary: grey[900],
-            secondary: grey[800],
-          }
+          primary: grey[900],
+          secondary: grey[800],
+        }
         : {
-            primary: '#fff',
-            secondary: grey[300],
-          }),
-    },
+          primary: '#fff',
+          secondary: grey[300],
+        }),
+    }
   },
+  overrides: {
+    MuiOutlinedInput: {
+      root: {
+        // Hover state
+        "&:hover $notchedOutline": {
+          borderColor: "#9a9a9a"
+        },
+        // Focused state
+        "&$focused $notchedOutline": {
+          borderColor: "#9a9a9a"
+        }
+      },
+      // Default State
+      notchedOutline: {
+        borderColor: "#9a9a9a"
+      }
+    }
+  }
 });
 
 const theme = createTheme(getDesignTokens('dark'));

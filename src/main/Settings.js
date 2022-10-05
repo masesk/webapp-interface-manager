@@ -3,15 +3,8 @@ import { connect } from 'react-redux'
 import { toggleShowing, deleteWindow, resetDefault, updateWindow } from '../redux/actions'
 import { AiOutlineDelete, AiOutlineEdit, AiOutlineCheck } from 'react-icons/ai'
 import * as R from 'ramda'
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Container } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close';
+import {Modal, Typography, Button, TableContainer, TableBody, TableCell, TableRow, TableHead, Paper, Table, IconButton, Switch, TextField, Grid, Divider, Dialog, DialogActions, DialogTitle, DialogContentText, DialogContent } from '@mui/material'
 
 
 
@@ -22,36 +15,31 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
     const [editableRow, setEditableRow] = useState(-1)
 
 
-    const [expanded, setExpanded] = React.useState(false);
-
-    const handleChange = (panel) => (event, isExpanded) => {
-        setExpanded(isExpanded ? panel : false);
-    };
 
     const renderButtons = (appid, index) => {
         return (
             <>
-                {/* {
-                     R.pathEq(["apps", appid, "editable"], true, windows) && 
-                     <Button style={{ marginRight: 5 }} onClick={() => {
-                                if(!R.equals(appid, editableRow)){
-                                    setEditableRow(index)
-                                }
-                                else{ 
-                                    updateWindow(appid, titleRef.current.value, Number(widthRef.current.value), 
-                                        Number(heightRef.current.value), urlRef.current.value, singletonRef.current.checked,
-                                       deletableRef.current.checked, R.path([appid, "editable"], window))
-                                    setEditableRow(-1)
-                                }
-                            }} 
-                        variant= {R.equals(appid, editableRow) ? "success" : "secondary"} target="_blank" rel="noopener noreferrer">
-                         {R.equals(appid, editableRow) ? <AiOutlineCheck/> : <AiOutlineEdit size={20} />}
+                {
+                    R.pathEq(["apps", appid, "editable"], true, windows) &&
+                    <Button style={{ marginRight: 5 }} onClick={() => {
+                        if (!R.equals(appid, editableRow)) {
+                            setEditableRow(index)
+                        }
+                        else {
+                            updateWindow(appid, titleRef.current.value, Number(widthRef.current.value),
+                                Number(heightRef.current.value), urlRef.current.value, singletonRef.current.checked,
+                                deletableRef.current.checked, R.path([appid, "editable"], window))
+                            setEditableRow(-1)
+                        }
+                    }}
+                        variant={R.equals(appid, editableRow) ? "success" : "secondary"} target="_blank" rel="noopener noreferrer">
+                        {R.equals(appid, editableRow) ? <AiOutlineCheck /> : <AiOutlineEdit size={20} />}
                     </Button>
                 }
                 {
                     R.pathEq(["apps", appid, "deletable"], true, windows) &&
                     <Button onClick={() => setAppName(appid)} variant="secondary" target="_blank" rel="noopener noreferrer"><AiOutlineDelete size={20} /></Button>
-                } */}
+                }
             </>
         );
 
@@ -73,8 +61,6 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
         toggleShowing(false)
         setEditableRow(-1)
     }
-    const handleCloseConfirm = () => setShowingConfirm(false)
-    const handleCloseConfirmReset = () => setShowingConfirmReset(false)
     const handleDelete = () => {
         deleteWindow(R.path(["apps", appName, "appid"], windows))
         setShowingConfirm(false)
@@ -97,206 +83,115 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
 
     return (
         <>
-
+            
             <Modal
-                open={false}
+                open={settings.showing}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
                 sx={{
                     minHeight: "100vh",
-                    bgcolor: "background.default"
+                    bgcolor: "background.default",
+                    zIndex: 998
                 }}
 
             >
-                <Container sx={{
-                    position: 'absolute', left: '50%', top: '50%',
-                    transform: 'translate(-50%, -50%)'
-                }}>
-                    <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1bh-content"
-                            id="panel1bh-header"
-                        >
-                            <Typography sx={{ width: '33%', flexShrink: 0 }}>
-                                General settings
-                            </Typography>
-                            <Typography sx={{ color: 'text.secondary' }}>I am an accordion</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Typography>
-                                Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat.
-                                Aliquam eget maximus est, id dignissim quam.
-                            </Typography>
-                        </AccordionDetails>
-                    </Accordion>
-                    <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel2bh-content"
-                            id="panel2bh-header"
-                        >
-                            <Typography sx={{ width: '33%', flexShrink: 0 }}>Users</Typography>
-                            <Typography sx={{ color: 'text.secondary' }}>
-                                You are currently not an owner
-                            </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Typography>
-                                Donec placerat, lectus sed mattis semper, neque lectus feugiat lectus,
-                                varius pulvinar diam eros in elit. Pellentesque convallis laoreet
-                                laoreet.
-                            </Typography>
-                        </AccordionDetails>
-                    </Accordion>
-                    <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel3bh-content"
-                            id="panel3bh-header"
-                        >
-                            <Typography sx={{ width: '33%', flexShrink: 0 }}>
-                                Advanced settings
-                            </Typography>
-                            <Typography sx={{ color: 'text.secondary' }}>
-                                Filtering has been entirely disabled for whole web server
-                            </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Typography>
-                                Nunc vitae orci ultricies, auctor nunc in, volutpat nisl. Integer sit
-                                amet egestas eros, vitae egestas augue. Duis vel est augue.
-                            </Typography>
-                        </AccordionDetails>
-                    </Accordion>
-                    <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel4bh-content"
-                            id="panel4bh-header"
-                        >
-                            <Typography sx={{ width: '33%', flexShrink: 0 }}>Personal data</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Typography>
-                                Nunc vitae orci ultricies, auctor nunc in, volutpat nisl. Integer sit
-                                amet egestas eros, vitae egestas augue. Duis vel est augue.
-                            </Typography>
-                        </AccordionDetails>
-                    </Accordion>
-                </Container>
+                <TableContainer component={Paper} sx={{ p: 5 }}>
+
+                    <Grid container spacing={3}>
+                        <Grid item xs={5}>
+                            <Typography variant="h4">SETTINGS</Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Button variant="contained" color="success" onClick={() => setShowingConfirmReset(true)}>Reset to default</Button>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <IconButton sx={{ float: "right" }} onClick={() => { toggleShowing() }}>
+                                <CloseIcon />
+                            </IconButton>
+                        </Grid>
+                    </Grid>
+                    <Divider sx={{ mb: 2, mt: 2 }} />
+
+                    <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>App ID</TableCell>
+                                <TableCell>Title</TableCell>
+                                <TableCell>Width</TableCell>
+                                <TableCell>Height</TableCell>
+                                <TableCell>URL</TableCell>
+                                <TableCell>Singleton</TableCell>
+                                <TableCell>Deletable</TableCell>
+                                <TableCell>Controls</TableCell>
+
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+
+                            {
+                                R.compose(R.map(([index, window]) => {
+                                    return (
+                                        <TableRow key={index}>
+
+                                            <TableCell>{R.prop("appid", window)}</TableCell>
+                                            {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("title", window)} inputRef={titleRef} placeholder="Title" /></TableCell> : <TableCell>{R.prop("title", window)}</TableCell>}
+                                            {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("width", window)} inputRef={widthRef} placeholder="Width" /></TableCell> : <TableCell>{R.prop("width", window)}</TableCell>}
+                                            {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("height", window)} inputRef={heightRef} placeholder="Height" /></TableCell> : <TableCell>{R.prop("height", window)}</TableCell>}
+                                            {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("url", window)} inputRef={urlRef} placeholder="URL" /></TableCell> : <TableCell>{R.prop("url", window)}</TableCell>}
+                                            {R.equals(index, editableRow) ? <TableCell><Switch defaultChecked={R.prop("single", window)} inputRef={singletonRef} /></TableCell> : <TableCell>{R.toString(R.propOr(false, "single", window))}</TableCell>}
+                                            {R.equals(index, editableRow) ? <TableCell><Switch defaultChecked={R.prop("deletable", window)} inputRef={deletableRef} /></TableCell> : <TableCell>{R.toString(R.propOr(false, "deletable", window))}</TableCell>}
+                                            <TableCell>{renderButtons(R.prop("appid", window), index)}</TableCell>
+                                        </TableRow>)
+                                }),
+                                    R.toPairs
+
+                                )(windows.apps)
+                            }
+                        </TableBody>
+                    </Table>
+                </TableContainer>
 
 
             </Modal>
 
+            <Dialog
+                open={showingConfirmReset}
+                sx={{ zIndex: 999 }}
+                keepMounted
+                onClose={() => setShowingConfirmReset(false)}
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle>{"Reset to default?"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-slide-description">
+                        Resetting to default will removed all added apps and reset any changes.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button color="error" variant="contained" onClick={() => handleResetDefault()}>Yes</Button>
+                    <Button onClick={() => setShowingConfirmReset(false)}>No</Button>
+                </DialogActions>
+            </Dialog>
 
-            {/* <div>
-                <Modal
-                    show={settings.showing}
-                    onHide={handleClose}
-                    backdrop="static"
-                    keyboard={false}
-                    size="lg"
-                    className="full-modal"
-                    variant="secondary"
-                >
-                    <Modal.Header closeButton>
-                        <Container style={{ marginLeft: 0 }}>
-                            <Row>
-                                <Col md={{ offset: 0 }}>
-                                    <Modal.Title>Settings</Modal.Title>
-                                </Col>
-                                <Col md={{ offset: 3 }}>
-                                    <Button onClick={() => setShowingConfirmReset(true)} variant="secondary">Reset to Default</Button>
-                                </Col>
-                            </Row></Container>
-
-                    </Modal.Header>
-                    <Modal.Body>
-                        <table cellPadding="10" className="w-100">
-                            <tbody>
-                                <tr>
-                                    <th>App ID</th>
-                                    <th>Title</th>
-                                    <th>Width</th>
-                                    <th>Height</th>
-                                    <th>URL</th>
-                                    <th>Singleton</th>
-                                    <th>Deletable</th>
-                                    <th>Controls</th>
-                                </tr>
-                                {
-                                    R.compose(R.map(([index, window]) => {
-                                        return (
-                                            <tr key={index}>
-
-                                                <th>{R.prop("appid", window)}</th>
-                                                {R.equals(index, editableRow) ? <th><Form.Control defaultValue={R.prop("title", window)} ref={titleRef} placeholder="Title" /></th> : <th>{R.prop("title", window)}</th>}
-                                                {R.equals(index, editableRow) ? <th><Form.Control defaultValue={R.prop("width", window)} ref={widthRef} placeholder="Width" /></th> : <th>{R.prop("width", window)}</th>}
-                                                {R.equals(index, editableRow) ? <th><Form.Control defaultValue={R.prop("height", window)} ref={heightRef} placeholder="Height" /></th> : <th>{R.prop("height", window)}</th>}
-                                                {R.equals(index, editableRow) ? <th><Form.Control defaultValue={R.prop("url", window)} ref={urlRef} placeholder="URL" /></th> : <th>{R.prop("url", window)}</th>}
-                                                {R.equals(index, editableRow) ? <th><Form.Check   defaultChecked={R.prop("single", window)} ref={singletonRef} /></th>: <th>{R.toString(R.propOr(false, "single", window))}</th>}
-                                                {R.equals(index, editableRow) ? <th><Form.Check   defaultChecked={R.prop("deletable", window)} ref={deletableRef} /></th>: <th>{R.toString(R.propOr(false, "deletable", window))}</th>}
-                                                <th>{renderButtons(R.prop("appid", window), index)}</th>
-                                            </tr>)
-                                    }),
-                                        R.toPairs
-
-                                    )(windows.apps)
-                                }
-                            </tbody>
-                        </table>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-                <Modal
-                    show={showingConfirm}
-                    onHide={handleCloseConfirm}
-                    backdrop="static"
-                    keyboard={false}
-                    size="lg"
-                    variant="secondary"
-                >
-                    <Modal.Header closeButton>
-                        <Modal.Title>Delete Confirmation</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        Are you sure you want to delete <b>{appName}</b>? All instances will be closed.
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleCloseConfirm}>
-                            Close
-                        </Button>
-                        <Button variant="danger" onClick={handleDelete}>Delete</Button>
-                    </Modal.Footer>
-                </Modal>
-                <Modal
-                    show={showingConfirmReset}
-                    onHide={handleCloseConfirmReset}
-                    backdrop="static"
-                    keyboard={false}
-                    size="lg"
-                    variant="secondary"
-                >
-                    <Modal.Header closeButton>
-                        <Modal.Title>Reset to Default</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        Are you sure you want to reset to default? All apps added and/or removed will be reset. Any open instance will be closed.
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleCloseConfirmReset}>
-                            No
-                        </Button>
-                        <Button variant="danger" onClick={handleResetDefault}>Reset</Button>
-                    </Modal.Footer>
-                </Modal>
-            </div> */}
+            <Dialog
+                open={showingConfirm}
+                sx={{ zIndex: 999 }}
+                keepMounted
+                onClose={() => setShowingConfirm(false)}
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle>{"Detele app?"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-slide-description">
+                        Deleting app will close all instances of the app and removed all of its data.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button color="error" variant="contained" onClick={() => handleDelete()}>Yes</Button>
+                    <Button onClick={() => setShowingConfirm(false)}>No</Button>
+                </DialogActions>
+            </Dialog>
         </>
 
     )

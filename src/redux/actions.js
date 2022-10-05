@@ -12,7 +12,11 @@ import {
   LOAD_APPS,
   RESET_DEFAULT,
   UPDATE_WINDOW,
-  SELECT_LAYOUT
+  SELECT_LAYOUT,
+  ADD_APP_DOM,
+  SELECT_LAYOUT_APP,
+  REMOVE_LAYOUT,
+  CHANGE_LAYOUT_SIZE_2COL_VER
 } from "./actionTypes";
 
 
@@ -90,6 +94,24 @@ export const selectLayout = (layoutType) => ({
 })
 
 
+export const addAppDom = (appid, appDom) => ({
+  type: ADD_APP_DOM,
+  payload: {appid, appDom}
+})
 
+
+export const selectLayoutApp = (appid, index) => ({
+  type: SELECT_LAYOUT_APP,
+  payload: {appid, index}
+})
+
+export const removeLayout = () => ({
+  type: REMOVE_LAYOUT
+})
+
+export const changeLayoutSize2ColVertical = (size) => ({
+  type: CHANGE_LAYOUT_SIZE_2COL_VER,
+  payload: {size}
+})
 
 

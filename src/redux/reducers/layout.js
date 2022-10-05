@@ -1,5 +1,5 @@
 import * as R from 'ramda'
-import { SELECT_LAYOUT } from "../actionTypes";
+import { REMOVE_LAYOUT, SELECT_LAYOUT, SELECT_LAYOUT_APP } from "../actionTypes";
 
 
 const initialState = {
@@ -14,6 +14,18 @@ export default function (state = initialState, action) {
         console.log(action)
         return R.assoc("selectedLayout", layoutType, state)
         
+      }
+
+      case SELECT_LAYOUT_APP: {
+        const {appid, index} = action.payload
+        return R.assocPath(["selectedApps", index], appid, state)
+      }
+
+      case REMOVE_LAYOUT: {
+        return R.compose(
+          R.assoc("selectedLayout", undefined),
+          R.assoc("selectedApps", {})
+        )(state)
       }
       default:
         return state;
