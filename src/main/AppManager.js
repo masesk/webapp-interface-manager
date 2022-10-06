@@ -29,6 +29,7 @@ const AppManager = ({ windows, loadApps, addAppDom }) => {
         callback(event.data)
       }, false);
     }
+    {/* Add all static apps below */}
     loadApps()
     addAppDom("sender", <Sender/>)
     addAppDom("receiver", <Receiver/>)

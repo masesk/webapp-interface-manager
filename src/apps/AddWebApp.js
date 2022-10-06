@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux'
 import { createWindow, updateIndex } from "../redux/actions";
-import { FormControl, InputLabel, TextField, Box, Button, Switch, FormControlLabel } from '@mui/material';
+import { TextField, Box, Button, Switch, FormControlLabel } from '@mui/material';
 import * as R from 'ramda'
 const AddWebApp = ({ createWindow }) => {
   const title = useRef();
@@ -87,13 +87,13 @@ const AddWebApp = ({ createWindow }) => {
           fullWidth
           variant="filled"
           error={urlError}
-          helperText={urlError == true ? "Must be URL and cannot be empty" : ""}
+          helperText={urlError === true ? "Must be URL and cannot be empty" : ""}
           inputRef={url}
         /></div>
       <div>
-        <FormControlLabel control={<Switch />} label="Singleton" /></div>
-      <div> <FormControlLabel control={<Switch />} label="Editable" /></div>
-      <div><FormControlLabel control={<Switch />} label="Deletable" /></div>
+        <FormControlLabel control={<Switch onChange={(e) => setSingle(e.target.checked)} />} label="Singleton" /></div>
+      <div> <FormControlLabel control={<Switch onChange={(e) => setEditable(e.target.checked)} />} label="Editable" /></div>
+      <div><FormControlLabel control={<Switch onChange={(e) => setDeletable(e.target.checked)} />} label="Deletable" /></div>
       <div>
         <Button variant="contained" color="success"
           onClick={e => {

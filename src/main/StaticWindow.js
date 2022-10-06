@@ -29,6 +29,7 @@ const StaticWindow = ({ windows, children, appid }, ref) => {
               url={window.url}
               height={window.height}>{children}</Window>
           }
+          return
 
         }),
         R.toPairs,

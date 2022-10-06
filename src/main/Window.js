@@ -240,7 +240,9 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
 
   const stopPropagation = (e) => {
     if (e.stopPropagation) e.stopPropagation();
-    //if (e.preventDefault) e.preventDefault();
+    if(e.preventDefault && (e.type !== "touchstart" && e.type !== "touchend" && e.type !== "touchmove")){
+      e.preventDefault();
+    }
     e.cancelBubble = true;
     e.returnValue = false;
     return false;
