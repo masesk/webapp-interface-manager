@@ -4,7 +4,7 @@ import { MdClose, MdCropSquare, MdRemove, MdFilterNone } from 'react-icons/md';
 import * as R from 'ramda'
 import { hideWindow, updateIndex, minimizeWindow } from "../redux/actions";
 import Box from '@mui/material/Box';
-
+import { MAX_HEIGHT_PX, MAX_WIDTH_PX } from '../constants';
 import { connect } from "react-redux";
 
 function Window({ title, width, height, url, appid, children, minimized, updateIndex, hideWindow, minimizeWindow, zIndex, index, viewid }) {
@@ -38,6 +38,12 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
 
   const initialRx = useRef(0)
   const initialRy = useRef(0)
+
+  
+  const expandDragChangeX = useRef(0)
+  const expandDragChangeY = useRef(0)
+
+  const resizeShadowRef = useRef()
 
   useEffect(() => {
     dimension.current = { width, height }
@@ -132,25 +138,6 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
 
 
 
-
-
-  const dragStart = (e) => {
-    active.current = true;
-    e.stopPropagation()
-    if (e.type === "touchstart") {
-      initialX.current = e.touches[0].clientX - xOffset.current;
-      initialY.current = e.touches[0].clientY - yOffset.current;
-    } else {
-      initialX.current = e.clientX - xOffset.current;
-      initialY.current = e.clientY - yOffset.current;
-    }
-    updateIndex(viewid)
-    setFrameStyle(
-      R.assoc("pointerEvents", "auto", frameStyle)
-    )
-
-  }
-
   const expandDragStart = (e) => {
     if (e.type === "touchstart") {
       initialRx.current = e.touches[0].clientX;
@@ -186,17 +173,53 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
     resizeDrag.current = false
     dimension.current.width = dimension.current.width + changeX
     dimension.current.height = dimension.current.height + changeY
-    if (dimension.current.width < 300) {
-      dimension.current.width = 300
+    if (dimension.current.width < MAX_WIDTH_PX) {
+      dimension.current.width = MAX_WIDTH_PX
     }
-    if (dimension.current.height < 300) {
-      dimension.current.height = 300
+    if (dimension.current.height < MAX_HEIGHT_PX) {
+      dimension.current.height = MAX_HEIGHT_PX
     }
     setFrameStyle(f => R.merge(f, {
       width: `${dimension.current.width + 600}px`, paddingBottom: `${dimension.current.height + 500}px`, height: `${dimension.current.height}px`
     }))
   }
 
+  const expandDrag = (e) => {
+    if(!resizeDrag.current || maximized){
+      return
+    }
+    stopPropagation(e)
+    if(e.type === "touchmove"){
+      expandDragChangeX.current = e.changedTouches[0].clientX - initialRx.current;
+      expandDragChangeY.current = e.changedTouches[0].clientY - initialRy.current;
+    }else{
+      expandDragChangeX.current = (e.clientX - initialRx.current);
+      expandDragChangeY.current = (e.clientY - initialRy.current);
+    }
+    console.log(expandDragChangeX.current, expandDragChangeY.current)
+    changeResizeShadowSize(expandDragChangeX.current, expandDragChangeY.current)
+  }
+
+
+
+  
+
+  const dragStart = (e) => {
+    active.current = true;
+    e.stopPropagation()
+    if (e.type === "touchstart") {
+      initialX.current = e.touches[0].clientX - xOffset.current;
+      initialY.current = e.touches[0].clientY - yOffset.current;
+    } else {
+      initialX.current = e.clientX - xOffset.current;
+      initialY.current = e.clientY - yOffset.current;
+    }
+    updateIndex(viewid)
+    setFrameStyle(
+      R.assoc("pointerEvents", "auto", frameStyle)
+    )
+
+  }
 
   const dragEnd = (e) => {
     if (!active.current) {
@@ -237,6 +260,13 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
   }
 
 
+  const changeResizeShadowSize = (x,y) => {
+    resizeShadowRef.current.style.width = `${dimension.current.width + x}px`
+    resizeShadowRef.current.style.height = `${dimension.current.height + y + 48}px`
+    console.log(x, y)
+  }
+
+
 
   const stopPropagation = (e) => {
     if (e.stopPropagation) e.stopPropagation();
@@ -263,6 +293,18 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
   }
   return (
     <>
+      <div style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        zIndex: resizeDrag.current ? 999 : -999,
+        pointerEvents: resizeDrag.current ? "auto" : "none"
+      }}
+      onMouseMove={expandDrag}
+      onTouchMove={expandDrag}
+      />
       <Box className="frame" onMouseMove={drag} sx={frameStyle} ref={ref}>
         <div className="frame-border" style={
           R.compose(
@@ -281,6 +323,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
           {!maximized && <div className="resize-arrow" onMouseDown={expandDragStart} onMouseUp={expandDragEnd} onTouchStart={expandDragStart} onTouchEnd={expandDragEnd}>
             <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" className="stroke" size="35" color="blue" height="35" width="35" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" stroke="#bfbfbf" strokeWidth="2" points="8 20 20 20 20 8"></polyline></svg>
           </div>}
+          {resizeDrag.current && <div ref={resizeShadowRef} style={{position: "fixed", background: "black", opacity: "0.5", zIndex: 999}}/>}
           <div onMouseDown={dragStart} onMouseUp={dragEnd} onMouseMove={drag} onTouchStart={dragStart} onTouchEnd={dragEnd} onTouchMove={drag} ref={topRef} className="topbar" style={{ width: maximized ? "100%" : `${R.propOr(width, "width", dimension.current)}px` }}>
             <Box sx={{ justifyContent: 'space-between' }}>
               <Box sx={{float: "right"}}>

@@ -4,9 +4,9 @@ import AppManager from './main/AppManager';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from "react-redux";
 import store from "./redux/store";
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { amber, deepOrange, grey, blue, indigo, blueGrey } from '@mui/material/colors';
+import { grey, blueGrey } from '@mui/material/colors';
 
 
 const getDesignTokens = (mode) => ({

@@ -25,3 +25,6 @@ export const BUILT_IN_APPS = {
         editable: true
     }
 }
+
+export const MAX_WIDTH_PX = 300;
+export const MAX_HEIGHT_PX = 200;
