@@ -196,7 +196,6 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
       expandDragChangeX.current = (e.clientX - initialRx.current);
       expandDragChangeY.current = (e.clientY - initialRy.current);
     }
-    console.log(expandDragChangeX.current, expandDragChangeY.current)
     changeResizeShadowSize(expandDragChangeX.current, expandDragChangeY.current)
   }
 
@@ -263,7 +262,6 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
   const changeResizeShadowSize = (x,y) => {
     resizeShadowRef.current.style.width = `${dimension.current.width + x}px`
     resizeShadowRef.current.style.height = `${dimension.current.height + y + 48}px`
-    console.log(x, y)
   }
 
 
