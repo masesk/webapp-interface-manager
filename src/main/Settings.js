@@ -96,7 +96,7 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
                 }}
 
             >
-                <TableContainer component={Paper} sx={{ p: 5 }}>
+                <TableContainer component={Paper} sx={{ p: 5, height: "100%" }}>
 
                     <Grid container spacing={3}>
                         <Grid item xs={5}>

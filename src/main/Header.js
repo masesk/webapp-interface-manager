@@ -29,8 +29,8 @@ const Header = ({ windows, showWindow, toggleShowing, selectLayout, removeLayout
   return (
 
 
-    <Box className="header" sx={{ bgcolor: 'background.paper', color: 'text.primary', justifyContent: 'space-between' }}>
-      <Box>
+    <Box className="header noselect" sx={{ bgcolor: 'background.paper', color: 'text.primary', justifyContent: 'space-between' }}>
+      <Box sx={{width: "150px", textAlign: "start"}}>
         <Button
           id="basic-button"
           aria-controls={appsAnchor ? 'basic-menu' : undefined}
@@ -102,9 +102,9 @@ const Header = ({ windows, showWindow, toggleShowing, selectLayout, removeLayout
 
 
       </Box>
-      <Box> <Typography variant="h7" >WAIM</Typography></Box>
+      <Box sx={{width: "150px", textAlign: "center"}}> <Typography variant="h7" >WAIM</Typography></Box>
 
-      <Box>
+      <Box sx={{width: "150px", textAlign: "end"}}>
 
         <ButtonGroup aria-label="outlined primary button group">
           <Tooltip title="Settings">

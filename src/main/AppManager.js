@@ -59,7 +59,7 @@ const AppManager = ({ windows, loadApps, addAppDom }) => {
             const appid = R.prop("appid", win)
             const key = R.prop("viewid", win)
             const zIndex = R.prop("zIndex", win)
-            if (R.has(appid, BUILT_IN_APPS)) {
+            if (!R.hasPath([appid, "url"], BUILT_IN_APPS)) {
               return null
             }
             const window = R.path(["apps", appid], windows)
