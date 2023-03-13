@@ -4,7 +4,7 @@ import { uminimizeUpdateIndex, hideWindow, updateIndex, hideWindowId, unminimize
 import * as R from 'ramda'
 import { AiOutlineCloseCircle } from 'react-icons/ai'
 import CloseIcon from '@mui/icons-material/Close';
-import { IconButton, Tab } from '@mui/material'
+import { IconButton, Tab, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 
 
@@ -17,7 +17,7 @@ const MinBar = ({ children, index, uminimizeUpdateIndex, hideWindowId, unminimiz
                 <IconButton>
                 <CloseIcon onClick={e => { hideWindowId(index); e.stopPropagation(); }} size={20} />
                 </IconButton>
-                <Box sx={{pr: 1}}><p>{children}</p></Box>
+                <Box sx={{pr: 1, textOverflow: "ellipsis", width: "inherit"}}><p style={{textAlign: "right", width: "150px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>{children}</p></Box>
             </span>
         }/>
 
