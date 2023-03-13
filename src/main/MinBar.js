@@ -12,7 +12,7 @@ import { Box } from '@mui/system'
 const MinBar = ({ children, index, uminimizeUpdateIndex, hideWindowId, unminimizeWindow, className, hideWindow }) => {
 
     return (
-        <Tab sx={{padding: 0, bgcolor: "background.paper", marginRight: "10px", mr: 1, ml: 1, borderTopRightRadius: "25px", borderTopLeftRadius: "25px"}} label={
+        <Tab onClick={()=> {uminimizeUpdateIndex(index)}} sx={{padding: 0, bgcolor: "background.paper", marginRight: "10px", mr: 1, ml: 1, borderTopRightRadius: "25px", borderTopLeftRadius: "25px"}} label={
             <span style={{display:"flex", minWidth: "150px", justifyContent: "space-between", alignItems: "center"}}>
                 <IconButton>
                 <CloseIcon onClick={e => { hideWindowId(index); e.stopPropagation(); }} size={20} />
