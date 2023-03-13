@@ -14,8 +14,6 @@
     "bootstrap": "^4.4.1",
     "ramda": "^0.27.0",
     "react": "^18.0.0",
-    "react-bootstrap-table-next": "^1.1.0",
-    "react-bootstrap-table2-editor": "^1.4.0",
     "react-dom": "^18.0.0",
     "react-icons": "^3.11.0",
     "react-redux": "^7.2.2",

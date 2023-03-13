@@ -13,6 +13,7 @@ import MinBar from './MinBar';
 import Sender from '../apps/Sender';
 import Receiver from '../apps/Receiver';
 import TwoColumnLayout from './TwoColumnLayout';
+import Tabs from "@mui/material/Tabs"
 import { VERTICAL_2COLUM } from '../redux/constants';
 
 
@@ -80,6 +81,12 @@ const AppManager = ({ windows, loadApps, addAppDom }) => {
       }
       <Settings />
       <div className="footer">
+      <Tabs
+        variant="scrollable"
+        scrollButtons="auto"
+        aria-label="scrollable auto tabs example"
+      >
+      
         {
 
           R.compose(
@@ -94,6 +101,7 @@ const AppManager = ({ windows, loadApps, addAppDom }) => {
 
           )(windows.view)
         }
+        </Tabs>
       </div>
       </>
   );
