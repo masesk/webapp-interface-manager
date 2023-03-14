@@ -23,10 +23,9 @@ const TwoColumnLayout = ({ windows, changeLayoutSize2ColVertical }) => {
                 vertical={false}
                 minSize={"20%"}
                 paneStyle={{ zIndex: 0 }}
-                onChange={(e)=> {console.log(e)}}
                 defaultSize={R.path(["layout", "2ColSizeVertcial"], windows)}
                 onDragStarted={() => { setAllowPointerEvents(false) }}
-                onDragFinished={(size) => { console.log("S", size) }}
+                onDragFinished={(size) => { changeLayoutSize2ColVertical(size); setAllowPointerEvents(true)}}
             >
                 <Allotment.Pane>
                     {!R.has(0, R.path(["layout", "selectedApps"], windows)) ? <LayoutSelector oIndex={0} /> : R.isNil(Render1) ?
