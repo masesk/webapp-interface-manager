@@ -5,7 +5,7 @@ import * as R from 'ramda'
 export const PaneFrame = ({ title, url, allowPointerEvents }) => {
     const [loadingFrame, setLoadingFrame] = useState(true)
     const frameRef = useRef();
-    const paneStyle = {pointerEvents : "auto", height: "calc(100% - 90px)"}
+    const paneStyle = {pointerEvents : "auto", height: "calc(100%)"}
     return (
         <>
             {loadingFrame && <div size="lg" animation="border" variant="secondary" className="frameloading" />}

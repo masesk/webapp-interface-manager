@@ -84,6 +84,7 @@ const AppManager = ({ windows, loadApps, addAppDom }) => {
       <Tabs
         variant="scrollable"
         scrollButtons="auto"
+        value={false}
         aria-label="scrollable auto tabs example"
       >
       

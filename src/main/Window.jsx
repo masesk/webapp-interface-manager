@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../css/App.css';
-import { MdClose, MdCropSquare, MdRemove, MdFilterNone } from 'react-icons/md';
+import CloseIcon from '@mui/icons-material/Close';
+import RemoveIcon from '@mui/icons-material/Remove';
+import FilterNoneIcon from '@mui/icons-material/FilterNone';
+import CropSquareIcon from '@mui/icons-material/CropSquare';
 import * as R from 'ramda'
 import { hideWindow, updateIndex, minimizeWindow } from "../redux/actions";
-import Box from '@mui/material/Box';
+import {Box} from '@mui/material';
 import { MAX_HEIGHT_PX, MAX_WIDTH_PX } from '../constants';
 import { connect } from "react-redux";
 
@@ -325,8 +328,8 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
           <div onMouseDown={dragStart} onMouseUp={dragEnd} onMouseMove={drag} onTouchStart={dragStart} onTouchEnd={dragEnd} onTouchMove={drag} ref={topRef} className="topbar" style={{ width: maximized ? "100%" : `${R.propOr(width, "width", dimension.current)}px` }}>
             <Box sx={{ justifyContent: 'space-between' }}>
               <Box sx={{float: "right"}}>
-                <MdClose onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(index) }} className="hover" size={21} />
-                {maximized ? <MdFilterNone className="hover" size={21} onClick={() => {
+                <CloseIcon onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(index) }} className="hover" size={21} />
+                {maximized ? <FilterNoneIcon className="hover" size={21} onClick={() => {
                   max.current = false
                   setMaximized(!maximized)
                   dimension.current.width = savedimension.current.width
@@ -334,7 +337,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
 
                 }
                 } />
-                  : <MdCropSquare onClick={() => {
+                  : <CropSquareIcon onClick={() => {
                     max.current = true
                     savedimension.current = { width: dimension.current.width, height: dimension.current.height }
                     setMaximized(!maximized)
@@ -343,7 +346,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
                   }} className="hover" size={21} />
 
                 }
-                <MdRemove onClick={() => { minimizeWindow(index) }} className="hover" size={21} />
+                <RemoveIcon onClick={() => { minimizeWindow(index) }} className="hover" size={21} />
               </Box>
               <Box>
                 {title}

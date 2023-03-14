@@ -23,6 +23,15 @@ export const BUILT_IN_APPS = {
         height: 300,
         deletable: true,
         editable: true
+    },    
+    test2: {
+        appid: "test2",
+        title: "test",
+        width: 700,
+        height: 300,
+        deletable: true,
+        url: "https://files.worldwind.arc.nasa.gov/artifactory/apps/web/examples/StarField.html",
+        editable: true
     }
 }
 

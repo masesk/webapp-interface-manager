@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { toggleShowing, deleteWindow, resetDefault, updateWindow } from '../redux/actions'
-import { AiOutlineDelete, AiOutlineEdit, AiOutlineCheck } from 'react-icons/ai'
 import * as R from 'ramda'
 import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
+import CheckIcon from '@mui/icons-material/Check';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {Modal, Typography, Button, TableContainer, TableBody, TableCell, TableRow, TableHead, Paper, Table, IconButton, Switch, TextField, Grid, Divider, Dialog, DialogActions, DialogTitle, DialogContentText, DialogContent } from '@mui/material'
 
 
@@ -33,12 +35,12 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
                         }
                     }}
                         variant={R.equals(appid, editableRow) ? "success" : "secondary"} target="_blank" rel="noopener noreferrer">
-                        {R.equals(appid, editableRow) ? <AiOutlineCheck /> : <AiOutlineEdit size={20} />}
+                        {R.equals(appid, editableRow) ? <CheckIcon /> : <EditIcon size={20} />}
                     </Button>
                 }
                 {
                     R.pathEq(["apps", appid, "deletable"], true, windows) &&
-                    <Button onClick={() => setAppName(appid)} variant="secondary" target="_blank" rel="noopener noreferrer"><AiOutlineDelete size={20} /></Button>
+                    <Button onClick={() => setAppName(appid)} variant="secondary" target="_blank" rel="noopener noreferrer"><DeleteIcon size={20} /></Button>
                 }
             </>
         );

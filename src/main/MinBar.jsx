@@ -2,10 +2,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { uminimizeUpdateIndex, hideWindow, updateIndex, hideWindowId, unminimizeWindow } from '../redux/actions'
 import * as R from 'ramda'
-import { AiOutlineCloseCircle } from 'react-icons/ai'
 import CloseIcon from '@mui/icons-material/Close';
-import { IconButton, Tab, Typography } from '@mui/material'
-import { Box } from '@mui/system'
+import { IconButton, Tab } from '@mui/material'
+import { Box } from '@mui/material'
 
 
 
@@ -14,8 +13,8 @@ const MinBar = ({ children, index, uminimizeUpdateIndex, hideWindowId, unminimiz
     return (
         <Tab onClick={()=> {uminimizeUpdateIndex(index)}} sx={{padding: 0, bgcolor: "background.paper", marginRight: "10px", mr: 1, ml: 1, borderTopRightRadius: "25px", borderTopLeftRadius: "25px"}} label={
             <span style={{display:"flex", minWidth: "150px", justifyContent: "space-between", alignItems: "center"}}>
-                <IconButton>
-                <CloseIcon onClick={e => { hideWindowId(index); e.stopPropagation(); }} size={20} />
+                <IconButton component="span" onClick={e => { hideWindowId(index); e.stopPropagation(); }}>
+                <CloseIcon  size={20} />
                 </IconButton>
                 <Box sx={{pr: 1, textOverflow: "ellipsis", width: "inherit"}}><p style={{textAlign: "right", width: "150px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>{children}</p></Box>
             </span>
