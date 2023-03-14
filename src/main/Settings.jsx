@@ -6,7 +6,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {Modal, Typography, Button, TableContainer, TableBody, TableCell, TableRow, TableHead, Paper, Table, IconButton, Switch, TextField, Grid, Divider, Dialog, DialogActions, DialogTitle, DialogContentText, DialogContent, Box } from '@mui/material'
+import { Modal, Typography, Button, Tab, Tabs, TableContainer, TableBody, TableCell, TableRow, TableHead, Paper, Table, IconButton, Switch, TextField, Grid, Divider, Dialog, DialogActions, DialogTitle, DialogContentText, DialogContent, Box } from '@mui/material'
 
 
 
@@ -85,7 +85,7 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
 
     return (
         <>
-            
+
             <Modal
                 open={R.propOr(false, "showing", settings)}
                 onClose={handleClose}
@@ -96,9 +96,13 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
                 }}
 
             >
-                <TableContainer component={Paper} sx={{overflow: "hidden", p: 2}}>
+                <TableContainer component={Paper} sx={{ overflow: "hidden", p: 2 }}>
 
-                    <Grid container spacing={3} sx={{height: 50}}>
+
+
+
+
+                    <Grid container spacing={3} sx={{ height: 50 }}>
                         <Grid item xs={5}>
                             <Typography variant="h4">SETTINGS</Typography>
                         </Grid>
@@ -112,44 +116,48 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
                         </Grid>
                     </Grid>
                     <Divider sx={{ mb: 2, mt: 2 }} />
-                    <Box sx={{height: "calc(100vh - 125px)", overflow: "auto"}}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>App ID</TableCell>
-                                <TableCell>Title</TableCell>
-                                <TableCell>Width</TableCell>
-                                <TableCell>Height</TableCell>
-                                <TableCell>URL</TableCell>
-                                <TableCell>Singleton</TableCell>
-                                <TableCell>Deletable</TableCell>
-                                <TableCell>Controls</TableCell>
+                    <Box sx={{ height: "calc(100vh - 125px)", overflow: "auto" }}>
+                        <Tabs sx={{bgcolor: "background.paper"}} value={0} onChange={()=> {console.log()}}>
+                            <Tab label="Apps"  />
+                        </Tabs>
+            
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>App ID</TableCell>
+                                    <TableCell>Title</TableCell>
+                                    <TableCell>Width</TableCell>
+                                    <TableCell>Height</TableCell>
+                                    <TableCell>URL</TableCell>
+                                    <TableCell>Singleton</TableCell>
+                                    <TableCell>Deletable</TableCell>
+                                    <TableCell>Controls</TableCell>
 
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
 
-                            {
-                                R.compose(R.map(([index, window]) => {
-                                    return (
-                                        <TableRow key={index}>
+                                {
+                                    R.compose(R.map(([index, window]) => {
+                                        return (
+                                            <TableRow key={index}>
 
-                                            <TableCell>{R.prop("appid", window)}</TableCell>
-                                            {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("title", window)} inputRef={titleRef} placeholder="Title" /></TableCell> : <TableCell>{R.prop("title", window)}</TableCell>}
-                                            {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("width", window)} inputRef={widthRef} placeholder="Width" /></TableCell> : <TableCell>{R.prop("width", window)}</TableCell>}
-                                            {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("height", window)} inputRef={heightRef} placeholder="Height" /></TableCell> : <TableCell>{R.prop("height", window)}</TableCell>}
-                                            {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("url", window)} inputRef={urlRef} placeholder="URL" /></TableCell> : <TableCell>{R.prop("url", window)}</TableCell>}
-                                            {R.equals(index, editableRow) ? <TableCell><Switch defaultChecked={R.prop("single", window)} inputRef={singletonRef} /></TableCell> : <TableCell>{R.toString(R.propOr(false, "single", window))}</TableCell>}
-                                            {R.equals(index, editableRow) ? <TableCell><Switch defaultChecked={R.prop("deletable", window)} inputRef={deletableRef} /></TableCell> : <TableCell>{R.toString(R.propOr(false, "deletable", window))}</TableCell>}
-                                            <TableCell>{renderButtons(R.prop("appid", window), index)}</TableCell>
-                                        </TableRow>)
-                                }),
-                                    R.toPairs
+                                                <TableCell>{R.prop("appid", window)}</TableCell>
+                                                {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("title", window)} inputRef={titleRef} placeholder="Title" /></TableCell> : <TableCell>{R.prop("title", window)}</TableCell>}
+                                                {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("width", window)} inputRef={widthRef} placeholder="Width" /></TableCell> : <TableCell>{R.prop("width", window)}</TableCell>}
+                                                {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("height", window)} inputRef={heightRef} placeholder="Height" /></TableCell> : <TableCell>{R.prop("height", window)}</TableCell>}
+                                                {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("url", window)} inputRef={urlRef} placeholder="URL" /></TableCell> : <TableCell>{R.prop("url", window)}</TableCell>}
+                                                {R.equals(index, editableRow) ? <TableCell><Switch defaultChecked={R.prop("single", window)} inputRef={singletonRef} /></TableCell> : <TableCell>{R.toString(R.propOr(false, "single", window))}</TableCell>}
+                                                {R.equals(index, editableRow) ? <TableCell><Switch defaultChecked={R.prop("deletable", window)} inputRef={deletableRef} /></TableCell> : <TableCell>{R.toString(R.propOr(false, "deletable", window))}</TableCell>}
+                                                <TableCell>{renderButtons(R.prop("appid", window), index)}</TableCell>
+                                            </TableRow>)
+                                    }),
+                                        R.toPairs
 
-                                )(windows.apps)
-                            }
-                        </TableBody>
-                    </Table>
+                                    )(windows.apps)
+                                }
+                            </TableBody>
+                        </Table>      
                     </Box>
                 </TableContainer>
 
