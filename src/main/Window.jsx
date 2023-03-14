@@ -348,7 +348,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
                 }
                 <RemoveIcon onClick={() => { minimizeWindow(index) }} className="hover" size={21} />
               </Box>
-              <Box>
+              <Box className="noselect">
                 {title}
               </Box>
             </Box>

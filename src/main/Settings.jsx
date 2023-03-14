@@ -6,7 +6,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {Modal, Typography, Button, TableContainer, TableBody, TableCell, TableRow, TableHead, Paper, Table, IconButton, Switch, TextField, Grid, Divider, Dialog, DialogActions, DialogTitle, DialogContentText, DialogContent } from '@mui/material'
+import {Modal, Typography, Button, TableContainer, TableBody, TableCell, TableRow, TableHead, Paper, Table, IconButton, Switch, TextField, Grid, Divider, Dialog, DialogActions, DialogTitle, DialogContentText, DialogContent, Box } from '@mui/material'
 
 
 
@@ -89,8 +89,6 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
             <Modal
                 open={R.propOr(false, "showing", settings)}
                 onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
                 sx={{
                     minHeight: "100vh",
                     bgcolor: "background.default",
@@ -98,14 +96,14 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
                 }}
 
             >
-                <TableContainer component={Paper} sx={{ p: 5, height: "100%" }}>
+                <TableContainer component={Paper} sx={{overflow: "hidden", p: 2}}>
 
-                    <Grid container spacing={3}>
+                    <Grid container spacing={3} sx={{height: 50}}>
                         <Grid item xs={5}>
                             <Typography variant="h4">SETTINGS</Typography>
                         </Grid>
                         <Grid item xs={4}>
-                            <Button variant="contained" color="success" onClick={() => setShowingConfirmReset(true)}>Reset to default</Button>
+                            <Button variant="contained" size="small" color="success" onClick={() => setShowingConfirmReset(true)}>Reset to default</Button>
                         </Grid>
                         <Grid item xs={3}>
                             <IconButton sx={{ float: "right" }} onClick={() => { toggleShowing() }}>
@@ -114,8 +112,8 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
                         </Grid>
                     </Grid>
                     <Divider sx={{ mb: 2, mt: 2 }} />
-
-                    <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+                    <Box sx={{height: "calc(100vh - 125px)", overflow: "auto"}}>
+                    <Table>
                         <TableHead>
                             <TableRow>
                                 <TableCell>App ID</TableCell>
@@ -152,6 +150,7 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
                             }
                         </TableBody>
                     </Table>
+                    </Box>
                 </TableContainer>
 
 

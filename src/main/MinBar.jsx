@@ -9,16 +9,18 @@ import { Box } from '@mui/material'
 
 
 const MinBar = ({ children, index, uminimizeUpdateIndex, hideWindowId, unminimizeWindow, className, hideWindow }) => {
-
+    React.useEffect(() => {
+        console.log(className)
+    }, [className])
     return (
-        <Tab onClick={()=> {uminimizeUpdateIndex(index)}} sx={{padding: 0, bgcolor: "background.paper", marginRight: "10px", mr: 1, ml: 1, borderTopRightRadius: "25px", borderTopLeftRadius: "25px"}} label={
-            <span style={{display:"flex", minWidth: "150px", justifyContent: "space-between", alignItems: "center"}}>
+        <Tab onClick={() => { uminimizeUpdateIndex(index) }} sx={{ padding: 0, bgcolor: className === "showing" ? "background.paper" : "primary.main", color:  className === "showing" ? "background.paper.contrastText" : "primary.contrastText", marginRight: "10px", mr: 1, ml: 1, borderTopRightRadius: "25px", borderTopLeftRadius: "25px" }} label={
+            <span style={{ display: "flex", minWidth: "150px", justifyContent: "space-between", alignItems: "center" }}>
                 <IconButton component="span" onClick={e => { hideWindowId(index); e.stopPropagation(); }}>
-                <CloseIcon  size={20} />
+                    <CloseIcon size={20} sx={{ color: className === "showing" ? "background.paper.contrastText" : "primary.contrastText" }} />
                 </IconButton>
-                <Box sx={{pr: 1, textOverflow: "ellipsis", width: "inherit"}}><p style={{textAlign: "right", width: "150px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden"}}>{children}</p></Box>
+                <Box sx={{ pr: 1, textOverflow: "ellipsis", width: "inherit" }}><p style={{ textAlign: "right", width: "150px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>{children}</p></Box>
             </span>
-        }/>
+        } />
 
     )
 
