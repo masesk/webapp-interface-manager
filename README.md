@@ -1,4 +1,8 @@
+<img width="300px" src="src/img/WAIM.svg"/>
+
 # webapp-interface-manager
+
+
 Web Application Inteface Manager (WAIM) allows the users to show multiple displays served locally or on the web.
 WAIM also supports React components; allowing users to add their render components directly to the app manager.
 
@@ -129,12 +133,10 @@ export const BUILT_IN_APPS = {
     },
 }
 ```
-2. Add a new StaticWindow component to `AppManager.js`, referencing the `appid` and including your custom component as its child component
+2. Add your app component to the DOM list in the `AppManager.js` useEffect
 ```
-{/* Add all static windows/apps below */}
- <StaticWindow appid="mynewapp">
-    <MyCustomReactComponent/>
- </StaticWindow>
+{/* Add all static apps below */}
+addAppDom("mynewapp", <MyNewAppComponent/>)
 ```
 
 ## Modify

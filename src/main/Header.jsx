@@ -16,6 +16,7 @@ import { VERTICAL_2COLUM } from '../redux/constants'
 import twoColLogo from '../img/layouts-2-icon.png'
 import AppsIcon from '@mui/icons-material/Apps';
 import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
+import { ReactComponent as WAIMLogo } from '../img/WAIM.svg'
 
 
 const Header = ({ windows, showWindow, toggleShowing, selectLayout, removeLayout }) => {
@@ -116,7 +117,7 @@ const Header = ({ windows, showWindow, toggleShowing, selectLayout, removeLayout
 
 
       </Box>
-      <Box sx={{ width: "250px", textAlign: "center" }}> <Typography variant="h7" >WAIM</Typography></Box>
+      <Box sx={{ width: "250px", textAlign: "center" }}> <WAIMLogo  width="100px"/></Box>
 
       <Box sx={{ width: "250px", textAlign: "end" }}>
 
