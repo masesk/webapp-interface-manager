@@ -74,7 +74,7 @@ const AppManager = ({ windows, loadApps, addAppDom }) => {
       R.toPairs
     )(windows.apps)
     pages = R.append({
-      path: "",
+      path: "*",
       element: <MainPage />,
       errorElement: <ErrorBoundary/>
     }, pages)
