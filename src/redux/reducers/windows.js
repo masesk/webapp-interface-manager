@@ -1,5 +1,5 @@
 import {
-  CREATE_WINDOW,
+  CREATE_APP,
   SHOW_WINDOW,
   HIDE_WINDOW,
   UPDATE_INDEX,
@@ -15,7 +15,9 @@ import {
   REMOVE_LAYOUT, 
   SELECT_LAYOUT, 
   SELECT_LAYOUT_APP,
-  CHANGE_LAYOUT_SIZE_2COL_VER
+  CHANGE_LAYOUT_SIZE_2COL_VER,
+  CREATE_NOTIFICATION,
+  REMOVE_NOTIFICATION
 } from "../actionTypes";
 import * as R from 'ramda'
 import { BUILT_IN_APPS } from '../../constants'
@@ -30,7 +32,9 @@ const initialState = {
   layout: {
     selectedLayout: undefined,
     selectedApps: {}
-  }
+  },
+  notificationCount: 0,
+  notifications: {}
 };
 
 const save = (newstate) => {
@@ -94,7 +98,7 @@ export default function main(state = initialState, action) {
       )(state.view)
       return R.assoc("view", R.remove(index, 1, instance), state)
     }
-    case CREATE_WINDOW: {
+    case CREATE_APP: {
       const payload = action.payload;
       const window = {
         appid: payload.appid,
@@ -331,6 +335,22 @@ export default function main(state = initialState, action) {
       const newState = R.assocPath(["layout", "2ColSizeVertcial"], size, state)
       window.localStorage.setItem(appNameLayout, JSON.stringify(R.prop("layout", newState)))
       return newState
+    }
+
+    case CREATE_NOTIFICATION: {
+      console.log(action.payload)
+      const {message, type, duration} = action.payload
+      return R.compose(
+        R.assocPath(["notifications", state.notificationCount], {message, type, duration}),
+        R.assoc("notificationCount", R.inc(R.prop("notificationCount", state)))
+      )(state)
+    }
+
+    case REMOVE_NOTIFICATION: {
+      const {id} = action.payload
+      return R.assoc("notifications", R.pick(R.filter((n)=> {
+        return n != id
+      }, R.keys(state.notifications)), state.notifications), state)
     }
 
     default:

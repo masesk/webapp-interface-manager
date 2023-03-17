@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import AppManager from './main/AppManager';
+import AppManager from './waim/AppManager';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from "react-redux";
 import store from "./redux/store";
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { grey, blueGrey } from '@mui/material/colors';
 

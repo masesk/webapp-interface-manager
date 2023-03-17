@@ -361,7 +361,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
             {!children && <iframe key={viewid} ref={frameRef} onLoad={() => {
               setLoading(false);
               try {
-                frameRef.current.contentWindow.messageHandler = window.messageHandler
+                frameRef.current.contentWindow.waim = window.waim
               } catch (e) {
                 console.error(e)
               }

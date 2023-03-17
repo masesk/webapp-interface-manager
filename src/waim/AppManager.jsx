@@ -4,8 +4,7 @@ import * as R from 'ramda'
 import AddWebApp from '../apps/AddWebApp'
 import { connect } from 'react-redux'
 import { loadApps, addAppDom } from '../redux/actions'
-import Sender from '../apps/Sender';
-import Receiver from '../apps/Receiver';
+import ChatClient from '../apps/ChatClient';
 import MainPage from './MainPage';
 import {
   createBrowserRouter,
@@ -20,8 +19,7 @@ const AppManager = ({ windows, loadApps, addAppDom }) => {
   useEffect(() => {
     {/* Add all static apps below */ }
     loadApps()
-    addAppDom("sender", <Sender />)
-    addAppDom("receiver", <Receiver />)
+    addAppDom("chatclient", <ChatClient />)
     addAppDom("addwebapp", <AddWebApp />)
   }, [addAppDom, loadApps])
 

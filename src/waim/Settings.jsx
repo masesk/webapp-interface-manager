@@ -104,7 +104,7 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
 
                     <Grid container spacing={3} sx={{ height: 50 }}>
                         <Grid item xs={5}>
-                            <Typography variant="h4">SETTINGS</Typography>
+                            <Typography variant="h6">SETTINGS</Typography>
                         </Grid>
                         <Grid item xs={4}>
                             <Button variant="contained" size="small" color="success" onClick={() => setShowingConfirmReset(true)}>Reset to default</Button>
@@ -117,7 +117,7 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
                     </Grid>
                     <Divider sx={{ mb: 2, mt: 2 }} />
                     <Box sx={{ height: "calc(100vh - 125px)", overflow: "auto" }}>
-                        <Tabs sx={{bgcolor: "background.paper"}} value={0} onChange={()=> {console.log()}}>
+                        <Tabs fullWidth sx={{bgcolor: "background.paper"}} value={0} onChange={()=> {console.log()}}>
                             <Tab label="Apps"  />
                         </Tabs>
             
@@ -142,13 +142,13 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
                                         return (
                                             <TableRow key={index}>
 
-                                                <TableCell>{R.prop("appid", window)}</TableCell>
-                                                {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("title", window)} inputRef={titleRef} placeholder="Title" /></TableCell> : <TableCell>{R.prop("title", window)}</TableCell>}
-                                                {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("width", window)} inputRef={widthRef} placeholder="Width" /></TableCell> : <TableCell>{R.prop("width", window)}</TableCell>}
-                                                {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("height", window)} inputRef={heightRef} placeholder="Height" /></TableCell> : <TableCell>{R.prop("height", window)}</TableCell>}
-                                                {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("url", window)} inputRef={urlRef} placeholder="URL" /></TableCell> : <TableCell>{R.prop("url", window)}</TableCell>}
-                                                {R.equals(index, editableRow) ? <TableCell><Switch defaultChecked={R.prop("single", window)} inputRef={singletonRef} /></TableCell> : <TableCell>{R.toString(R.propOr(false, "single", window))}</TableCell>}
-                                                {R.equals(index, editableRow) ? <TableCell><Switch defaultChecked={R.prop("deletable", window)} inputRef={deletableRef} /></TableCell> : <TableCell>{R.toString(R.propOr(false, "deletable", window))}</TableCell>}
+                                                <TableCell title={R.prop("appid", window)}>{R.prop("appid", window)}</TableCell>
+                                                {R.equals(index, editableRow) ? <TableCell ><TextField size="small" defaultValue={R.prop("title", window)} inputRef={titleRef} placeholder="Title" /></TableCell> : <TableCell className="settings-cell" title={R.prop("title", window)}>{R.prop("title", window)}</TableCell>}
+                                                {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("width", window)} inputRef={widthRef} placeholder="Width" /></TableCell> : <TableCell className="settings-cell" title={R.prop("width", window)}>{R.prop("width", window)}</TableCell>}
+                                                {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("height", window)} inputRef={heightRef} placeholder="Height" /></TableCell> : <TableCell className="settings-cell" title={R.prop("height", window)}>{R.prop("height", window)}</TableCell>}
+                                                {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("url", window)} inputRef={urlRef} placeholder="URL" /></TableCell> : <TableCell className="settings-cell" title={R.prop("url", window)}>{R.prop("url", window)}</TableCell>}
+                                                {R.equals(index, editableRow) ? <TableCell><Switch defaultChecked={R.prop("single", window)} inputRef={singletonRef} /></TableCell> : <TableCell className="settings-cell">{R.toString(R.propOr(false, "single", window))}</TableCell>}
+                                                {R.equals(index, editableRow) ? <TableCell><Switch defaultChecked={R.prop("deletable", window)} inputRef={deletableRef} /></TableCell> : <TableCell className="settings-cell">{R.toString(R.propOr(false, "deletable", window))}</TableCell>}
                                                 <TableCell>{renderButtons(R.prop("appid", window), index)}</TableCell>
                                             </TableRow>)
                                     }),

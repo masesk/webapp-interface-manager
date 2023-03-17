@@ -2,10 +2,7 @@ import React from 'react'
 import * as R from 'ramda'
 import { connect } from 'react-redux'
 import { showWindow, toggleShowing, selectLayout, removeLayout } from '../redux/actions'
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import { ButtonGroup, Tooltip } from '@mui/material'
+import {Box, Button, ButtonGroup, Tooltip} from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 import MenuItem from '@mui/material/MenuItem';

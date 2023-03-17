@@ -3,20 +3,16 @@ import { connect } from 'react-redux'
 import { uminimizeUpdateIndex, hideWindow, updateIndex, hideWindowId, unminimizeWindow } from '../redux/actions'
 import * as R from 'ramda'
 import CloseIcon from '@mui/icons-material/Close';
-import { IconButton, Tab } from '@mui/material'
-import { Box } from '@mui/material'
+import { IconButton, Tab, Box } from '@mui/material'
 
 
 
-const MinBar = ({ children, index, uminimizeUpdateIndex, hideWindowId, unminimizeWindow, className, hideWindow }) => {
-    React.useEffect(() => {
-        console.log(className)
-    }, [className])
+const MinBar = ({ children, index, uminimizeUpdateIndex, hideWindowId, unminimizeWindow, minimized, hideWindow }) => {
     return (
-        <Tab onClick={() => { uminimizeUpdateIndex(index) }} sx={{ padding: 0, bgcolor: className === "showing" ? "background.paper" : "primary.main", color:  className === "showing" ? "background.paper.contrastText" : "primary.contrastText", marginRight: "10px", mr: 1, ml: 1, borderTopRightRadius: "25px", borderTopLeftRadius: "25px" }} label={
+        <Tab onClick={() => { uminimizeUpdateIndex(index) }} sx={{ padding: 0, bgcolor: !minimized ? "background.paper" : "primary.main", color: !minimized ? "background.paper.contrastText" : "primary.contrastText", marginRight: "10px", mr: 1, ml: 1, borderTopRightRadius: "25px", borderTopLeftRadius: "25px" }} label={
             <span style={{ display: "flex", minWidth: "150px", justifyContent: "space-between", alignItems: "center" }}>
                 <IconButton component="span" onClick={e => { hideWindowId(index); e.stopPropagation(); }}>
-                    <CloseIcon size={20} sx={{ color: className === "showing" ? "background.paper.contrastText" : "primary.contrastText" }} />
+                    <CloseIcon size={20} sx={{ color: !minimized ? "background.paper.contrastText" : "primary.contrastText" }} />
                 </IconButton>
                 <Box sx={{ pr: 1, textOverflow: "ellipsis", width: "inherit" }}><p style={{ textAlign: "right", width: "150px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>{children}</p></Box>
             </span>

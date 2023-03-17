@@ -1,6 +1,6 @@
 import {
   SHOW_WINDOW,
-  CREATE_WINDOW,
+  CREATE_APP,
   HIDE_WINDOW,
   TOGGLE_SETTINGS,
   UPDATE_INDEX,
@@ -16,7 +16,9 @@ import {
   ADD_APP_DOM,
   SELECT_LAYOUT_APP,
   REMOVE_LAYOUT,
-  CHANGE_LAYOUT_SIZE_2COL_VER
+  CHANGE_LAYOUT_SIZE_2COL_VER,
+  CREATE_NOTIFICATION,
+  REMOVE_NOTIFICATION
 } from "./actionTypes";
 
 
@@ -30,8 +32,8 @@ export const showWindow = appid => ({
   payload: { appid }
 })
 
-export const createWindow = (appid, title, width, height, url, single, deletable, editable) => ({
-  type: CREATE_WINDOW,
+export const createApp = (appid, title, width, height, url, single, deletable, editable) => ({
+  type: CREATE_APP,
   payload: { appid, title, width, height, url, single, deletable, editable }
 })
 
@@ -114,4 +116,13 @@ export const changeLayoutSize2ColVertical = (size) => ({
   payload: {size}
 })
 
+export const createNotification = (message, type, duration) => ({
+  type: CREATE_NOTIFICATION,
+  payload: {message, type, duration}
+})
+
+export const removeNotification = (id) => ({
+  type: REMOVE_NOTIFICATION,
+  payload: {id}
+})
 
