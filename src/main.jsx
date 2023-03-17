@@ -4,8 +4,7 @@ import AppManager from './waim/AppManager';
 import * as serviceWorker from './serviceWorker';
 import { Provider } from "react-redux";
 import store from "./redux/store";
-import { createTheme, ThemeProvider } from '@mui/material';
-import CssBaseline from '@mui/material/CssBaseline';
+import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 import { grey, blueGrey } from '@mui/material/colors';
 
 

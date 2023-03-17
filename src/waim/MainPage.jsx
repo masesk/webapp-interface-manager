@@ -59,6 +59,7 @@ const MainPage = ({ windows, createApp, updateIndex, createNotification, removeN
                 duration: 4000
             })
         })
+        console.info("WAIM successfully loaded")
 
     }, [])
 

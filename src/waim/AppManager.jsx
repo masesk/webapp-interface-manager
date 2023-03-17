@@ -56,15 +56,10 @@ const AppManager = ({ windows, loadApps, addAppDom }) => {
   }
 
   const createPages = () => {
-    let pages = [{
-      path: "/",
-      element: <MainPage />,
-      errorElement: <ErrorBoundary/>
-    }]
+    let pages = []
     R.compose(
       R.map(([key, value]) => {
-        pages = R.append({ path: `/${key}`, element: pageWrapper(value) }, pages)
-        //  /console.log(key, value)
+        pages = R.append({ path: `${key}`, element: pageWrapper(value) }, pages)
       }),
       R.toPairs
     )(windows.appDoms)
@@ -72,13 +67,17 @@ const AppManager = ({ windows, loadApps, addAppDom }) => {
     R.compose(
       R.map(([key, value]) => {
         if (R.has("url", value)) {
-          pages = R.append({ path: `/${key}`, element: framePageWrapper(value.url) }, pages)
-
+          pages = R.append({ path: `${key}`, element: framePageWrapper(value.url) }, pages)
         }
       },
       ),
       R.toPairs
     )(windows.apps)
+    pages = R.append({
+      path: "",
+      element: <MainPage />,
+      errorElement: <ErrorBoundary/>
+    }, pages)
     return pages
   }
 
