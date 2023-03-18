@@ -22,7 +22,6 @@ WAIM also supports React components; allowing users to add their render componen
 * Support for database storage.
 * User management and authentication.
 * User autherization and app access levels.
-* Remote, OS-level, application UI rendering as a app.
 
 
 ## Support
@@ -33,11 +32,12 @@ WAIM also supports React components; allowing users to add their render componen
 * **MS Edge (v89+)**
 
 ### Supported OS
+*
 * **Windows 10**
 * **Ubuntu 18.04**
 * **Ubuntu 20.04**
 
-**NOTE**: Does not support mobile devices and Safari web browsers.
+**NOTE**: Minimal/initial support for mobile devices and Safari web browsers.
 
 ## Install
 
@@ -75,11 +75,11 @@ For each new app in `src/constants.js`, provide:
 ### As URL to a page
 
 #### In Code
-Using `StaticWindow` React component, reference the `id` that uses the URL you need. 
+Using `src/constants.js` to add your pre-built UI endpoint and URL.
 
 Example:
-1. Change `src/constants.js` to include your new app
-```
+Change `src/constants.js` to include your new app
+```js
 export const BUILT_IN_APPS = {
     .
     ..
@@ -93,34 +93,38 @@ export const BUILT_IN_APPS = {
     },
 }
 ```
-2. Add a new StaticWindow component to `AppManager.js`
-
-```
- {/* Add all static windows/apps below */}
- <StaticWindow appid="mynewapp"/>
-```
-
-3. Add your app component to the DOM list in the `AppManager.js` useEffect
-
-```
-{/* Add all static apps below */}
-addAppDom("mynewapp", <MyNewAppComponent/>)
-```
 
 
 
 #### In browser
-After running the app manager, navigate to the top left and open `Add New Web App` window to add new app providing `appid`, `title`, `url`, `width`, `height`, `deletable`, and `single` from the UI selection.
+After running WAIM, navigate to the top left and open `Add New Web App` window to add new app providing `appid`, `title`, `url`, `width`, `height`, `deletable`, and `single` from the UI selection.
 
-The `Add Web App` React component uses the `createWindow` redux action passing in the mentioned parameters. Any other React component can perform this action, given it connects to the Redux store.
-See `src/apps/AddWebApp.js` for a working example.
+The `Add Web App` React component uses the the built in messaging system and hooks into `window.waim.messageHandler` to publish an object to the `__create_new_app__` channel containing the object below:
+```js
+{
+    id: sting,
+    title: string,
+    width: number,
+    height: number,
+    url: string,
+    single: true|false,
+    deletable: true|false,
+    editable: true|false
+}
+```
+
+WAIM will respond with the appid and a status object on the `__create_new_app_response__` channel in the following format:
+```js
+{
+    id: string,
+    status: "success"|"failure"
+}
+```
 
 ### As a React Component
-Using `StaticWindow` React component, reference the `id` that uses the URL you need. 
 
-Example:
 1. Change `src/constants.js` to include your new app
-```
+```js
 export const BUILT_IN_APPS = {
     .
     ..
@@ -134,7 +138,7 @@ export const BUILT_IN_APPS = {
 }
 ```
 2. Add your app component to the DOM list in the `AppManager.js` useEffect
-```
+```js
 {/* Add all static apps below */}
 addAppDom("mynewapp", <MyNewAppComponent/>)
 ```
@@ -163,6 +167,38 @@ addAppDom("mynewapp", <MyNewAppComponent/>)
     * `listen("channelName", callback)`. In this instance, `callback` is a function that contains 1 parameter: the data sent by the publisher.
 * Applications residing on a different domain (as iframes) will not be able to use this feature.
 
+
+### Built in Channel
+1. `__create_notification__`: Use this channel to show a framework wide notification.
+```js
+{
+    message: string,
+    type: "info"|"error"|"warning"|"success",
+    duration: number -> miliseconds
+}
+```
+
+2. `__create_new_app__`: Use this channel to create new apps from other WAIM apps.
+```js
+{
+    id: sting,
+    title: string,
+    width: number,
+    height: number,
+    url: string,
+    single: true|false,
+    deletable: true|false,
+    editable: true|false
+}
+```
+
+3. `__create_new_app_response_`: Use this channel to receive a response on an app creation request.
+```js
+{
+    id: string,
+    status: "success"|"failure"
+}
+```
 
 ## Build
 

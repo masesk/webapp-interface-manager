@@ -40,7 +40,6 @@ const MainPage = ({ windows, createApp, updateIndex, createNotification, removeN
         })
 
         window.waim.messageHandler.listen("__create_new_app__", (data) => {
-            console.log(data.id, windowsAppRefs.current, R.has(data.id, windowsAppRefs.current))
             if (R.has(data.id, windowsAppRefs.current)) {
                 window.waim.messageHandler.publish("__create_new_app_response__", { id: data.id, status: "failure" })
                 window.waim.messageHandler.publish("__create_notification__", {
