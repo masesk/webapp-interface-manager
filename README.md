@@ -162,10 +162,11 @@ addAppDom("mynewapp", <MyNewAppComponent/>)
 
 * Each application can attempt to access a version of `messageHandler` to subscribe and publish to channels.
 
-* To grab the instance, use `window.messageHandler`, which contains 2 functions:
+* To grab the instance, use `wain.window.messageHandler`, which contains 2 functions:
     * `publish("channelName", data)`
     * `listen("channelName", callback)`. In this instance, `callback` is a function that contains 1 parameter: the data sent by the publisher.
 * Applications residing on a different domain (as iframes) will not be able to use this feature.
+* Application pre-built and residing on the same domain as the server (no CORS issues) can access the waim messaging framework after the webpage is loaded on `window.waim.messageHandler`
 
 
 ### Built in Channel
@@ -192,7 +193,7 @@ addAppDom("mynewapp", <MyNewAppComponent/>)
 }
 ```
 
-3. `__create_new_app_response_`: Use this channel to receive a response on an app creation request.
+3. `__create_new_app_response__`: Use this channel to receive a response on an app creation request.
 ```js
 {
     id: string,
