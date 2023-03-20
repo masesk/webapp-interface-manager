@@ -162,7 +162,7 @@ addAppDom("mynewapp", <MyNewAppComponent/>)
 
 * Each application can attempt to access a version of `messageHandler` to subscribe and publish to channels.
 
-* To grab the instance, use `waim.window.messageHandler`, which contains 2 functions:
+* To grab the instance, use `window.waim.messageHandler`, which contains 2 functions:
     * `publish("channelName", data)`
     * `listen("channelName", callback)`. In this instance, `callback` is a function that contains 1 parameter: the data sent by the publisher.
 * Applications residing on a different domain (as iframes) will not be able to use this feature.
