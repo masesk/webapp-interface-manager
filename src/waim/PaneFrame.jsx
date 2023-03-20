@@ -12,7 +12,7 @@ export const PaneFrame = ({ title, url, allowPointerEvents }) => {
             <iframe ref={frameRef} onLoad={() => {
                 setLoadingFrame(false);
                 try {
-                    frameRef.current.contentWindow.messageHandler = window.messageHandler
+                    frameRef.current.contentWindow.waim = window.waim
                 } catch (e) {
                     console.error(e)
                 }

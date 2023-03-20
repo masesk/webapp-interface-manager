@@ -57,8 +57,8 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
     currentY.current = -250
     window.addEventListener('resize', () => {
       if (max.current) {
-        dimension.current.width = window.parent.innerWidth - 7
-        dimension.current.height = window.parent.innerHeight - 137
+        dimension.current.width = window.parent.innerWidth
+        dimension.current.height = window.parent.innerHeight - 145
         setFrameStyle(f => R.merge(f, {
 
           transform: "none",
@@ -341,7 +341,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
                     max.current = true
                     savedimension.current = { width: dimension.current.width, height: dimension.current.height }
                     setMaximized(!maximized)
-                    dimension.current = { width: window.parent.innerWidth - 7, height: window.parent.innerHeight - 137 }
+                    dimension.current = { width: window.parent.innerWidth, height: window.parent.innerHeight - 145 }
 
                   }} className="hover" size={21} />
 
