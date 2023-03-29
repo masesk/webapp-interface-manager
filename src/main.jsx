@@ -8,6 +8,9 @@ import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 import { grey, blueGrey } from '@mui/material/colors';
 
 
+// create a palette for themes
+// the mode can be used to specifcy specific color schemes
+// currently only dark and light are supported
 const getDesignTokens = (mode) => ({
   palette: {
     mode,
@@ -61,10 +64,13 @@ const getDesignTokens = (mode) => ({
   }
 });
 
+// we pass the value of the mode here
 const theme = createTheme(getDesignTokens('dark'));
 
-
+// generate the root dom
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
+// pass it to the redux store provider, theme provide, and css baseline components
 root.render(
   <Provider store={store}>
     <ThemeProvider theme={theme}>

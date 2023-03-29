@@ -6,8 +6,7 @@ import Settings from './Settings'
 import StaticWindow from './StaticWindow'
 import { BUILT_IN_APPS } from '../constants'
 import MinBar from './MinBar';
-import TwoColumnLayout from './TwoColumnLayout';
-import { VERTICAL_2COLUM } from '../redux/constants';
+import SplitLayout from './SplitLayout';
 import { createApp, updateIndex, createNotification, removeNotification } from "../redux/actions"
 import { Snackbar, Box, Alert, Tabs } from "@mui/material"
 import CloseIcon from "@mui/icons-material/Close"
@@ -83,7 +82,12 @@ const MainPage = ({ windows, createApp, updateIndex, createNotification, removeN
                     R.toPairs
                 )(windows.appDoms)
             }
-            {(R.equals(R.path(["layout", "selectedLayout"], windows), VERTICAL_2COLUM)) && <TwoColumnLayout />}
+            {
+                (!R.isNil(R.path(["layout", "type"], windows))) && 
+                <div id="paneGrandParent" style={{height: "calc(100vh - 100px)"}}>
+                <SplitLayout indexPath={[]} layoutType={R.path(["layout", "type"], windows)} />
+                </div>
+            }
             {
                 R.compose(
                     R.map(([index, win]) => {
@@ -104,12 +108,14 @@ const MainPage = ({ windows, createApp, updateIndex, createNotification, removeN
                             key={key}
                             viewid={key}
                             minimized={R.prop("minimized", win)}
-                            height={window.height} />
+                            height={window.height}
+                            imageUrl={window.imageUrl}
+                            />
                     }),
                     R.toPairs,
                 )(windows.view)
             }
-            <Settings />
+            
             <div className="footer">
                 <Tabs
                     variant="scrollable"
@@ -158,6 +164,7 @@ const MainPage = ({ windows, createApp, updateIndex, createNotification, removeN
                     )(windows.notifications)
                 }
             </Box>
+            <Settings />
         </>
     )
 }

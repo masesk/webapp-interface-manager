@@ -12,15 +12,19 @@ import {
   RESET_DEFAULT,
   UPDATE_WINDOW,
   ADD_APP_DOM,
-  REMOVE_LAYOUT, 
-  SELECT_LAYOUT, 
+  REMOVE_ALL_LAYOUT,
+  SELECT_LAYOUT,
   SELECT_LAYOUT_APP,
-  CHANGE_LAYOUT_SIZE_2COL_VER,
   CREATE_NOTIFICATION,
-  REMOVE_NOTIFICATION
+  REMOVE_NOTIFICATION,
+  ADD_LAYOUT,
+  ADD_LAYOUT_INITIAL,
+  TOGGLE_LAYOUT_EDIT,
+  LAYOUT_SIZE_CHANGE
 } from "../actionTypes";
 import * as R from 'ramda'
 import { BUILT_IN_APPS } from '../../constants'
+import { SELECTED_APP } from "../constants";
 let appView = 0;
 let opened = {}
 const appName = "waim"
@@ -29,12 +33,12 @@ const initialState = {
   apps: BUILT_IN_APPS,
   view: [],
   appDoms: {},
-  layout: {
-    selectedLayout: undefined,
-    selectedApps: {}
-  },
+  layout:
+  {},
+  layoutEditEnabled: false,
   notificationCount: 0,
-  notifications: {}
+  notifications: {},
+  openApps: {}
 };
 
 const save = (newstate) => {
@@ -43,13 +47,40 @@ const save = (newstate) => {
   return newstate
 }
 
+const countLayoutApps = (map, layout) => {
+  if(R.isNil(layout)){
+    return 0
+  } 
+  if(layout.type === SELECTED_APP){
+ 		let count = 0;
+    if(map.get(layout.appid) !== undefined){
+    	count = map.get(layout.appid)
+    }
+    map.set(layout.appid, count+1)
+  }
+  if(layout["0"] !== undefined){
+   countLayoutApps(map, layout[0])
+  }
+  if(layout["1"] !== undefined){
+   countLayoutApps(map, layout[1])
+  }
+}
 const load = (newstate) => {
   const myStorage = window.localStorage;
   const apps = myStorage.getItem(appName);
   const layout = myStorage.getItem(appNameLayout)
   const layoutObj = R.assoc("layout", JSON.parse(layout), newstate)
-  return R.assoc("apps", R.isNil(apps) ? BUILT_IN_APPS : JSON.parse(apps), layoutObj)
+  const map = new Map()
+  countLayoutApps(map, R.prop("layout", layoutObj))
+  let tmpLayoutObj = layoutObj
+  for (let [key, value] of map) {
+    tmpLayoutObj = R.assocPath(["openApps", key], value, tmpLayoutObj)
+  }
+  return R.assoc("apps", R.isNil(apps) ? BUILT_IN_APPS : JSON.parse(apps), tmpLayoutObj)
 }
+
+
+
 
 const updateIn = R.curry((path, val, obj) => R.compose(
   R.set(R.__, val, obj),
@@ -61,13 +92,14 @@ export default function main(state = initialState, action) {
   switch (action.type) {
     case SHOW_WINDOW: {
       const { appid } = action.payload
-      if (R.pathEq(["apps", appid, "single"], true, state) && ( R.propEq(appid, true, opened) || R.includes(appid, R.values(R.path(["layout", "selectedApps"], state))))) {
+      if (R.pathEq(["apps", appid, "single"], true, state) && R.gt(R.path(["openApps", appid], state), 0)) {
         return state
       }
       appView++
       opened[appid] = true
       return R.compose(
-        R.assoc("view", R.append({ appid, viewid: appView, zIndex: Number(R.length(R.prop("view", state)) + 1) }, state.view))
+        R.assoc("view", R.append({ appid, viewid: appView, zIndex: Number(R.length(R.prop("view", state)) + 1) }, state.view)),
+        R.assocPath(["openApps", appid], R.inc(R.pathOr(0, ["openApps", appid], state)))
       )(state)
     }
 
@@ -96,7 +128,11 @@ export default function main(state = initialState, action) {
         }),
         R.toPairs,
       )(state.view)
-      return R.assoc("view", R.remove(index, 1, instance), state)
+      const appid = R.path(["view", index, "appid"], state)
+      return R.compose(
+        R.assoc("view", R.remove(index, 1, instance)),
+        R.assocPath(["openApps", appid], R.dec(R.pathOr(0, ["openApps", appid], state)))
+      )(state)
     }
     case CREATE_APP: {
       const payload = action.payload;
@@ -108,7 +144,8 @@ export default function main(state = initialState, action) {
         url: R.propOr("", "url", payload),
         single: R.propOr(false, "single", payload),
         deletable: R.propOr(true, "deletable", payload),
-        editable: R.propOr(true, "editable", payload)
+        editable: R.propOr(true, "editable", payload),
+        imageUrl: R.propOr("", "imageUrl", payload),
       }
       return R.compose(
         save,
@@ -215,7 +252,14 @@ export default function main(state = initialState, action) {
         }),
         R.toPairs,
       )(state.view)
-      return R.assoc("view", R.remove(index, 1, instance), state)
+      
+      const appid = R.path(["view", index, "appid"], state)
+       
+      return R.compose(
+        R.assoc("view", R.remove(index, 1, instance)),
+        R.assocPath(["openApps", appid], R.dec(R.pathOr(0, ["openApps", appid], state)))
+      )(state)
+      
     }
 
 
@@ -229,7 +273,8 @@ export default function main(state = initialState, action) {
         url: R.propOr("", "url", payload),
         single: R.propOr(false, "single", payload),
         deletable: R.propOr(true, "deletable", payload),
-        editable: R.propOr(true, "editable", payload)
+        editable: R.propOr(true, "editable", payload),
+        imageUrl: R.propOr("", "imageUrl", payload),
       }
       delete opened[payload.appid]
 
@@ -292,34 +337,29 @@ export default function main(state = initialState, action) {
         save,
         R.assoc("apps", BUILT_IN_APPS),
         R.assoc("view", []),
-        R.assoc("layout", {})
+        R.assoc("layout", {}),
+        R.assoc("openApps", {})
       )(state)
     }
 
-    case SELECT_LAYOUT:  {
+    case SELECT_LAYOUT: {
       const { layoutType } = action.payload
-      console.log(action)
       const newState = R.assocPath(["layout", "selectedLayout"], layoutType, state)
       window.localStorage.setItem(appNameLayout, JSON.stringify(R.prop("layout", newState)))
       return newState
-      
+
     }
 
-    case SELECT_LAYOUT_APP: {
-      const {appid, index} = action.payload
-      if(R.pathEq(["apps", appid, "single"], true, state) && (R.propEq(appid, true, opened) || R.includes(appid, R.values(R.path(["layout", "selectedApps"], state))))){
-        return state
+    case REMOVE_ALL_LAYOUT: {
+      const map = new Map()
+      countLayoutApps(map, R.prop("layout", state))
+      let tmpState = state
+      for (let [key, _] of map) {
+        tmpState = R.assocPath(["openApps", key], R.dec(R.pathOr(0, ["openApps", key], tmpState)), tmpState)
       }
-      const newState = R.assocPath(["layout", "selectedApps", index], appid, state)
-      window.localStorage.setItem(appNameLayout, JSON.stringify(R.prop("layout", newState)))
-      return newState
-    }
-
-    case REMOVE_LAYOUT: {
-      const newState= R.compose(
-        R.assocPath(["layout", "selectedLayout"], null),
-        R.assocPath(["layout", "selectedApps"], {})
-      )(state)
+      const newState = R.compose(
+        R.assoc("layout", {})
+      )(tmpState)
       window.localStorage.setItem(appNameLayout, JSON.stringify(R.prop("layout", newState)))
       return newState
     }
@@ -329,28 +369,59 @@ export default function main(state = initialState, action) {
       return R.assocPath(["appDoms", appid], appDom, state)
     }
 
-
-    case CHANGE_LAYOUT_SIZE_2COL_VER:{
-      const {size} = action.payload
-      const newState = R.assocPath(["layout", "2ColSizeVertcial"], size, state)
-      window.localStorage.setItem(appNameLayout, JSON.stringify(R.prop("layout", newState)))
-      return newState
-    }
-
     case CREATE_NOTIFICATION: {
-      console.log(action.payload)
-      const {message, type, duration} = action.payload
+      const { message, type, duration } = action.payload
       return R.compose(
-        R.assocPath(["notifications", state.notificationCount], {message, type, duration}),
+        R.assocPath(["notifications", state.notificationCount], { message, type, duration }),
         R.assoc("notificationCount", R.inc(R.prop("notificationCount", state)))
       )(state)
     }
 
     case REMOVE_NOTIFICATION: {
-      const {id} = action.payload
-      return R.assoc("notifications", R.pick(R.filter((n)=> {
+      const { id } = action.payload
+      return R.assoc("notifications", R.pick(R.filter((n) => {
         return n != id
       }, R.keys(state.notifications)), state.notifications), state)
+    }
+
+    case ADD_LAYOUT: {
+      const { indexPath, layoutType } = action.payload
+      const newState = R.assocPath(["layout", ...indexPath, "type"], layoutType, state)
+      window.localStorage.setItem(appNameLayout, JSON.stringify(R.prop("layout", newState)))
+      return newState
+    }
+
+    case ADD_LAYOUT_INITIAL: {
+      const {layoutType} = action.payload
+      const newState = R.assocPath(["layout", "type"], layoutType, state)
+      window.localStorage.setItem(appNameLayout, JSON.stringify(R.prop("layout", newState)))
+      return newState
+    }
+
+    case SELECT_LAYOUT_APP: {
+      const { appid, indexPath } = action.payload
+      if (R.pathEq(["apps", appid, "single"], true, state) && R.gt(R.path(["openApps", appid], state), 0)) {
+        return state
+      }
+      const newState = R.compose(
+        R.assocPath(["layout", ...indexPath, "appid"], appid),
+        R.assocPath(["layout", ...indexPath, "type"], SELECTED_APP),
+        R.assocPath(["openApps", appid], R.inc(R.pathOr(0, ["openApps", appid], state)))
+      )(state)
+      window.localStorage.setItem(appNameLayout, JSON.stringify(R.prop("layout", newState)))
+      return newState
+    }
+
+    case TOGGLE_LAYOUT_EDIT: {
+      return R.assoc("layoutEditEnabled", !R.prop("layoutEditEnabled", state), state)
+    }
+
+    case LAYOUT_SIZE_CHANGE: {
+      const { indexPath, sizes } = action.payload
+      const newState = R.assocPath(["layout", ...indexPath, "sizes"], sizes, state)
+      window.localStorage.setItem(appNameLayout, JSON.stringify(R.prop("layout", newState)))
+      console.log("here?")
+      return newState
     }
 
     default:
