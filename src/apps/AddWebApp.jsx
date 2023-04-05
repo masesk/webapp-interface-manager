@@ -7,6 +7,7 @@ const AddWebApp = () => {
   const id = useRef();
   const width = useRef()
   const height = useRef()
+  const imageUrl = useRef()
   const [titleError, setTitleError] = useState(false)
   const [idError, setIdError] = useState(false)
   const [urlError, setUrlError] = useState(false)
@@ -56,7 +57,8 @@ const AddWebApp = () => {
           width: Number(width.current.value),
           height: Number(height.current.value),
           url: url.current.value,
-          single, deletable, editable
+          single, deletable, editable, 
+          imageUrl: imageUrl.current.value
 
         }
 
@@ -142,11 +144,21 @@ const AddWebApp = () => {
             error={urlError}
             helperText={urlError === true ? "Must be URL and cannot be empty" : ""}
             inputRef={url}
-          /></div>
+          />
+          </div>
+          <div>
+          <TextField
+            label="Image URL"
+            size="small"
+            fullWidth
+            variant="filled"
+            inputRef={imageUrl}
+          />
+          </div>
         <div>
           <FormControlLabel control={<Switch onChange={(e) => setSingle(e.target.checked)} />} label="Singleton" /></div>
-        <div> <FormControlLabel control={<Switch onChange={(e) => setEditable(e.target.checked)} />} label="Editable" /></div>
-        <div><FormControlLabel control={<Switch onChange={(e) => setDeletable(e.target.checked)} />} label="Deletable" /></div>
+        <div> <FormControlLabel control={<Switch defaultChecked={true} onChange={(e) => setEditable(e.target.checked)} />} label="Editable" /></div>
+        <div><FormControlLabel control={<Switch defaultChecked={true} onChange={(e) => setDeletable(e.target.checked)} />} label="Deletable" /></div>
         <div>
           <Button variant="contained" color="success"
             onClick={e => {

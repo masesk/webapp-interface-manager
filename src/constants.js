@@ -5,7 +5,8 @@ export const BUILT_IN_APPS = {
         width: 800,
         height: 600,
         single: true,
-        editable: false
+        editable: false,
+        imageUrl: "addwebapp.png"
     },
     chatclient: {
         appid: "chatclient",
@@ -13,7 +14,8 @@ export const BUILT_IN_APPS = {
         width: 700,
         height: 500,
         deletable: true,
-        editable: true
+        editable: true,
+        imageUrl: "chatclient.png"
     },
     statueofliberty: {
         appid: "statueofliberty",

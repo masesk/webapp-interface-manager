@@ -15,10 +15,13 @@ import {
   SELECT_LAYOUT,
   ADD_APP_DOM,
   SELECT_LAYOUT_APP,
-  REMOVE_LAYOUT,
-  CHANGE_LAYOUT_SIZE_2COL_VER,
+  REMOVE_ALL_LAYOUT,
   CREATE_NOTIFICATION,
-  REMOVE_NOTIFICATION
+  REMOVE_NOTIFICATION,
+  ADD_LAYOUT,
+  ADD_LAYOUT_INITIAL,
+  TOGGLE_LAYOUT_EDIT,
+  LAYOUT_SIZE_CHANGE
 } from "./actionTypes";
 
 
@@ -32,14 +35,14 @@ export const showWindow = appid => ({
   payload: { appid }
 })
 
-export const createApp = (appid, title, width, height, url, single, deletable, editable) => ({
+export const createApp = (appid, title, width, height, url, single, deletable, editable, imageUrl) => ({
   type: CREATE_APP,
-  payload: { appid, title, width, height, url, single, deletable, editable }
+  payload: { appid, title, width, height, url, single, deletable, editable, imageUrl }
 })
 
-export const updateWindow = (appid, title, width, height, url, single, deletable, editable) => ({
+export const updateWindow = (appid, title, width, height, url, single, deletable, editable, imageUrl) => ({
   type: UPDATE_WINDOW,
-  payload: { appid, title, width, height, url, single, deletable, editable }
+  payload: { appid, title, width, height, url, single, deletable, editable, imageUrl }
 })
 
 
@@ -102,18 +105,13 @@ export const addAppDom = (appid, appDom) => ({
 })
 
 
-export const selectLayoutApp = (appid, index) => ({
+export const selectLayoutApp = (appid, indexPath) => ({
   type: SELECT_LAYOUT_APP,
-  payload: {appid, index}
+  payload: {appid, indexPath}
 })
 
-export const removeLayout = () => ({
-  type: REMOVE_LAYOUT
-})
-
-export const changeLayoutSize2ColVertical = (size) => ({
-  type: CHANGE_LAYOUT_SIZE_2COL_VER,
-  payload: {size}
+export const removeAllLayout = () => ({
+  type: REMOVE_ALL_LAYOUT
 })
 
 export const createNotification = (message, type, duration) => ({
@@ -124,5 +122,25 @@ export const createNotification = (message, type, duration) => ({
 export const removeNotification = (id) => ({
   type: REMOVE_NOTIFICATION,
   payload: {id}
+})
+
+
+export const addLayout = (indexPath, layoutType) => ({
+  type: ADD_LAYOUT,
+  payload: {indexPath, layoutType}
+})
+
+export const addInitialLayout = (layoutType) => ({
+  type: ADD_LAYOUT_INITIAL,
+  payload: {layoutType}
+})
+
+export const toggleLayoutEdit = () => ({
+  type: TOGGLE_LAYOUT_EDIT
+})
+
+export const layoutSizeChange = (indexPath, sizes) => ({
+  type: LAYOUT_SIZE_CHANGE,
+  payload: {indexPath, sizes}
 })
 

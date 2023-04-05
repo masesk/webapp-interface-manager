@@ -6,9 +6,18 @@ import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Modal, Typography, Button, Tab, Tabs, TableContainer, TableBody, TableCell, TableRow, TableHead, Paper, Table, IconButton, Switch, TextField, Grid, Divider, Dialog, DialogActions, DialogTitle, DialogContentText, DialogContent, Box } from '@mui/material'
+import {
+    FormControlLabel, FormControl, Slide, Typography, Button, Tab, Tabs, TableContainer,
+    TableBody, TableCell, TableRow, TableHead, Paper, Table, IconButton, Switch, TextField,
+    Grid, Divider, Dialog, DialogActions, DialogTitle, DialogContentText, DialogContent, Box, ButtonGroup
+} from '@mui/material'
+import UndefinedAppImage from "../img/unknown.png"
 
 
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 
 const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault, updateWindow }) => {
@@ -17,34 +26,132 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
     const [editableRow, setEditableRow] = useState(-1)
 
 
-
     const renderButtons = (appid, index) => {
         return (
-            <>
+            <ButtonGroup variant="contained">
                 {
                     R.pathEq(["apps", appid, "editable"], true, windows) &&
-                    <Button style={{ marginRight: 5 }} onClick={() => {
+                    <Button variant="primary" onClick={() => {
                         if (!R.equals(appid, editableRow)) {
                             setEditableRow(index)
                         }
                         else {
-                            updateWindow(appid, titleRef.current.value, Number(widthRef.current.value),
+                            updateWindow(editableRow, titleRef.current.value, Number(widthRef.current.value),
                                 Number(heightRef.current.value), urlRef.current.value, singletonRef.current.checked,
-                                deletableRef.current.checked, R.path([appid, "editable"], window))
+                                deletableRef.current.checked, R.path([editableRow, "editable"], window))
                             setEditableRow(-1)
                         }
-                    }}
-                        variant={R.equals(appid, editableRow) ? "success" : "secondary"} target="_blank" rel="noopener noreferrer">
-                        {R.equals(appid, editableRow) ? <CheckIcon /> : <EditIcon size={20} />}
+                    }}>
+                        <EditIcon size={20} />
                     </Button>
                 }
                 {
                     R.pathEq(["apps", appid, "deletable"], true, windows) &&
-                    <Button onClick={() => setAppName(appid)} variant="secondary" target="_blank" rel="noopener noreferrer"><DeleteIcon size={20} /></Button>
+                    <Button variant="primary" onClick={() => setAppName(appid)}><DeleteIcon size={20} /></Button>
                 }
-            </>
+            </ButtonGroup>
         );
 
+    }
+
+
+    const EditingPanel = () => {
+        const [errors, setErrors] = useState({})
+        return (
+            <Dialog size="lg" fullWidth open={editableRow !== -1} onClose={() => setEditableRow(-1)}>
+                <DialogTitle>Editing {R.path(["apps", editableRow, "title"], windows)}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+
+                    </DialogContentText>
+                    <TextField
+                        margin="dense"
+                        label="Title"
+                        fullWidth
+                        variant="filled"
+                        required
+                        inputRef={titleRef}
+                        error={R.propOr(false, "title", errors)}
+                        defaultValue={R.path(["apps", editableRow, "title"], windows)}
+
+                    />
+                    <TextField
+                        margin="dense"
+                        label="Width"
+                        fullWidth
+                        type="number"
+                        variant="filled"
+                        required
+                        inputRef={widthRef}
+                        error={R.propOr(false, "width", errors)}
+                        defaultValue={R.path(["apps", editableRow, "width"], windows)}
+
+                    />
+                    <TextField
+                        margin="dense"
+                        label="Height"
+                        fullWidth
+                        type="number"
+                        variant="filled"
+                        required
+                        inputRef={heightRef}
+                        error={R.propOr(false, "height", errors)}
+                        defaultValue={R.path(["apps", editableRow, "height"], windows)}
+
+                    />
+                    <TextField
+                        margin="dense"
+                        label="URL"
+                        fullWidth
+                        variant="filled"
+                        inputRef={urlRef}
+                        error={R.propOr(false, "url", errors)}
+                        defaultValue={R.path(["apps", editableRow, "url"], windows)}
+
+                    />
+                    <TextField
+                        margin="dense"
+                        label="Image URL"
+                        fullWidth
+                        variant="filled"
+                        inputRef={imageUrlRef}
+                        error={R.propOr(false, "imageUrl", errors)}
+                        defaultValue={R.path(["apps", editableRow, "imageUrl"], windows)}
+
+                    />
+                    <div><FormControlLabel control={<Switch inputRef={singletonRef} defaultChecked={R.path(["apps", editableRow, "single"], windows)} margin="dense" />} label="Singleton" /></div>
+                    <div><FormControlLabel control={<Switch inputRef={deletableRef} defaultChecked={R.path(["apps", editableRow, "deletable"], windows)} margin="dense" />} label="Deletable" /></div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setEditableRow(-1)}>Cancel</Button>
+                    <Button variant="contained" color="primary" onClick={() => {
+
+                        const isValidNumber = R.both(R.is(Number), R.complement(R.equals(NaN)));
+                        let tmpErrors = {}
+                        if (R.isEmpty(titleRef.current.value)) {
+                            tmpErrors = R.assoc("title", true, tmpErrors)
+                        }
+                        if (R.isEmpty(widthRef.current.value) || !isValidNumber(Number(widthRef.current.value))) {
+                            tmpErrors = R.assoc("width", true, tmpErrors)
+                        }
+
+                        if (R.isEmpty(heightRef.current.value) || !isValidNumber(Number(heightRef.current.value))) {
+                            tmpErrors = R.assoc("height", true, tmpErrors)
+                        }
+                        if (!R.isEmpty(tmpErrors)) {
+                            setErrors(tmpErrors)
+                            return
+                        }
+
+
+
+                        updateWindow(editableRow, titleRef.current.value, Number(widthRef.current.value),
+                            Number(heightRef.current.value), urlRef.current.value, singletonRef.current.checked,
+                            deletableRef.current.checked, R.path([editableRow, "editable"], window), imageUrlRef.current.value); setEditableRow(-1)
+                    }}>Save</Button>
+                </DialogActions>
+            </Dialog>
+        )
     }
 
 
@@ -53,6 +160,7 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
     const widthRef = useRef()
     const heightRef = useRef()
     const urlRef = useRef()
+    const imageUrlRef = useRef()
     const deletableRef = useRef()
     const singletonRef = useRef()
 
@@ -86,22 +194,21 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
     return (
         <>
 
-            <Modal
+            <Dialog
                 open={R.propOr(false, "showing", settings)}
                 onClose={handleClose}
+                fullScreen
+                TransitionComponent={Transition}
                 sx={{
-                    minHeight: "100vh",
-                    bgcolor: "background.default",
-                    zIndex: 998
+                    bgcolor: "background.default"
                 }}
 
             >
-                <TableContainer component={Paper} sx={{ overflow: "hidden", p: 2 }}>
 
 
 
 
-
+                <Box sx={{ p: 2 }}>
                     <Grid container spacing={3} sx={{ height: 50 }}>
                         <Grid item xs={5}>
                             <Typography variant="h6">SETTINGS</Typography>
@@ -116,57 +223,59 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
                         </Grid>
                     </Grid>
                     <Divider sx={{ mb: 2, mt: 2 }} />
-                    <Box sx={{ height: "calc(100vh - 125px)", overflow: "auto" }}>
-                        <Tabs fullWidth sx={{bgcolor: "background.paper"}} value={0} onChange={()=> {console.log()}}>
-                            <Tab label="Apps"  />
+                    <Box>
+                        <Tabs sx={{ bgcolor: "background.paper" }} value={0}>
+                            <Tab label="Apps" />
                         </Tabs>
-            
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>App ID</TableCell>
-                                    <TableCell>Title</TableCell>
-                                    <TableCell>Width</TableCell>
-                                    <TableCell>Height</TableCell>
-                                    <TableCell>URL</TableCell>
-                                    <TableCell>Singleton</TableCell>
-                                    <TableCell>Deletable</TableCell>
-                                    <TableCell>Controls</TableCell>
+                        <Box component={Paper}>
+                            <TableContainer>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>App ID</TableCell>
+                                            <TableCell>Image</TableCell>
+                                            <TableCell>Title</TableCell>
+                                            <TableCell>Width</TableCell>
+                                            <TableCell>Height</TableCell>
+                                            <TableCell>URL</TableCell>
+                                            <TableCell>Singleton</TableCell>
+                                            <TableCell>Controls</TableCell>
 
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
 
-                                {
-                                    R.compose(R.map(([index, window]) => {
-                                        return (
-                                            <TableRow key={index}>
+                                        {
+                                            R.compose(R.map(([index, window]) => {
+                                                return (
+                                                    <TableRow key={index}>
 
-                                                <TableCell title={R.prop("appid", window)}>{R.prop("appid", window)}</TableCell>
-                                                {R.equals(index, editableRow) ? <TableCell ><TextField size="small" defaultValue={R.prop("title", window)} inputRef={titleRef} placeholder="Title" /></TableCell> : <TableCell className="settings-cell" title={R.prop("title", window)}>{R.prop("title", window)}</TableCell>}
-                                                {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("width", window)} inputRef={widthRef} placeholder="Width" /></TableCell> : <TableCell className="settings-cell" title={R.prop("width", window)}>{R.prop("width", window)}</TableCell>}
-                                                {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("height", window)} inputRef={heightRef} placeholder="Height" /></TableCell> : <TableCell className="settings-cell" title={R.prop("height", window)}>{R.prop("height", window)}</TableCell>}
-                                                {R.equals(index, editableRow) ? <TableCell><TextField size="small" defaultValue={R.prop("url", window)} inputRef={urlRef} placeholder="URL" /></TableCell> : <TableCell className="settings-cell" title={R.prop("url", window)}>{R.prop("url", window)}</TableCell>}
-                                                {R.equals(index, editableRow) ? <TableCell><Switch defaultChecked={R.prop("single", window)} inputRef={singletonRef} /></TableCell> : <TableCell className="settings-cell">{R.toString(R.propOr(false, "single", window))}</TableCell>}
-                                                {R.equals(index, editableRow) ? <TableCell><Switch defaultChecked={R.prop("deletable", window)} inputRef={deletableRef} /></TableCell> : <TableCell className="settings-cell">{R.toString(R.propOr(false, "deletable", window))}</TableCell>}
-                                                <TableCell>{renderButtons(R.prop("appid", window), index)}</TableCell>
-                                            </TableRow>)
-                                    }),
-                                        R.toPairs
+                                                        <TableCell title={R.prop("appid", window)}>{R.prop("appid", window)}</TableCell>
+                                                        <TableCell className="settings-cell" title={R.prop("imageUrl", window)}><img onError={(e)=>(e.target.src=UndefinedAppImage)} width="20px" height="20px" src={R.propOr(UndefinedAppImage, "imageUrl", window)}/></TableCell>
+                                                        <TableCell className="settings-cell" title={R.prop("title", window)}>{R.prop("title", window)}</TableCell>
+                                                        <TableCell className="settings-cell" title={R.prop("width", window)}>{R.prop("width", window)}</TableCell>
+                                                        <TableCell className="settings-cell" title={R.prop("height", window)}>{R.prop("height", window)}</TableCell>
+                                                        <TableCell className="settings-cell" title={R.prop("url", window)}>{R.prop("url", window)}</TableCell>
+                                                        <TableCell> {R.prop("single", window) && <CheckIcon />}</TableCell>
+                                                        <TableCell>{renderButtons(R.prop("appid", window), index)}</TableCell>
+                                                    </TableRow>)
+                                            }),
+                                                R.toPairs
 
-                                    )(windows.apps)
-                                }
-                            </TableBody>
-                        </Table>      
+                                            )(windows.apps)
+                                        }
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Box>
                     </Box>
-                </TableContainer>
+                </Box>
 
 
-            </Modal>
+            </Dialog>
 
             <Dialog
                 open={showingConfirmReset}
-                sx={{ zIndex: 999 }}
                 onClose={() => setShowingConfirmReset(false)}
                 aria-describedby="alert-dialog-slide-description"
             >
@@ -184,7 +293,6 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
 
             <Dialog
                 open={showingConfirm}
-                sx={{ zIndex: 999 }}
                 onClose={() => setShowingConfirm(false)}
                 aria-describedby="alert-dialog-slide-description"
             >
@@ -198,7 +306,9 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
                     <Button color="error" variant="contained" onClick={() => handleDelete()}>Yes</Button>
                     <Button onClick={() => setShowingConfirm(false)}>No</Button>
                 </DialogActions>
+
             </Dialog>
+            <EditingPanel />
         </>
 
     )

@@ -9,8 +9,9 @@ import { hideWindow, updateIndex, minimizeWindow } from "../redux/actions";
 import {Box} from '@mui/material';
 import { MAX_HEIGHT_PX, MAX_WIDTH_PX } from '../constants';
 import { connect } from "react-redux";
+import UndefinedAppImage from "../img/unknown.png"
 
-function Window({ title, width, height, url, appid, children, minimized, updateIndex, hideWindow, minimizeWindow, zIndex, index, viewid }) {
+function Window({ title, width, height, url, appid, children, minimized, updateIndex, hideWindow, minimizeWindow, zIndex, index, viewid, imageUrl }) {
   const frameRef = useRef()
   const windowRef = useRef()
   const topRef = useRef()
@@ -348,7 +349,8 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
                 }
                 <RemoveIcon onClick={() => { minimizeWindow(index) }} className="hover" size={21} />
               </Box>
-              <Box className="noselect">
+              <Box className="noselect" sx={{display: "flex", justifyItems: "center", mr: 1}}>
+                <img onError={(e) => (e.target.src = UndefinedAppImage)} style={{ width: "20px", height: "20px", borderRadius: 2, marginRight: "5px" }} src={(R.isEmpty(imageUrl) || R.isNil(imageUrl)) ? UndefinedAppImage : imageUrl} />
                 {title}
               </Box>
             </Box>

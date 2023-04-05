@@ -27,7 +27,9 @@ const StaticWindow = ({ windows, children, appid }, ref) => {
               index={index}
               minimized={R.prop("minimized", win)}
               url={window.url}
-              height={window.height}>{children}</Window>
+              height={window.height}
+              imageUrl={window.imageUrl}
+              >{children}</Window>
           }
           return
 
