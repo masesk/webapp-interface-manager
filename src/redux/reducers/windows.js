@@ -7,10 +7,10 @@ import {
   UNMINIMIZE_WINDOW,
   UNMINIMIZE_UPDATE_INDEX,
   HIDE_WINDOW_ID,
-  DELETE_WINDOW,
+  DELETE_APP,
   LOAD_APPS,
   RESET_DEFAULT,
-  UPDATE_WINDOW,
+  UPDATE_APP,
   ADD_APP_DOM,
   REMOVE_ALL_LAYOUT,
   SELECT_LAYOUT,
@@ -289,7 +289,7 @@ export default function main(state = initialState, action) {
     }
 
 
-    case UPDATE_WINDOW: {
+    case UPDATE_APP: {
       const payload = action.payload;
       const window = {
         appid: payload.appid,
@@ -320,7 +320,7 @@ export default function main(state = initialState, action) {
       )(layoutRemoved)
 
 
-      const sorted = R.reverse(R.sortBy(R.prop("zIndex"), removed))
+      const sorted = R.reverse(R.sortBy(R.prop("zIndex"), removed.view))
       let lengthIndex = sorted.length
       return R.assoc("view", R.compose(
         R.map(([index, win]) => {
@@ -331,7 +331,7 @@ export default function main(state = initialState, action) {
 
     }
 
-    case DELETE_WINDOW: {
+    case DELETE_APP: {
       const { appid } = action.payload
       const removed = R.compose(
         save,

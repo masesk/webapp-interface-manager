@@ -8,10 +8,10 @@ import {
   UNMINIMIZE_WINDOW,
   UNMINIMIZE_UPDATE_INDEX,
   HIDE_WINDOW_ID,
-  DELETE_WINDOW,
+  DELETE_APP,
   LOAD_APPS,
   RESET_DEFAULT,
-  UPDATE_WINDOW,
+  UPDATE_APP,
   SELECT_LAYOUT,
   ADD_APP_DOM,
   SELECT_LAYOUT_APP,
@@ -40,8 +40,8 @@ export const createApp = (appid, title, width, height, url, single, deletable, e
   payload: { appid, title, width, height, url, single, deletable, editable, imageUrl }
 })
 
-export const updateWindow = (appid, title, width, height, url, single, deletable, editable, imageUrl) => ({
-  type: UPDATE_WINDOW,
+export const updateApp = (appid, title, width, height, url, single, deletable, editable, imageUrl) => ({
+  type: UPDATE_APP,
   payload: { appid, title, width, height, url, single, deletable, editable, imageUrl }
 })
 
@@ -78,8 +78,8 @@ export const hideWindowId = (viewid) => ({
 })
 
 
-export const deleteWindow = (appid) => ({
-  type: DELETE_WINDOW,
+export const deleteApp = (appid) => ({
+  type: DELETE_APP,
   payload: { appid }
 })
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { toggleShowing, deleteWindow, resetDefault, updateWindow } from '../redux/actions'
+import { toggleShowing, deleteApp, resetDefault, updateApp } from '../redux/actions'
 import * as R from 'ramda'
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
@@ -20,7 +20,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 
-const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault, updateWindow }) => {
+const Settings = ({ windows, settings, toggleShowing, deleteApp, resetDefault, updateApp }) => {
 
 
     const [editableRow, setEditableRow] = useState(-1)
@@ -36,7 +36,7 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
                             setEditableRow(index)
                         }
                         else {
-                            updateWindow(editableRow, titleRef.current.value, Number(widthRef.current.value),
+                            updateApp(editableRow, titleRef.current.value, Number(widthRef.current.value),
                                 Number(heightRef.current.value), urlRef.current.value, singletonRef.current.checked,
                                 deletableRef.current.checked, R.path([editableRow, "editable"], window))
                             setEditableRow(-1)
@@ -145,7 +145,7 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
 
 
 
-                        updateWindow(editableRow, titleRef.current.value, Number(widthRef.current.value),
+                        updateApp(editableRow, titleRef.current.value, Number(widthRef.current.value),
                             Number(heightRef.current.value), urlRef.current.value, singletonRef.current.checked,
                             deletableRef.current.checked, R.path([editableRow, "editable"], window), imageUrlRef.current.value); setEditableRow(-1)
                     }}>Save</Button>
@@ -172,7 +172,7 @@ const Settings = ({ windows, settings, toggleShowing, deleteWindow, resetDefault
         setEditableRow(-1)
     }
     const handleDelete = () => {
-        deleteWindow(R.path(["apps", appName, "appid"], windows))
+        deleteApp(R.path(["apps", appName, "appid"], windows))
         setShowingConfirm(false)
     }
 
@@ -321,5 +321,5 @@ const mapStateToProps = state => {
 
 export default connect(
     mapStateToProps,
-    { toggleShowing, deleteWindow, resetDefault, updateWindow }
+    { toggleShowing, deleteApp, resetDefault, updateApp }
 )(Settings)
