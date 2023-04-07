@@ -190,7 +190,8 @@ table {
   position: absolute;
   right: -2px;
   bottom: -9px;
-  z-index: 1
+  z-index: 1;
+  pointer-events: none;
 }
 
 .resize-arrow-container{
