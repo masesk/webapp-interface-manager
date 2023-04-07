@@ -15,8 +15,8 @@ import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
 import VerticalSplitIcon from '@mui/icons-material/VerticalSplit';
 import HorizontalSplitIcon from '@mui/icons-material/HorizontalSplit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import StopCircleIcon from '@mui/icons-material/StopCircle';
-import EditIcon from '@mui/icons-material/Edit';
+// import StopCircleIcon from '@mui/icons-material/StopCircle';
+// import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import { ReactComponent as WAIMLogo } from '../img/WAIM.svg'
 import { HORIZONTAL_LAYOUT, VERTICAL_LAYOUT } from '../redux/constants';
@@ -26,9 +26,16 @@ import { HEADER_HEIGHT } from './constant';
 
 const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitialLayout, toggleLayoutEdit }) => {
   
+  // app anchor for apps dropdown
   const [appsAnchor, setAppsAnchor] = React.useState(null);
+
+  // layout anchor
   const [layoutAnchor, setLayoutAnchor] = React.useState(null);
+
+  // search strign for searching for a specific app from the apps dropdown
   const [searchString, setSeearchString] = React.useState("")
+
+  // list of all default layouts, their type, and icon
   const layouts = [
     {
       title: "Vertical Split",
@@ -73,6 +80,7 @@ const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitia
               'aria-labelledby': 'basic-button',
             }}
           >
+            {/* Search bar for searching a specific app by its name */}
             <TextField
               autoFocus={false}
               size="small"
@@ -95,9 +103,11 @@ const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitia
               sx={{ mt: 2, mb: 2, pl: 3, pr: 3 }}
             />
             {
+              // loops each app saved and create a menu entry for it
               R.compose(
                 R.map(([key, windowKey]) => {
 
+                  // check first if the app name is included in the search
                   if (!R.isEmpty(searchString) && !R.prop("title", R.prop(windowKey, windows.apps)).toLowerCase().includes(searchString)) {
                     return
                   }
@@ -139,6 +149,8 @@ const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitia
             }}
           >
             {
+              // loop each layout type and create a menu entry for it
+              // disable it if the layout is in edit mode
               R.compose(
                 R.map((layout) => {
                   return <MenuItem disabled={R.equals(R.prop("layoutEditEnabled", windows), true) || R.hasPath(["layout", "type"], windows)} key={`${layout.type}menuitem`} onClick={() => { addInitialLayout(layout.type); setLayoutAnchor(null); }}>{layout.icon} {layout.title}</MenuItem>

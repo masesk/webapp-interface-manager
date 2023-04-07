@@ -40,7 +40,7 @@ const SplitLayout = ({ windows, layoutType, indexPath, layoutSizeChange }) => {
             <Allotment
                 vertical={layoutType === HORIZONTAL_LAYOUT}
                 onDragStart={() => { setAllowPointerEvents(false) }}
-                onDragEnd={(sizes) => { layoutSizeChange(indexPath, sizes); }}
+                onDragEnd={(sizes) => { layoutSizeChange(indexPath, sizes); setAllowPointerEvents(true) }}
                 defaultSizes={R.pathOr(undefined, ["layout", ...indexPath, "sizes"], windows)}
 
 
