@@ -6,10 +6,11 @@ import FilterNoneIcon from '@mui/icons-material/FilterNone';
 import CropSquareIcon from '@mui/icons-material/CropSquare';
 import * as R from 'ramda'
 import { hideWindow, updateIndex, minimizeWindow } from "../redux/actions";
-import {Box} from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { MAX_HEIGHT_PX, MAX_WIDTH_PX } from '../constants';
 import { connect } from "react-redux";
 import UndefinedAppImage from "../img/unknown.png"
+import { FOOTER_HEIGHT, HEADER_HEIGHT, MAXIMIZED_STYLE, WINDOW_HEIGHT_MAXIMIZED_OFFSET, WINDOW_TOPBAR_HEIGHT } from './constant';
 
 function Window({ title, width, height, url, appid, children, minimized, updateIndex, hideWindow, minimizeWindow, zIndex, index, viewid, imageUrl }) {
   const frameRef = useRef()
@@ -43,34 +44,28 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
   const initialRx = useRef(0)
   const initialRy = useRef(0)
 
-  
+
   const expandDragChangeX = useRef(0)
   const expandDragChangeY = useRef(0)
 
   const resizeShadowRef = useRef()
 
+
   useEffect(() => {
     dimension.current = { width, height }
-    setTranslate(-300, -250)
+    setTranslate(-300,  -300 + HEADER_HEIGHT)
     xOffset.current = -300
-    yOffset.current = -250
+    yOffset.current = -300 + HEADER_HEIGHT
     currentX.current = -300
-    currentY.current = -250
+    currentY.current = -300 + HEADER_HEIGHT
     window.addEventListener('resize', () => {
       if (max.current) {
         dimension.current.width = window.parent.innerWidth
-        dimension.current.height = window.parent.innerHeight - 145
-        setFrameStyle(f => R.merge(f, {
+        dimension.current.height = window.parent.innerHeight - FOOTER_HEIGHT - HEADER_HEIGHT - WINDOW_TOPBAR_HEIGHT - WINDOW_HEIGHT_MAXIMIZED_OFFSET
+        setFrameStyle(f => R.merge(f,
 
-          transform: "none",
-          top: 50,
-          width: "100%",
-          height: "calc(100% - 30px)",
-          paddingBottom: 0,
-          paddingTop: 0,
-          paddingLeft: 0
-
-        }))
+          MAXIMIZED_STYLE
+        ))
       }
 
     });
@@ -84,17 +79,10 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
     } else {
       if (maximized) {
 
-        setFrameStyle(f => R.merge(f, {
+        setFrameStyle(f => R.merge(f,
+          MAXIMIZED_STYLE
 
-          transform: "none",
-          top: 50,
-          width: "100%",
-          height: "calc(100% - 30px)",
-          paddingBottom: 0,
-          paddingTop: 0,
-          paddingLeft: 0
-
-        }))
+        ))
 
         windowRef.current.style.width = "100%"
         topRef.current.style.width = "100%"
@@ -189,14 +177,14 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
   }
 
   const expandDrag = (e) => {
-    if(!resizeDrag.current || maximized){
+    if (!resizeDrag.current || maximized) {
       return
     }
     stopPropagation(e)
-    if(e.type === "touchmove"){
+    if (e.type === "touchmove") {
       expandDragChangeX.current = e.changedTouches[0].clientX - initialRx.current;
       expandDragChangeY.current = e.changedTouches[0].clientY - initialRy.current;
-    }else{
+    } else {
       expandDragChangeX.current = (e.clientX - initialRx.current);
       expandDragChangeY.current = (e.clientY - initialRy.current);
     }
@@ -205,7 +193,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
 
 
 
-  
+
 
   const dragStart = (e) => {
     active.current = true;
@@ -263,16 +251,16 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
   }
 
 
-  const changeResizeShadowSize = (x,y) => {
+  const changeResizeShadowSize = (x, y) => {
     resizeShadowRef.current.style.width = `${dimension.current.width + x}px`
-    resizeShadowRef.current.style.height = `${dimension.current.height + y + 48}px`
+    resizeShadowRef.current.style.height = `${dimension.current.height + y + 32}px`
   }
 
 
 
   const stopPropagation = (e) => {
     if (e.stopPropagation) e.stopPropagation();
-    if(e.preventDefault && (e.type !== "touchstart" && e.type !== "touchend" && e.type !== "touchmove")){
+    if (e.preventDefault && (e.type !== "touchstart" && e.type !== "touchend" && e.type !== "touchmove")) {
       e.preventDefault();
     }
     e.cancelBubble = true;
@@ -304,8 +292,8 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
         zIndex: resizeDrag.current ? 999 : -999,
         pointerEvents: resizeDrag.current ? "auto" : "none"
       }}
-      onMouseMove={expandDrag}
-      onTouchMove={expandDrag}
+        onMouseMove={expandDrag}
+        onTouchMove={expandDrag}
       />
       <Box className="frame" onMouseMove={drag} sx={frameStyle} ref={ref}>
         <div className="frame-border" style={
@@ -316,42 +304,52 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
             R.assoc("paddingRight", maximized ? 0 : 2),
             R.assoc("width", (maximized ? "100%" : null)),
             R.assoc("top", null),
-            R.assoc("height", dimension.current.height + 48),
+            R.assoc("height", dimension.current.height + WINDOW_TOPBAR_HEIGHT + 4),
             R.assoc("paddingBottom", `${dimension.current.height + 5}px`),
             R.assoc("pointerEvents", (resizeDrag.current ? "none" : "auto"))
           )(frameStyle)
 
         }>
-          {!maximized && <div className="resize-arrow" onMouseDown={expandDragStart} onMouseUp={expandDragEnd} onTouchStart={expandDragStart} onTouchEnd={expandDragEnd}>
-            <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" className="stroke" size="35" color="blue" height="35" width="35" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" stroke="#bfbfbf" strokeWidth="2" points="8 20 20 20 20 8"></polyline></svg>
-          </div>}
-          {resizeDrag.current && <div ref={resizeShadowRef} style={{position: "fixed", background: "black", opacity: "0.5", zIndex: 999}}/>}
+          {!maximized &&
+          <>
+          
+          <div className="resize-arrow">
+            <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 24 24" className="stroke" size="15" color="blue" height="18" width="18" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" stroke="#bfbfbf" strokeWidth="2" points="8 20 20 20 20 8"></polyline></svg>
+          </div>
+          <div className="resize-arrow-container" onMouseDown={expandDragStart} onMouseUp={expandDragEnd} onTouchStart={expandDragStart} onTouchEnd={expandDragEnd}/>
+          </>
+          }
+          {resizeDrag.current && <div ref={resizeShadowRef} style={{ position: "fixed", background: "black", opacity: "0.5", zIndex: 999 }} />}
           <div onMouseDown={dragStart} onMouseUp={dragEnd} onMouseMove={drag} onTouchStart={dragStart} onTouchEnd={dragEnd} onTouchMove={drag} ref={topRef} className="topbar" style={{ width: maximized ? "100%" : `${R.propOr(width, "width", dimension.current)}px` }}>
-            <Box sx={{ justifyContent: 'space-between' }}>
-              <Box sx={{float: "right"}}>
-                <CloseIcon onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(index) }} className="hover" size={21} />
-                {maximized ? <FilterNoneIcon className="hover" size={21} onClick={() => {
-                  max.current = false
-                  setMaximized(!maximized)
-                  dimension.current.width = savedimension.current.width
-                  dimension.current.height = savedimension.current.height
-
-                }
-                } />
-                  : <CropSquareIcon onClick={() => {
-                    max.current = true
-                    savedimension.current = { width: dimension.current.width, height: dimension.current.height }
-                    setMaximized(!maximized)
-                    dimension.current = { width: window.parent.innerWidth, height: window.parent.innerHeight - 145 }
-
-                  }} className="hover" size={21} />
-
-                }
-                <RemoveIcon onClick={() => { minimizeWindow(index) }} className="hover" size={21} />
+            <Box sx={{ display: "flex", justifyContent: 'space-between', alignItems: "center", height: WINDOW_TOPBAR_HEIGHT }}>
+              <Box className="noselect" sx={{ display: "flex", justifyItems: "center", alignItems: "center", p: "4px", height: WINDOW_TOPBAR_HEIGHT }}>
+                <img onError={(e) => (e.target.src = UndefinedAppImage)} style={{ width: "15px", height: "15px", borderRadius: 2, marginRight: "5px" }} src={(R.isEmpty(imageUrl) || R.isNil(imageUrl)) ? UndefinedAppImage : imageUrl} />
+                <Typography variant="paragraph">{title}</Typography>
               </Box>
-              <Box className="noselect" sx={{display: "flex", justifyItems: "center", mr: 1}}>
-                <img onError={(e) => (e.target.src = UndefinedAppImage)} style={{ width: "20px", height: "20px", borderRadius: 2, marginRight: "5px" }} src={(R.isEmpty(imageUrl) || R.isNil(imageUrl)) ? UndefinedAppImage : imageUrl} />
-                {title}
+              <Box sx={{ display: "flex" }}>
+                <span style={{ display: "flex", marginRight: "5px" }}><CloseIcon onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(index) }} className="hover" sx={{ fontSize: 15 }} /></span>
+                <span style={{ display: "flex", marginRight: "5px" }}>
+                  {maximized ? <FilterNoneIcon className="hover" sx={{ fontSize: 15 }} onClick={() => {
+                    max.current = false
+                    setMaximized(!maximized)
+                    dimension.current.width = savedimension.current.width
+                    dimension.current.height = savedimension.current.height
+
+                  }
+                  } />
+                    : <CropSquareIcon onClick={() => {
+                      max.current = true
+                      savedimension.current = { width: dimension.current.width, height: dimension.current.height }
+                      setMaximized(!maximized)
+                      dimension.current = { width: window.parent.innerWidth, height: window.parent.innerHeight - FOOTER_HEIGHT - HEADER_HEIGHT - WINDOW_TOPBAR_HEIGHT - WINDOW_HEIGHT_MAXIMIZED_OFFSET  }
+
+                    }} className="hover" sx={{ fontSize: 15 }} />
+
+                  }
+                </span>
+                <span style={{ display: "flex", marginRight: "5px" }}>
+                  <RemoveIcon onClick={() => { minimizeWindow(index) }} className="hover" sx={{ fontSize: 15 }} />
+                </span>
               </Box>
             </Box>
 

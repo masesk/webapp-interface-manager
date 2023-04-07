@@ -4,19 +4,34 @@ import { uminimizeUpdateIndex, hideWindow, updateIndex, hideWindowId, unminimize
 import * as R from 'ramda'
 import CloseIcon from '@mui/icons-material/Close';
 import { IconButton, Tab, Box } from '@mui/material'
-
+import { styled } from '@mui/material/styles';
+import { FOOTER_HEIGHT } from './constant';
 
 
 const MinBar = ({ children, index, uminimizeUpdateIndex, hideWindowId, unminimizeWindow, minimized, hideWindow }) => {
+
+
+    const AntTab = styled((props) => <Tab disableRipple {...props} />)(({ theme }) => ({
+
+        height: FOOTER_HEIGHT,
+        display: "flex",
+        justifyContent: "baseline"
+    }))
     return (
-        <Tab onClick={() => { uminimizeUpdateIndex(index) }} sx={{ padding: 0, bgcolor: !minimized ? "background.paper" : "primary.main", color: !minimized ? "background.paper.contrastText" : "primary.contrastText", marginRight: "10px", mr: 1, ml: 1, borderTopRightRadius: "25px", borderTopLeftRadius: "25px" }} label={
-            <span style={{ display: "flex", minWidth: "150px", justifyContent: "space-between", alignItems: "center" }}>
-                <IconButton component="span" onClick={e => { hideWindowId(index); e.stopPropagation(); }}>
-                    <CloseIcon size={20} sx={{ color: !minimized ? "background.paper.contrastText" : "primary.contrastText" }} />
-                </IconButton>
-                <Box sx={{ pr: 1, textOverflow: "ellipsis", width: "inherit" }}><p style={{ textAlign: "right", width: "150px", whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden" }}>{children}</p></Box>
-            </span>
-        } />
+        <AntTab onClick={() => { uminimizeUpdateIndex(index) }} sx={{
+            paddingInline: 0, mt: 0, padding: 0, bgcolor: !minimized ? "background.paper" : "primary.main", color: !minimized ? "background.paper.contrastText" : "primary.contrastText",
+            mr: 1, ml: 1, borderTopRightRadius: "25px", borderTopLeftRadius: "25px"
+        }}
+            label={
+                <span style={{ display: "flex", minWidth: "150px", justifyContent: "space-between", alignItems: "baseline" }}>
+                    <Box>
+                    <IconButton component="span" onClick={e => { hideWindowId(index); e.stopPropagation(); }}>
+                        <CloseIcon size={20} sx={{ color: !minimized ? "background.paper.contrastText" : "primary.contrastText" }} />
+                    </IconButton>
+                    </Box>
+                    <Box sx={{ pr: 1, textOverflow: "ellipsis", width: "inherit" }}>{children}</Box>
+                </span>
+            } />
 
     )
 

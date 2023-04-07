@@ -11,6 +11,7 @@ import { createApp, updateIndex, createNotification, removeNotification } from "
 import { Snackbar, Box, Alert, Tabs } from "@mui/material"
 import CloseIcon from "@mui/icons-material/Close"
 import * as R from 'ramda'
+import { FOOTER_HEIGHT, HEADER_HEIGHT } from "./constant"
 const MainPage = ({ windows, createApp, updateIndex, createNotification, removeNotification }) => {
     const windowsAppRefs = useRef()
     useEffect(() => {
@@ -60,8 +61,7 @@ const MainPage = ({ windows, createApp, updateIndex, createNotification, removeN
         console.info("WAIM successfully loaded")
 
     }, [])
-
-
+    
     useEffect(()=> {
         windowsAppRefs.current = windows.apps
     }, [windows.apps])
@@ -84,7 +84,7 @@ const MainPage = ({ windows, createApp, updateIndex, createNotification, removeN
             }
             {
                 (!R.isNil(R.path(["layout", "type"], windows))) && 
-                <div id="paneGrandParent" style={{height: "calc(100vh - 100px)"}}>
+                <div id="paneGrandParent" style={{height: `calc(100vh - ${FOOTER_HEIGHT + HEADER_HEIGHT}px)`}}>
                 <SplitLayout indexPath={[]} layoutType={R.path(["layout", "type"], windows)} />
                 </div>
             }
@@ -116,11 +116,12 @@ const MainPage = ({ windows, createApp, updateIndex, createNotification, removeN
                 )(windows.view)
             }
             
-            <div className="footer">
+            <div className="footer" style={{height: FOOTER_HEIGHT}}>
                 <Tabs
                     variant="scrollable"
                     scrollButtons="auto"
                     value={false}
+                    sx={{ minHeight: FOOTER_HEIGHT, height: FOOTER_HEIGHT }}
                 >
 
                     {

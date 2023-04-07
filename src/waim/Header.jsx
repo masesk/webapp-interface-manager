@@ -21,6 +21,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { ReactComponent as WAIMLogo } from '../img/WAIM.svg'
 import { HORIZONTAL_LAYOUT, VERTICAL_LAYOUT } from '../redux/constants';
 import UndefinedAppImage from "../img/unknown.png"
+import { HEADER_HEIGHT } from './constant';
 
 
 const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitialLayout, toggleLayoutEdit }) => {
@@ -44,7 +45,7 @@ const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitia
   return (
 
 
-    <Box className="header noselect" sx={{ bgcolor: 'background.paper', color: 'text.primary', justifyContent: 'space-between' }}>
+    <Box className="header noselect" sx={{ bgcolor: 'background.paper', color: 'text.primary', justifyContent: 'space-between', height: HEADER_HEIGHT }}>
       <Box sx={{ width: "250px", textAlign: "start" }}>
 
 
@@ -73,6 +74,7 @@ const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitia
             }}
           >
             <TextField
+              autoFocus={false}
               size="small"
               onChange={(e) => setSeearchString(e.target.value)}
               value={searchString}
@@ -168,7 +170,7 @@ const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitia
 
 
       </Box>
-      <Box sx={{ width: "250px", textAlign: "center" }}> <WAIMLogo width="100px" /></Box>
+      <Box sx={{ width: "250px", textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center" }}> <WAIMLogo width="100px" /></Box>
 
       <Box sx={{ width: "250px", textAlign: "end" }}>
 

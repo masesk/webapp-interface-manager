@@ -34,7 +34,7 @@ const initialState = {
   view: [],
   appDoms: {},
   layout:
-  {},
+    {},
   layoutEditEnabled: false,
   notificationCount: 0,
   notifications: {},
@@ -47,24 +47,50 @@ const save = (newstate) => {
   return newstate
 }
 
+const saveLayout = (newState) => {
+  const myStorage = window.localStorage;
+  myStorage.setItem(appNameLayout, JSON.stringify(R.prop("layout", newState)))
+  return newState
+}
+
 const countLayoutApps = (map, layout) => {
-  if(R.isNil(layout)){
+  if (R.isNil(layout)) {
     return 0
-  } 
-  if(layout.type === SELECTED_APP){
- 		let count = 0;
-    if(map.get(layout.appid) !== undefined){
-    	count = map.get(layout.appid)
+  }
+  if (layout.type === SELECTED_APP) {
+    let count = 0;
+    if (map.get(layout.appid) !== undefined) {
+      count = map.get(layout.appid)
     }
-    map.set(layout.appid, count+1)
+    map.set(layout.appid, count + 1)
   }
-  if(layout["0"] !== undefined){
-   countLayoutApps(map, layout[0])
+  if (layout["0"] !== undefined) {
+    countLayoutApps(map, layout[0])
   }
-  if(layout["1"] !== undefined){
-   countLayoutApps(map, layout[1])
+  if (layout["1"] !== undefined) {
+    countLayoutApps(map, layout[1])
   }
 }
+
+
+const mapLayoutApp = (layout, appid, path, callback) => {
+  if (R.isNil(layout)) {
+    return
+  }
+  if (layout.type === SELECTED_APP && layout.appid === appid) {
+    callback(layout, path)
+  }
+  if (layout["0"] !== undefined) {
+    mapLayoutApp(layout[0], appid, R.append(0, path), callback)
+  }
+  if (layout["1"] !== undefined) {
+    mapLayoutApp(layout[1], appid, R.append(1, path), callback)
+  }
+}
+
+
+
+
 const load = (newstate) => {
   const myStorage = window.localStorage;
   const apps = myStorage.getItem(appName);
@@ -235,7 +261,7 @@ export default function main(state = initialState, action) {
       const zIndex = R.path(["view", Number(index), "zIndex"], state)
       const length = R.length(state.view)
       const instance = R.compose(
-        R.map(([index, win]) => {
+        R.map(([_, win]) => {
           const fviewid = R.prop("viewid", win)
           const fzIndex = R.prop("zIndex", win)
           if (R.equals(fviewid, viewid)) {
@@ -252,14 +278,14 @@ export default function main(state = initialState, action) {
         }),
         R.toPairs,
       )(state.view)
-      
+
       const appid = R.path(["view", index, "appid"], state)
-       
+
       return R.compose(
         R.assoc("view", R.remove(index, 1, instance)),
         R.assocPath(["openApps", appid], R.dec(R.pathOr(0, ["openApps", appid], state)))
       )(state)
-      
+
     }
 
 
@@ -278,16 +304,23 @@ export default function main(state = initialState, action) {
       }
       delete opened[payload.appid]
 
+      let layoutRemoved = state
+      mapLayoutApp(layoutRemoved.layout, payload.appid, [], (_, path) => {
+        layoutRemoved = R.dissocPath(["layout", ...path], layoutRemoved)
+      })
+
+      layoutRemoved = R.dissocPath(["openApps", payload.appid], layoutRemoved)
       const removed = R.compose(
         save,
+        saveLayout,
         R.assocPath(["apps", payload.appid], window),
         R.assoc("view", R.filter(view => {
           return !R.propEq("appid", payload.appid, view)
-        }, state.view)
-        ))(state)
+        }, state.view)),
+      )(layoutRemoved)
 
 
-      const sorted = R.reverse(R.sortBy(R.prop("zIndex"), removed.view))
+      const sorted = R.reverse(R.sortBy(R.prop("zIndex"), removed))
       let lengthIndex = sorted.length
       return R.assoc("view", R.compose(
         R.map(([index, win]) => {
@@ -316,12 +349,17 @@ export default function main(state = initialState, action) {
         }),
         R.toPairs,
       )(sorted), removed)
-      const removedState = R.compose(
-        R.assocPath(["layout", "selectedLayout"], null),
-        R.assocPath(["layout", "selectedApps"], {})
-      )(newState)
-      window.localStorage.setItem(appNameLayout, JSON.stringify(R.prop("layout", removedState)))
-      return removedState
+
+
+      let layoutRemoved = newState
+      mapLayoutApp(layoutRemoved.layout, appid, [], (_, path) => {
+        layoutRemoved = R.dissocPath(["layout", ...path], layoutRemoved)
+      })
+      return R.compose(
+        saveLayout,
+        R.dissocPath(["openApps", appid])
+      )(layoutRemoved)
+  
 
     }
     case LOAD_APPS: {
@@ -386,16 +424,18 @@ export default function main(state = initialState, action) {
 
     case ADD_LAYOUT: {
       const { indexPath, layoutType } = action.payload
-      const newState = R.assocPath(["layout", ...indexPath, "type"], layoutType, state)
-      window.localStorage.setItem(appNameLayout, JSON.stringify(R.prop("layout", newState)))
-      return newState
+      return R.compose(
+        saveLayout,
+        R.assocPath(["layout", ...indexPath, "type"], layoutType)
+      )(state)
     }
 
     case ADD_LAYOUT_INITIAL: {
-      const {layoutType} = action.payload
-      const newState = R.assocPath(["layout", "type"], layoutType, state)
-      window.localStorage.setItem(appNameLayout, JSON.stringify(R.prop("layout", newState)))
-      return newState
+      const { layoutType } = action.payload
+      return R.compose(
+        saveLayout,
+        R.assocPath(["layout", "type"], layoutType)
+      )(state)
     }
 
     case SELECT_LAYOUT_APP: {
@@ -403,13 +443,12 @@ export default function main(state = initialState, action) {
       if (R.pathEq(["apps", appid, "single"], true, state) && R.gt(R.path(["openApps", appid], state), 0)) {
         return state
       }
-      const newState = R.compose(
+      return R.compose(
+        saveLayout,
         R.assocPath(["layout", ...indexPath, "appid"], appid),
         R.assocPath(["layout", ...indexPath, "type"], SELECTED_APP),
         R.assocPath(["openApps", appid], R.inc(R.pathOr(0, ["openApps", appid], state)))
       )(state)
-      window.localStorage.setItem(appNameLayout, JSON.stringify(R.prop("layout", newState)))
-      return newState
     }
 
     case TOGGLE_LAYOUT_EDIT: {
@@ -418,10 +457,11 @@ export default function main(state = initialState, action) {
 
     case LAYOUT_SIZE_CHANGE: {
       const { indexPath, sizes } = action.payload
-      const newState = R.assocPath(["layout", ...indexPath, "sizes"], sizes, state)
-      window.localStorage.setItem(appNameLayout, JSON.stringify(R.prop("layout", newState)))
-      console.log("here?")
-      return newState
+
+      return R.compose(
+        saveLayout,
+        R.assocPath(["layout", ...indexPath, "sizes"], sizes)
+      )(state)
     }
 
     default:
