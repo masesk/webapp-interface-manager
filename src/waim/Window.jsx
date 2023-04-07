@@ -327,8 +327,8 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
                 <Typography variant="paragraph">{title}</Typography>
               </Box>
               <Box sx={{ display: "flex" }}>
-                <span style={{ display: "flex", marginRight: "5px" }}><CloseIcon onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(index) }} className="hover" sx={{ fontSize: 15 }} /></span>
-                <span style={{ display: "flex", marginRight: "5px" }}>
+                <span style={{ display: "flex", marginRight: "7px" }}><CloseIcon onMouseDown={(event) => { stopPropagation(event) }} onClick={() => { hideWindow(index) }} className="hover" sx={{ fontSize: 15 }} /></span>
+                <span style={{ display: "flex", marginRight: "7px" }}>
                   {maximized ? <FilterNoneIcon className="hover" sx={{ fontSize: 15 }} onClick={() => {
                     max.current = false
                     setMaximized(!maximized)
@@ -347,7 +347,7 @@ function Window({ title, width, height, url, appid, children, minimized, updateI
 
                   }
                 </span>
-                <span style={{ display: "flex", marginRight: "5px" }}>
+                <span style={{ display: "flex", marginRight: "7px" }}>
                   <RemoveIcon onClick={() => { minimizeWindow(index) }} className="hover" sx={{ fontSize: 15 }} />
                 </span>
               </Box>
