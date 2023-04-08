@@ -195,8 +195,8 @@ table {
 }
 
 .resize-arrow-container{
-  height: 10px;
-  width: 10px;
+  height: 20px;
+  width: 20px;
   position: absolute;
   right: -4px;
   bottom: -4px;
