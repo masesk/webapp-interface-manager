@@ -198,8 +198,8 @@ table {
   height: 20px;
   width: 20px;
   position: absolute;
-  right: -4px;
-  bottom: -4px;
+  right: -10px;
+  bottom: -10px;
   z-index: 1;
   cursor: se-resize	;
 }

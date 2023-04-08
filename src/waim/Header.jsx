@@ -2,7 +2,7 @@ import React from 'react'
 import * as R from 'ramda'
 import { connect } from 'react-redux'
 import { showWindow, toggleShowing, selectLayout, removeAllLayout, addInitialLayout, toggleLayoutEdit } from '../redux/actions'
-import { InputAdornment, Box, Button, ButtonGroup, Tooltip, TextField, IconButton } from '@mui/material';
+import { InputAdornment, Box, Button, ButtonGroup, Tooltip, IconButton, FormControl, OutlinedInput } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -25,7 +25,7 @@ import { HEADER_BUTTON_SIZE, HEADER_HEIGHT } from './constant';
 
 
 const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitialLayout, toggleLayoutEdit }) => {
-  
+
   // app anchor for apps dropdown
   const [appsAnchor, setAppsAnchor] = React.useState(null);
 
@@ -63,7 +63,7 @@ const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitia
           <Button
             size="small"
             id="basic-button"
-            sx={{fontSize: HEADER_BUTTON_SIZE}}
+            sx={{ fontSize: HEADER_BUTTON_SIZE }}
             startIcon={<AppsIcon />}
             aria-controls={appsAnchor ? 'basic-menu' : undefined}
             aria-haspopup="true"
@@ -82,34 +82,35 @@ const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitia
             }}
           >
             {/* Search bar for searching a specific app by its name */}
-            <TextField
-              autoFocus={false}
-              size="small"
-              onChange={(e) => setSeearchString(e.target.value)}
-              value={searchString}
-              placeholder="Search with App Name..."
-              InputProps={{
-                style: {paddingRight: 0},
-                startAdornment: (
-                  <InputAdornment position="start">
+            <FormControl  sx={{ mt: 2, mb: 2, pl: 3, pr: 3 }}>
+              <OutlinedInput
+                autoFocus={false}
+                size="small"
+                onChange={(e) => setSeearchString(e.target.value)}
+                value={searchString}
+                placeholder="Search with App Name..."
+                startAdornment= {(
+                  <InputAdornment sx={{padding: 0}} position="start">
                     <SearchIcon />
                   </InputAdornment>
-                ),
-                endAdornment: (
-                  <IconButton onClick={()=> {setSeearchString("")}} position="start">
+                )}
+                endAdornment= {(
+                  <IconButton sx={{padding: 0}}  onClick={() => { setSeearchString("") }} position="start">
                     <CloseIcon />
                   </IconButton>
-                )
-              }}
-              sx={{ mt: 2, mb: 2, pl: 3, pr: 3 }}
-            />
+                )}
+               
+
+              />
+            </FormControl>
             {
               // loops each app saved and create a menu entry for it
               R.compose(
                 R.map(([key, windowKey]) => {
+                  if(R.isNil(searchString)) return
 
                   // check first if the app name is included in the search
-                  if (!R.isEmpty(searchString) && !R.prop("title", R.prop(windowKey, windows.apps)).toLowerCase().includes(searchString)) {
+                  if (!R.isEmpty(searchString) && !R.prop("title", R.prop(windowKey, windows.apps)).toLowerCase().includes(searchString.toLowerCase())) {
                     return
                   }
                   return (
@@ -122,7 +123,7 @@ const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitia
 
                             <Box sx={{ display: "flex", flexDirection: "row", flex: 1, alignItems: "center" }}>
                               <Box sx={{ borderRadius: 3, border: "2px solid #9a9a9a", w: 1, h: 1, mr: 1, display: "flex", flex: "column" }}>
-                                <img onError={(e)=>(e.target.src=UndefinedAppImage)} style={{width: "50px", height: "50px", borderRadius: 10}} src={R.pathOr(UndefinedAppImage, ["apps", windowKey, "imageUrl"], windows)}/>
+                                <img onError={(e) => (e.target.src = UndefinedAppImage)} style={{ width: "50px", height: "50px", borderRadius: 10 }} src={R.pathOr(UndefinedAppImage, ["apps", windowKey, "imageUrl"], windows)} />
                               </Box>
                               {R.prop("title", R.prop(windowKey, windows.apps))}
                             </Box>
@@ -170,7 +171,7 @@ const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitia
           <Button
             size="small"
             id="basic-button"
-            sx={{fontSize: HEADER_BUTTON_SIZE}}
+            sx={{ fontSize: HEADER_BUTTON_SIZE }}
             startIcon={<AutoAwesomeMosaicIcon />}
             aria-controls={layoutAnchor ? 'basic-menu' : undefined}
             aria-haspopup="true"
@@ -189,8 +190,8 @@ const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitia
       <Box sx={{ width: "250px", textAlign: "end" }}>
 
         <ButtonGroup variant="none" size="small" >
-          <Button sx={{fontSize: HEADER_BUTTON_SIZE}} onClick={() => toggleShowing(true)} startIcon={<SettingsIcon />} size="small">Settings</Button>
-          <Button sx={{fontSize: HEADER_BUTTON_SIZE}} startIcon={<HelpIcon />} size="small">Help</Button>
+          <Button sx={{ fontSize: HEADER_BUTTON_SIZE }} onClick={() => toggleShowing(true)} startIcon={<SettingsIcon />} size="small">Settings</Button>
+          <Button sx={{ fontSize: HEADER_BUTTON_SIZE }} startIcon={<HelpIcon />} size="small">Help</Button>
 
         </ButtonGroup>
       </Box>
