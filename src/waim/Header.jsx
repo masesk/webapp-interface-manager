@@ -21,7 +21,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { ReactComponent as WAIMLogo } from '../img/WAIM.svg'
 import { HORIZONTAL_LAYOUT, VERTICAL_LAYOUT } from '../redux/constants';
 import UndefinedAppImage from "../img/unknown.png"
-import { HEADER_HEIGHT } from './constant';
+import { HEADER_BUTTON_SIZE, HEADER_HEIGHT } from './constant';
 
 
 const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitialLayout, toggleLayoutEdit }) => {
@@ -63,6 +63,7 @@ const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitia
           <Button
             size="small"
             id="basic-button"
+            sx={{fontSize: HEADER_BUTTON_SIZE}}
             startIcon={<AppsIcon />}
             aria-controls={appsAnchor ? 'basic-menu' : undefined}
             aria-haspopup="true"
@@ -169,6 +170,7 @@ const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitia
           <Button
             size="small"
             id="basic-button"
+            sx={{fontSize: HEADER_BUTTON_SIZE}}
             startIcon={<AutoAwesomeMosaicIcon />}
             aria-controls={layoutAnchor ? 'basic-menu' : undefined}
             aria-haspopup="true"
@@ -187,8 +189,8 @@ const Header = ({ windows, showWindow, toggleShowing, removeAllLayout, addInitia
       <Box sx={{ width: "250px", textAlign: "end" }}>
 
         <ButtonGroup variant="none" size="small" >
-          <Button onClick={() => toggleShowing(true)} startIcon={<SettingsIcon />} size="small">Settings</Button>
-          <Button startIcon={<HelpIcon />} size="small">Help</Button>
+          <Button sx={{fontSize: HEADER_BUTTON_SIZE}} onClick={() => toggleShowing(true)} startIcon={<SettingsIcon />} size="small">Settings</Button>
+          <Button sx={{fontSize: HEADER_BUTTON_SIZE}} startIcon={<HelpIcon />} size="small">Help</Button>
 
         </ButtonGroup>
       </Box>

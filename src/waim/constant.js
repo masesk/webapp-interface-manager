@@ -20,3 +20,5 @@ export const MAXIMIZED_STYLE = {
     paddingTop: 0,
     paddingLeft: 0
 }
+
+export const HEADER_BUTTON_SIZE = 13
