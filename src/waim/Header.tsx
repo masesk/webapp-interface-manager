@@ -32,7 +32,7 @@ const Header = () => {
   const dispatch = useAppDispatch()
   
   // app anchor for apps dropdown
-  const [appsAnchor, setAppsAnchor] = React.useState(null);
+  const [appsAnchor, setAppsAnchor] = React.useState<HTMLButtonElement>(null);
 
   // layout anchor
   const [layoutAnchor, setLayoutAnchor] = React.useState(null);
@@ -71,7 +71,7 @@ interface LayoutStruct {
 
 
 
-        <ButtonGroup size="small" variant="none" color="primary">
+        <ButtonGroup size="small"  color="primary" variant="none">
           <Button
             size="small"
             id="basic-button"
@@ -107,7 +107,7 @@ interface LayoutStruct {
                   </InputAdornment>
                 )}
                 endAdornment= {(
-                  <IconButton sx={{padding: 0}}  onClick={() => { setSearchString("") }} position="start">
+                  <IconButton sx={{padding: 0}}  onClick={() => { setSearchString("") }}>
                     <CloseIcon />
                   </IconButton>
                 )}
@@ -122,22 +122,22 @@ interface LayoutStruct {
                   if(R.isNil(searchString)) return
 
                   // check first if the app name is included in the search
-                  if (!R.isEmpty(searchString) && !R.prop("title", R.prop(windowKey, windows.apps)).toLowerCase().includes(searchString.toLowerCase())) {
+                  if (!R.isEmpty(searchString) && windows.apps[windowKey].title.toLowerCase().includes(searchString.toLowerCase())) {
                     return
                   }
                   return (
                     <Box sx={{ pl: 1, pr: 1 }} key={key}>
 
-                      <Tooltip key={`${windowKey}tooltip`} followCursor title={R.pathEq(["apps", windowKey, "single"], true, windows) && (R.gt(R.pathOr(0, ["openApps", windowKey], windows), 0)) ? "Only one instance of app can be opened" : ""}>
+                      <Tooltip key={`${windowKey}tooltip`} followCursor title={R.path(["apps", windowKey, "single"], windows) && (R.gt(R.pathOr(0, ["openApps", windowKey], windows), 0)) ? "Only one instance of app can be opened" : ""}>
                         <span key={`${windowKey}span`} style={{ display: "block" }}>
 
-                          <MenuItem key={`${windowKey}menuitem`} disabled={R.pathEq(["apps", windowKey, "single"], true, windows) && (R.gt(R.pathOr(0, ["openApps", windowKey], windows), 0))} onClick={() => { dispatch(createWindow(windowKey)); setAppsAnchor(null); }}>
+                          <MenuItem key={`${windowKey}menuitem`} disabled={R.pathOr(false, ["apps", windowKey, "single"], windows) && (R.gt(R.pathOr(0, ["openApps", windowKey], windows), 0))} onClick={() => { dispatch(createWindow(windowKey)); setAppsAnchor(null); }}>
 
                             <Box sx={{ display: "flex", flexDirection: "row", flex: 1, alignItems: "center" }}>
                               <Box sx={{ borderRadius: 3, border: "2px solid #9a9a9a", w: 1, h: 1, mr: 1, display: "flex", flex: "column" }}>
                                 <img onError={(e) => (e.target.src = UndefinedAppImage)} style={{ width: "50px", height: "50px", borderRadius: 10 }} src={R.pathOr(UndefinedAppImage, ["apps", windowKey, "imageUrl"], windows)} />
                               </Box>
-                              {R.prop("title", R.prop(windowKey, windows.apps))}
+                              {windows.apps[windowKey].title}
                             </Box>
 
                           </MenuItem>

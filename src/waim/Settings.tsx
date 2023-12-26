@@ -29,10 +29,7 @@ const Transition = React.forwardRef(function Transition(
 
 interface SettingsProps {
     windows: any,
-    settings: any,
-    deleteApp: Function,
-    resetDefault: Function,
-    updateApp: Function
+    settings: any
 }
 
 
@@ -44,7 +41,6 @@ const Settings = () => {
 
     const [editableRow, setEditableRow] = useState<string>("")
 
-
     const renderButtons = (appid: string, index: string) => {
         return (
             <ButtonGroup variant="contained">
@@ -55,9 +51,19 @@ const Settings = () => {
                             setEditableRow(index)
                         }
                         else {
-                            dispatch(updateApp(editableRow, titleRef.current?.value, Number(widthRef.current?.value),
-                                Number(heightRef.current?.value), urlRef.current?.value, singletonRef.current?.checked,
-                                deletableRef.current?.checked, R.path([editableRow, "editable"], window)))
+                            dispatch(updateApp(
+                                {
+                                    appid: editableRow,
+                                    title: titleRef.current?.value,
+                                    width: Number(widthRef.current?.value),
+                                    height: Number(heightRef.current?.value),
+                                    url: urlRef.current?.value,
+                                    single: singletonRef.current?.checked,
+                                    deletable: deletableRef.current?.checked,
+                                    editable: R.pathOr(true, [editableRow, "editable"], window),
+                                    imageUrl: imageUrlRef.current?.value
+
+                                }))
                             setEditableRow("")
                         }
                     }}>
@@ -164,9 +170,19 @@ const Settings = () => {
 
 
 
-                        dispatch(updateApp(editableRow, titleRef.current?.value, Number(widthRef.current?.value),
-                            Number(heightRef.current?.value), urlRef.current?.value, singletonRef.current?.checked,
-                            deletableRef.current?.checked, R.path([editableRow, "editable"], window), imageUrlRef.current?.value)); setEditableRow("")
+                        dispatch(updateApp(
+                            {
+                                appid: editableRow,
+                                title: titleRef.current?.value,
+                                width: Number(widthRef.current?.value),
+                                height: Number(heightRef.current?.value),
+                                url: urlRef.current?.value,
+                                single: singletonRef.current?.checked,
+                                deletable: deletableRef.current?.checked,
+                                editable: R.pathOr(true, [editableRow, "editable"], window),
+                                imageUrl: imageUrlRef.current?.value
+
+                            })); setEditableRow("")
                     }}>Save</Button>
                 </DialogActions>
             </Dialog>

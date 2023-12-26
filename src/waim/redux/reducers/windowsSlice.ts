@@ -207,6 +207,37 @@ const assocPathInternal =  (path: any, val: any, obj: any) => {
   }
   if (idx !== "") tmpObj[idx] = val
 }
+const dissocPathInternal =  (path: any, obj: any) => {
+  let tmpObj = obj
+  let idx: number | string = ""
+  while(path.length !== 0){
+      idx = path[0]
+      if (path.length === 1) break
+      if(tmpObj.hasOwnProperty(idx) && 
+          typeof tmpObj[idx] === "object" || Array.isArray(obj[idx])){
+          tmpObj = tmpObj[idx]
+      }
+      else{
+        return
+      }
+      path.splice(0, 1)
+  }
+  if(idx !== ""){
+    if(Array.isArray(tmpObj) && typeof idx === "number"){
+        tmpObj.splice(idx, 1)
+    }
+    else{
+        delete tmpObj[idx]
+    }
+  }
+}
+
+const sortByKey = (array: any, key: string) => {
+  return array.sort(function(a: any, b: any) {
+      var x = a[key]; var y = b[key];
+      return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+  });
+}
 
 
 export const windowsSlice = createSlice({
@@ -227,9 +258,9 @@ export const windowsSlice = createSlice({
       const newView: View = {
         appid: appid,
         viewid: appView,
-        zIndex: Number(R.length(R.prop("view", state)) + 1)
+        zIndex: state.view.length + 1
       }
-      state.openApps[appid] += 1
+      !state.openApps.hasOwnProperty(appid) ? state.openApps[appid] = 1 : state.openApps[appid] += 1
       state.view.push(newView)
     },
 
@@ -360,7 +391,7 @@ export const windowsSlice = createSlice({
     },
     updateApp: (state, action: PayloadAction<AppStruct>) => {
 
-      // grab all the necessary props
+      // grab all the necessary propss
       const { appid, title, width, height, url, single, deletable, editable, imageUrl }: AppStruct = action.payload
       
       // construct a new window to update
@@ -380,8 +411,9 @@ export const windowsSlice = createSlice({
       delete opened[appid]
 
       // loop through and remove all the layouts that use this app
-      mapLayoutApp((state.layout as Layout), appid, [], (path: number[]) => {
-        state = R.dissocPath(["layout", ...path], state)
+      mapLayoutApp((state.layout as Layout), appid, [], (_1: Layout, path: number[]) => {
+        console.log(path)
+        dissocPathInternal(["layout", ...path], state)
       })
 
       // remove the open apps 
@@ -391,6 +423,7 @@ export const windowsSlice = createSlice({
       state.view = state.view.filter(view => view.appid !== appid)
 
       // update the app
+      console.log(appid)
       state.apps[appid] = newWindow
 
       // save new layout
@@ -400,18 +433,18 @@ export const windowsSlice = createSlice({
       save(state.apps)
 
       // sort the list based on the zIndex
-      const sorted: View[] = R.reverse(R.sortBy(R.prop("zIndex"), state.view))
+      sortByKey(state.view, "zIndex")
+
+      // reverse the list
+      state.view.reverse()
 
       // grab the length of the sorted list
-      let lengthIndex: number = sorted.length
+      let lengthIndex: number = state.view.length
 
       // loop through each view and update the index
-      sorted.map((value: View) => {
+      state.view.map((value: View) => {
         value.zIndex = lengthIndex--
       })
-
-      // assign the view to the sorted
-      state.view = sorted
 
     },
     deleteApp: (state, action: PayloadAction<string>)=> {
@@ -422,22 +455,22 @@ export const windowsSlice = createSlice({
       state.view = state.view.filter(e => e.appid !== appid)
 
       // sort the list based on the zIndex
-      const sorted: View[] = R.reverse(R.sortBy(R.prop("zIndex"), state.view))
+      sortByKey(state.view, "zIndex")
+
+      // reverse the list
+      state.view.reverse()
 
       // grab the length of the sorted list
-      let lengthIndex: number = sorted.length
+      let lengthIndex: number = state.view.length
 
       // loop through each view and update the index
-      sorted.map((value: View) => {
+      state.view.map((value: View) => {
         value.zIndex = lengthIndex--
       })
 
-      // assign the new state 
-      state.view = sorted
-
       // loop through and remove all the layouts that use this app
       mapLayoutApp((state.layout as Layout), appid, [], (path: number[]) => {
-          state = R.dissocPath(["layout", ...path], state)
+          dissocPathInternal(["layout", ...path], state)
       })
 
       // delete that the app is open
@@ -515,11 +548,7 @@ export const windowsSlice = createSlice({
       // grab the layout params
       const {indexPath, layoutType} = action.payload
 
-      console.log(state)
-
       // set the state based on the layout path and layout type
-      //state = R.assocPath(["layout", ...indexPath, "type"], layoutType, state)
-
       assocPathInternal(["layout", ...indexPath, "type"], layoutType, state)
 
       // save the state
@@ -537,8 +566,8 @@ export const windowsSlice = createSlice({
       const { appid, indexPath } = action.payload
       if(state.apps[appid].single && state.openApps[appid] > 0) return state
       state.openApps[appid] += 1
-      state = R.assocPath(["layout", ...indexPath, "type"], SELECTED_APP, state)
-      state = R.assocPath(["layout", ...indexPath, "appid"], appid, state)
+      assocPathInternal(["layout", ...indexPath, "type"], SELECTED_APP, state)
+      assocPathInternal(["layout", ...indexPath, "appid"], appid, state)
     },
     toggleLayoutEdit: (state)=> {
       // toggle if the layout is in edit mode
@@ -549,7 +578,9 @@ export const windowsSlice = createSlice({
       const { indexPath, sizes } = action.payload
 
       // modify the state with the new sizes
-      state = R.assocPath(["layout", ...indexPath, "sizes"], sizes, state)
+      assocPathInternal(["layout", ...indexPath, "sizes"], sizes, state)
+
+      //state = R.assocPath(["layout", ...indexPath, "sizes"], sizes, state)
 
       // save to local storage
       saveLayout(state)
