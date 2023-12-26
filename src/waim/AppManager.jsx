@@ -2,8 +2,6 @@ import React, { useEffect } from 'react';
 import '../css/App.css';
 import * as R from 'ramda'
 import AddWebApp from '../apps/AddWebApp'
-import { connect } from 'react-redux'
-import { loadApps, addAppDom } from '../redux/actions'
 import ChatClient from '../apps/ChatClient';
 import MainPage from './MainPage';
 import {
@@ -11,19 +9,22 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { isRouteErrorResponse, useRouteError } from "react-router-dom";
+import { addAppDom, loadApps, selectWindows } from './redux/reducers/windowsSlice';
+import { useAppSelector, useAppDispatch } from './redux/hooks';
 
 
-
-const AppManager = ({ windows, loadApps, addAppDom }) => {
-
+const AppManager = () => {
+  
+  const dispatch = useAppDispatch()
+  const windows = useAppSelector(selectWindows)
   // this will be called initially, and when the addAppDom or loadApps methods are changed
   // pass your app id and react dom below if you want to render a react component as an app
   // don't forget to add your app in src/constants.js
   useEffect(() => {
     {/* Add all static apps below */ }
-    loadApps()
-    addAppDom("chatclient", <ChatClient />)
-    addAppDom("addwebapp", <AddWebApp />)
+    dispatch(loadApps())
+    dispatch(addAppDom({appid: "chatclient",  appDom: <ChatClient />}))
+    dispatch(addAppDom({appid: "addwebapp", appDom: <AddWebApp />}))
   }, [addAppDom, loadApps])
 
 
@@ -109,11 +110,7 @@ const AppManager = ({ windows, loadApps, addAppDom }) => {
 }
 
 
-const mapStateToProps = state => {
-  return state
-};
-
 // connect to the redux store
-export default connect(mapStateToProps, { loadApps, addAppDom })(AppManager);
+export default AppManager;
 
 

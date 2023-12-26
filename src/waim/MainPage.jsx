@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react"
-import { connect } from 'react-redux'
 import Window from './Window'
 import Header from './Header'
 import Settings from './Settings'
@@ -7,12 +6,17 @@ import StaticWindow from './StaticWindow'
 import { BUILT_IN_APPS } from '../constants'
 import MinBar from './MinBar';
 import SplitLayout from './SplitLayout';
-import { createApp, updateIndex, createNotification, removeNotification } from "../redux/actions"
+// import { createApp, updateIndex, createNotification, removeNotification } from "./redux/actions"
 import { Snackbar, Box, Alert, Tabs } from "@mui/material"
 import CloseIcon from "@mui/icons-material/Close"
 import * as R from 'ramda'
-const MainPage = ({ windows, createApp, updateIndex, createNotification, removeNotification }) => {
+import { FOOTER_HEIGHT, HEADER_HEIGHT } from "./constant"
+import { useAppDispatch, useAppSelector } from "./redux/hooks"
+import { createApp, createNotificaiton, removeNotification, selectWindows, updateIndex } from "./redux/reducers/windowsSlice"
+const MainPage = () => {
     const windowsAppRefs = useRef()
+    const windows = useAppSelector(selectWindows)
+    const dispatch = useAppDispatch()
     useEffect(() => {
         if (window === undefined) retunr
         window.waim = {}
@@ -34,7 +38,7 @@ const MainPage = ({ windows, createApp, updateIndex, createNotification, removeN
         }
         window.waim.messageHandler.listen("__create_notification__", (data) => {
             const { message, type, duration } = data
-            createNotification(message, type, duration)
+            dispatch(createNotificaiton(message, type, duration))
             return
         })
 
@@ -48,8 +52,8 @@ const MainPage = ({ windows, createApp, updateIndex, createNotification, removeN
                 })
                 return
             }
-            createApp(...Object.values(data))
-            updateIndex(data.id)
+            dispatch(createApp(...Object.values(data)))
+            dispatch(updateIndex(data.id))
             window.waim.messageHandler.publish("__create_new_app_response__", { id: data.id, status: "success" })
             window.waim.messageHandler.publish("__create_notification__", {
                 message: <span>New application with ID <span style={{fontWeight:"bold"}}>{data.id}</span> was successfully created!</span>,
@@ -60,15 +64,14 @@ const MainPage = ({ windows, createApp, updateIndex, createNotification, removeN
         console.info("WAIM successfully loaded")
 
     }, [])
-
-
+    
     useEffect(()=> {
         windowsAppRefs.current = windows.apps
     }, [windows.apps])
 
     return (
         <>
-            <Header windows={windows} />
+            <Header />
             {/* Add all static windows/apps below */}
             {
                 R.compose(
@@ -84,7 +87,7 @@ const MainPage = ({ windows, createApp, updateIndex, createNotification, removeN
             }
             {
                 (!R.isNil(R.path(["layout", "type"], windows))) && 
-                <div id="paneGrandParent" style={{height: "calc(100vh - 100px)"}}>
+                <div id="paneGrandParent" style={{height: `calc(100vh - ${FOOTER_HEIGHT + HEADER_HEIGHT}px)`}}>
                 <SplitLayout indexPath={[]} layoutType={R.path(["layout", "type"], windows)} />
                 </div>
             }
@@ -116,11 +119,12 @@ const MainPage = ({ windows, createApp, updateIndex, createNotification, removeN
                 )(windows.view)
             }
             
-            <div className="footer">
+            <div className="footer" style={{height: FOOTER_HEIGHT}}>
                 <Tabs
                     variant="scrollable"
                     scrollButtons="auto"
                     value={false}
+                    sx={{ minHeight: FOOTER_HEIGHT, height: FOOTER_HEIGHT }}
                 >
 
                     {
@@ -149,11 +153,11 @@ const MainPage = ({ windows, createApp, updateIndex, createNotification, removeN
                                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                                 message={value.message}
                                 key={`notification_${key}`}
-                                onClose={()=> {removeNotification(key)}}
+                                onClose={()=> {dispatch(removeNotification(key))}}
                                 open={R.has(key, windows.notifications)}
                             >
 
-                                <Alert severity={value.type} onClose={() => { removeNotification(key);}} closeText="close" sx={{ width: '100%' }} slotProps={{ closeIcon: <CloseIcon /> }}>
+                                <Alert severity={value.type} onClose={() => { dispatch(removeNotification(key));}} closeText="close" sx={{ width: '100%' }} slotProps={{ closeIcon: <CloseIcon /> }}>
                                     {value.message}
 
 
@@ -169,8 +173,5 @@ const MainPage = ({ windows, createApp, updateIndex, createNotification, removeN
     )
 }
 
-const mapStateToProps = state => {
-    return state
-};
 
-export default connect(mapStateToProps, { createApp, updateIndex, createNotification, removeNotification })(MainPage);
+export default MainPage;
