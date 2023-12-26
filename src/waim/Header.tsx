@@ -17,22 +17,20 @@ import DeleteIcon from '@mui/icons-material/Delete';
 // import StopCircleIcon from '@mui/icons-material/StopCircle';
 // import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
-//import { ReactComponent as WAIMLogo } from '../img/WAIM.svg'
-
-import { HORIZONTAL_LAYOUT, VERTICAL_LAYOUT } from './redux/constants';
+//import { ReactComponent as WAIMLogo } from '../img/WAIM.svg'd
 import UndefinedAppImage from "../img/unknown.png"
 import { HEADER_BUTTON_SIZE, HEADER_HEIGHT } from './constant';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
-import windowsSlice, { LayoutType, addLayoutInitial, createWindow, removeAllLayout, selectWindows, toggleLayoutEdit } from './redux/reducers/windowsSlice';
+import { LayoutType, addLayoutInitial, createWindow, removeAllLayout, selectWindows } from './redux/reducers/windowsSlice';
 import { toggleSettings } from './redux/reducers/settingsSlice';
 
 
 const Header = () => {
   const windows = useAppSelector(selectWindows)
   const dispatch = useAppDispatch()
-  
+
   // app anchor for apps dropdown
-  const [appsAnchor, setAppsAnchor] = React.useState<HTMLButtonElement>(null);
+  const [appsAnchor, setAppsAnchor] = React.useState<HTMLButtonElement | null>(null);
 
   // layout anchor
   const [layoutAnchor, setLayoutAnchor] = React.useState(null);
@@ -42,11 +40,11 @@ const Header = () => {
 
   // list of all default layouts, their type, and icon
 
-interface LayoutStruct {
-  title: string,
-  type: LayoutType,
-  icon: JSX.Element
-}
+  interface LayoutStruct {
+    title: string,
+    type: LayoutType,
+    icon: JSX.Element
+  }
 
   const layouts: LayoutStruct[] = [
     {
@@ -71,7 +69,14 @@ interface LayoutStruct {
 
 
 
-        <ButtonGroup size="small"  color="primary" variant="none">
+        <ButtonGroup size="small" color="primary" sx={{
+          ".MuiButtonGroup-grouped": {
+            border: "none"
+          },
+          ".MuiButtonGroup-grouped: hover": {
+            border: "none"
+          },
+        }}>
           <Button
             size="small"
             id="basic-button"
@@ -94,24 +99,24 @@ interface LayoutStruct {
             }}
           >
             {/* Search bar for searching a specific app by its name */}
-            <FormControl  sx={{ mt: 2, mb: 2, pl: 3, pr: 3 }}>
+            <FormControl sx={{ mt: 2, mb: 2, pl: 3, pr: 3 }}>
               <OutlinedInput
                 autoFocus={false}
                 size="small"
                 onChange={(e) => setSearchString(e.target.value)}
                 value={searchString}
                 placeholder="Search with App Name..."
-                startAdornment= {(
-                  <InputAdornment sx={{padding: 0}} position="start">
+                startAdornment={(
+                  <InputAdornment sx={{ padding: 0 }} position="start">
                     <SearchIcon />
                   </InputAdornment>
                 )}
-                endAdornment= {(
-                  <IconButton sx={{padding: 0}}  onClick={() => { setSearchString("") }}>
+                endAdornment={(
+                  <IconButton sx={{ padding: 0 }} onClick={() => { setSearchString("") }}>
                     <CloseIcon />
                   </IconButton>
                 )}
-               
+
 
               />
             </FormControl>
@@ -119,7 +124,7 @@ interface LayoutStruct {
               // loops each app saved and create a menu entry for it
               R.compose(
                 R.map(([key, windowKey]) => {
-                  if(R.isNil(searchString)) return
+                  if (R.isNil(searchString)) return
 
                   // check first if the app name is included in the search
                   if (!R.isEmpty(searchString) && windows.apps[windowKey].title.toLowerCase().includes(searchString.toLowerCase())) {
@@ -135,7 +140,7 @@ interface LayoutStruct {
 
                             <Box sx={{ display: "flex", flexDirection: "row", flex: 1, alignItems: "center" }}>
                               <Box sx={{ borderRadius: 3, border: "2px solid #9a9a9a", w: 1, h: 1, mr: 1, display: "flex", flex: "column" }}>
-                                <img onError={(e) => (e.target.src = UndefinedAppImage)} style={{ width: "50px", height: "50px", borderRadius: 10 }} src={R.pathOr(UndefinedAppImage, ["apps", windowKey, "imageUrl"], windows)} />
+                                <img onError={(e: any) => (e.target.src = UndefinedAppImage)} style={{ width: "50px", height: "50px", borderRadius: 10 }} src={R.pathOr(UndefinedAppImage, ["apps", windowKey, "imageUrl"], windows)} />
                               </Box>
                               {windows.apps[windowKey].title}
                             </Box>
@@ -166,7 +171,7 @@ interface LayoutStruct {
               // loop each layout type and create a menu entry for it
               // disable it if the layout is in edit mode
               R.compose(
-                R.map((layout) => {
+                R.map((layout: LayoutStruct) => {
                   return <MenuItem disabled={R.equals(R.prop("layoutEditEnabled", windows), true) || R.hasPath(["layout", "type"], windows)} key={`${layout.type}menuitem`} onClick={() => { dispatch(addLayoutInitial(layout.type)); setLayoutAnchor(null); }}>{layout.icon} {layout.title}</MenuItem>
 
                 })
@@ -188,7 +193,7 @@ interface LayoutStruct {
             aria-controls={layoutAnchor ? 'basic-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={layoutAnchor ? 'true' : undefined}
-            onClick={(event) => { setLayoutAnchor(event.currentTarget) }}
+            onClick={(event: any) => { setLayoutAnchor(event.currentTarget) }}
           >
             Layout
           </Button>
@@ -201,7 +206,14 @@ interface LayoutStruct {
 
       <Box sx={{ width: "250px", textAlign: "end" }}>
 
-        <ButtonGroup variant="none" size="small" >
+        <ButtonGroup size="small" sx={{
+          ".MuiButtonGroup-grouped": {
+            border: "none"
+          },
+          ".MuiButtonGroup-grouped:hover": {
+            border: "none"
+          },
+        }}>
           <Button sx={{ fontSize: HEADER_BUTTON_SIZE }} onClick={() => dispatch(toggleSettings(true))} startIcon={<SettingsIcon />} size="small">Settings</Button>
           <Button sx={{ fontSize: HEADER_BUTTON_SIZE }} startIcon={<HelpIcon />} size="small">Help</Button>
 

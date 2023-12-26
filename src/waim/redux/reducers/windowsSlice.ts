@@ -454,6 +454,12 @@ export const windowsSlice = createSlice({
       // filter out all the views that use the appid
       state.view = state.view.filter(e => e.appid !== appid)
 
+      // remove the app
+      delete state.apps[appid]
+
+      // save the apps
+      save(state.apps)
+
       // sort the list based on the zIndex
       sortByKey(state.view, "zIndex")
 
@@ -468,8 +474,11 @@ export const windowsSlice = createSlice({
         value.zIndex = lengthIndex--
       })
 
+
+
       // loop through and remove all the layouts that use this app
-      mapLayoutApp((state.layout as Layout), appid, [], (path: number[]) => {
+      mapLayoutApp((state.layout as Layout), appid, [], (_1: Layout, path: number[]) => {
+          console.log(path)
           dissocPathInternal(["layout", ...path], state)
       })
 
@@ -485,6 +494,7 @@ export const windowsSlice = createSlice({
     },
     resetDefault: (state)=> {
       // reset everything to default
+      console.log(initialState)
       state = initialState
       opened = {}
       appView = 0
@@ -495,6 +505,9 @@ export const windowsSlice = createSlice({
 
       // save the apps as they now appear
       save(state.apps)
+
+      // return the new state
+      return state
     },
     removeAllLayout: (state)=> {
       // grab a map 
