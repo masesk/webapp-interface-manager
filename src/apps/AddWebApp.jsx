@@ -34,7 +34,7 @@ const AddWebApp = () => {
 
     messageHandlerRef.current = messageHandler
     messageHandlerRef.current.listen("__create_new_app_response__", (data) => {
-      if (data.id === lastSentId.current) {
+      if (data.appid === lastSentId.current) {
         setAwaitingCreationResponse(false)
       }
     })
@@ -52,7 +52,7 @@ const AddWebApp = () => {
     if (awaitingCreationResponse) {
       messageHandlerRef.current.publish("__create_new_app__",
         {
-          id: id.current.value,
+          appid: id.current.value,
           title: title.current.value,
           width: Number(width.current.value),
           height: Number(height.current.value),

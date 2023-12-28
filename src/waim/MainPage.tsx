@@ -8,11 +8,12 @@ import MinBar from './MinBar';
 import SplitLayout from './SplitLayout';
 // import { createApp, updateIndex, createNotification, removeNotification } from "./redux/actions"
 import { Snackbar, Box, Alert, Tabs } from "@mui/material"
-import CloseIcon from "@mui/icons-material/Close"
 import * as R from 'ramda'
 import { FOOTER_HEIGHT, HEADER_HEIGHT } from "./constant"
 import { useAppDispatch, useAppSelector } from "./redux/hooks"
-import { createApp, createNotificaiton, removeNotification, selectWindows, updateIndex } from "./redux/reducers/windowsSlice"
+import { createApp, createNotificaiton, removeNotification, selectWindows } from "./redux/reducers/windowsSlice"
+import { ErrorBoundary } from "react-error-boundary";
+import ErrorView from "./ErrorView"
 
 export class WaimEvent extends Event{
     data: any
@@ -45,24 +46,22 @@ const MainPage = () => {
         localWindow.waim.messageHandler.listen("__create_notification__", (data: any) => {
             const { message, type, duration } = data
             dispatch(createNotificaiton({message, type, duration}))
-            return
         })
 
         localWindow.waim.messageHandler.listen("__create_new_app__", (data: any) => {
             if (R.has(data.id, windowsAppRefs.current)) {
-                localWindow.waim.messageHandler.publish("__create_new_app_response__", { id: data.id, status: "failure" })
+                localWindow.waim.messageHandler.publish("__create_new_app_response__", { appid: data.appid, status: "failure" })
                 localWindow.waim.messageHandler.publish("__create_notification__", {
-                    message: <span>New application with ID <span style={{fontWeight:"bold"}}>{data.id}</span> cannot be created because it already exists!</span>,
+                    message: <span>New application with ID <span style={{fontWeight:"bold"}}>{data.appid}</span> cannot be created because it already exists!</span>,
                     type: "error",
                     duration: 4000
                 })
                 return
             }
             dispatch(createApp(data))
-            dispatch(updateIndex(data.id))
-            localWindow.waim.messageHandler.publish("__create_new_app_response__", { id: data.id, status: "success" })
+            localWindow.waim.messageHandler.publish("__create_new_app_response__", { appid: data.appid, status: "success" })
             localWindow.waim.messageHandler.publish("__create_notification__", {
-                message: <span>New application with ID <span style={{fontWeight:"bold"}}>{data.id}</span> was successfully created!</span>,
+                message: <span>New application with ID <span style={{fontWeight:"bold"}}>{data.appid}</span> was successfully created!</span>,
                 type: "success",
                 duration: 4000
             })
@@ -83,8 +82,11 @@ const MainPage = () => {
                 R.compose(
                     R.map(([key, value]) => {
                         return (
+                            
                             <StaticWindow key={`static_app_${key}`} appid={key}>
+                                <ErrorBoundary fallback={<ErrorView/>}>
                                 {value}
+                                </ErrorBoundary>
                             </StaticWindow>
                         )
                     }),
@@ -107,7 +109,7 @@ const MainPage = () => {
                             return null
                         }
                         const window = R.path(["apps", appid], windows)
-                        return <Window
+                        return <ErrorBoundary fallback={<ErrorView/>}><Window
                             appid={window.appid}
                             title={window.title}
                             url={window.url || ""}
@@ -119,7 +121,7 @@ const MainPage = () => {
                             minimized={R.prop("minimized", win)}
                             height={window.height}
                             imageUrl={window.imageUrl || ""}
-                            />
+                            /></ErrorBoundary>
                     }),
                     R.toPairs,
                 )(windows.view)
@@ -163,7 +165,7 @@ const MainPage = () => {
                                 open={R.has(key, windows.notifications)}
                             >
 
-                                <Alert severity={value.type} onClose={() => { dispatch(removeNotification(key));}} closeText="close" sx={{ width: '100%' }} slotProps={{ closeIcon: <CloseIcon /> }}>
+                                <Alert severity={value.type} onClose={() => { dispatch(removeNotification(key));}} closeText="close" sx={{ width: '100%' }}>
                                     {value.message}
 
 

@@ -1,5 +1,5 @@
 
-import React, {useState } from 'react'
+import React, { useState } from 'react'
 import LayoutSelector from './LayoutSelector';
 import * as R from 'ramda'
 import PaneFrame from './PaneFrame';
@@ -7,13 +7,15 @@ import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { changeLayoutSizes, selectWindows } from './redux/reducers/windowsSlice';
+import { ErrorBoundary } from 'react-error-boundary';
+import ErrorView from './ErrorView';
 
 interface SplitLayoutProps {
     layoutType: string,
     indexPath: number[],
 }
 
-const SplitLayout = ({layoutType, indexPath } : SplitLayoutProps) => {
+const SplitLayout = ({ layoutType, indexPath }: SplitLayoutProps) => {
     const dispatch = useAppDispatch()
     const windows = useAppSelector(selectWindows)
 
@@ -21,33 +23,36 @@ const SplitLayout = ({layoutType, indexPath } : SplitLayoutProps) => {
     const Render1 = R.path(["appDoms", R.path(["layout", ...indexPath, 0, "appid"], windows) as string], windows)
     const Render2 = R.path(["appDoms", R.path(["layout", ...indexPath, 1, "appid"], windows) as string], windows)
     const paneStyle = { pointerEvents: "auto", height: "100%" } as React.CSSProperties
-    
+
     return (
         <div id="paneParent" style={{ width: "100%", height: "100%" }}>
 
             <Allotment
                 vertical={layoutType === "HORIZONTAL_LAYOUT"}
                 onDragStart={() => { setAllowPointerEvents(false) }}
-                onDragEnd={(sizes: number[]) => { dispatch(changeLayoutSizes({indexPath, sizes: [sizes[0] ,sizes[1]]})); setAllowPointerEvents(true) }}
+                onDragEnd={(sizes: number[]) => { dispatch(changeLayoutSizes({ indexPath, sizes: [sizes[0], sizes[1]] })); setAllowPointerEvents(true) }}
                 defaultSizes={R.pathOr(undefined, ["layout", ...indexPath, "sizes"], windows)}
             >
                 <Allotment.Pane>
-                    {R.path(["layout", ...indexPath, 0, "type"], windows) !== "SELECTED_APP" ? <LayoutSelector indexPath={R.append(0, indexPath)} /> : R.isNil(Render1) ?
+                    <ErrorBoundary fallback={<ErrorView />}>
+                        {R.path(["layout", ...indexPath, 0, "type"], windows) !== "SELECTED_APP" ? <LayoutSelector indexPath={R.append(0, indexPath)} /> : R.isNil(Render1) ?
 
-                        <PaneFrame allowPointerEvents={allowPointerEvents} key={"frame12col"} url={R.path(["apps", R.path(["layout", ...indexPath, 0, "appid"], windows) as string, "url"], windows) as string} title={R.path(["apps", R.path(["layout", ...indexPath, 0], windows) as string, "title"], windows)} />
-                        : <div style={allowPointerEvents ? paneStyle : R.assoc("pointerEvents", "none", paneStyle)}>{Render1}</div>
+                            <PaneFrame allowPointerEvents={allowPointerEvents} key={"frame12col"} url={R.path(["apps", R.path(["layout", ...indexPath, 0, "appid"], windows) as string, "url"], windows) as string} title={R.path(["apps", R.path(["layout", ...indexPath, 0], windows) as string, "title"], windows)} />
+                            : <div style={allowPointerEvents ? paneStyle : R.assoc("pointerEvents", "none", paneStyle)}>{Render1}</div>
 
-                    }
+                        }
+                    </ErrorBoundary>
 
                 </Allotment.Pane>
                 <Allotment.Pane>
+                    <ErrorBoundary fallback={<ErrorView />}>
+                        {R.path(["layout", ...indexPath, 1, "type"], windows) !== "SELECTED_APP" ? <LayoutSelector indexPath={R.append(1, indexPath)} /> : R.isNil(Render2) ?
 
-                    {R.path(["layout", ...indexPath, 1, "type"], windows) !== "SELECTED_APP"  ? <LayoutSelector indexPath={R.append(1, indexPath)} /> : R.isNil(Render2) ?
+                            <PaneFrame allowPointerEvents={allowPointerEvents} key={"frame22col"} url={R.path(["apps", R.path(["layout", ...indexPath, 1, "appid"], windows) as string, "url"], windows) as string} title={R.path(["apps", R.path(["layout", ...indexPath, 1], windows) as string, "title"], windows)} />
+                            : <div style={allowPointerEvents ? paneStyle : R.assoc("pointerEvents", "none", paneStyle)}>{Render2}</div>
 
-                        <PaneFrame allowPointerEvents={allowPointerEvents} key={"frame22col"} url={R.path(["apps", R.path(["layout", ...indexPath, 1, "appid"], windows) as string, "url"], windows) as string} title={R.path(["apps", R.path(["layout", ...indexPath, 1], windows) as string, "title"], windows)} />
-                        : <div style={allowPointerEvents ? paneStyle : R.assoc("pointerEvents", "none", paneStyle)}>{Render2}</div>
-
-                    }
+                        }
+                    </ErrorBoundary>
                 </Allotment.Pane>
 
             </Allotment>

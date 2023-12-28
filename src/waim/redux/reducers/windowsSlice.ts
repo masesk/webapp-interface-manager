@@ -548,15 +548,15 @@ export const windowsSlice = createSlice({
       state.notificationCount += 1
     },
 
-    removeNotification: (state, action: PayloadAction<NotificationStruct>)=> {
+    removeNotification: (state, action: PayloadAction<number>)=> {
       // grab the notification struct
-      const { message, type, duration }: NotificationStruct = action.payload
+      const id: number = action.payload
 
       // add the new notification with the new id
-      state.notifications[state.notificationCount] = { message, type, duration}
+      delete state.notifications[id]
 
       // increment the notification id
-      state.notificationCount += 1
+      state.notificationCount -= 1
     },
     addLayout: (state, action: PayloadAction<LayoutParams>)=> {
       // grab the layout params

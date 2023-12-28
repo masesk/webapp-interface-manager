@@ -35,10 +35,6 @@ const LayoutSelector = ({indexPath} : LayoutSelectorProps) => {
         setSelectedApp("")
     }, [windows.openApps])
 
-    useEffect(()=> {
-        console.log("Index Path: ", indexPath)
-    }, [windows])
-
     return (
         <>
             {
