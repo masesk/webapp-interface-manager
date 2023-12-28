@@ -49,7 +49,7 @@ const MainPage = () => {
         })
 
         localWindow.waim.messageHandler.listen("__create_new_app__", (data: any) => {
-            if (R.has(data.id, windowsAppRefs.current)) {
+            if (R.has(data.appid, windowsAppRefs.current)) {
                 localWindow.waim.messageHandler.publish("__create_new_app_response__", { appid: data.appid, status: "failure" })
                 localWindow.waim.messageHandler.publish("__create_notification__", {
                     message: <span>New application with ID <span style={{fontWeight:"bold"}}>{data.appid}</span> cannot be created because it already exists!</span>,
