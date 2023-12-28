@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "resolve": "tsc --traceResolution"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
@@ -17,7 +18,7 @@
     "@preact/signals-react": "^2.0.0",
     "@reduxjs/toolkit": "^2.0.1",
     "@types/ramda": "^0.29.9",
-    "allotment": "^1.19.3",
+    "allotment": "^1.19.4",
     "ramda": "^0.27.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

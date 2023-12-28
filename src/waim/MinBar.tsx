@@ -7,9 +7,8 @@ import { useAppDispatch } from './redux/hooks';
 import { hideWindowWithViewId, unminimizeWindowAndUpdateIndex } from './redux/reducers/windowsSlice';
 
 interface MinBarProps {
-    children: any,
+    children?: any,
     index: number,
-    hideWindowId: Function,
     minimized: boolean,
 }
 

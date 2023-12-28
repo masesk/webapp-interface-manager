@@ -11,7 +11,7 @@ import UndefinedAppImage from "../img/unknown.png"
 
 import { FOOTER_HEIGHT, HEADER_HEIGHT, MAXIMIZED_STYLE, WINDOW_HEIGHT_MAXIMIZED_OFFSET, WINDOW_TOPBAR_HEIGHT } from './constant';
 import { useAppDispatch } from './redux/hooks';
-import { hideWindowWithViewId, hideWindowWithIndex, minimizeWindow, updateIndex } from './redux/reducers/windowsSlice';
+import { hideWindowWithIndex, minimizeWindow, updateIndex } from './redux/reducers/windowsSlice';
 
 interface WindowDimensions{
   width: number,
@@ -22,7 +22,7 @@ interface WindowProperties extends WindowDimensions{
   title: string,
   url: string,
   appid: string,
-  children: any,
+  children?: any,
   minimized: boolean,
   zIndex: number,
   index: number,

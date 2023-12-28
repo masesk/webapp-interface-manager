@@ -27,10 +27,6 @@ const Transition = React.forwardRef(function Transition(
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
-interface SettingsProps {
-    windows: any,
-    settings: any
-}
 
 
 const Settings = () => {
@@ -54,7 +50,7 @@ const Settings = () => {
                             dispatch(updateApp(
                                 {
                                     appid: editableRow,
-                                    title: titleRef.current?.value,
+                                    title: titleRef?.current!.value,
                                     width: Number(widthRef.current?.value),
                                     height: Number(heightRef.current?.value),
                                     url: urlRef.current?.value,
@@ -173,7 +169,7 @@ const Settings = () => {
                         dispatch(updateApp(
                             {
                                 appid: editableRow,
-                                title: titleRef.current?.value,
+                                title: titleRef.current!.value,
                                 width: Number(widthRef.current?.value),
                                 height: Number(heightRef.current?.value),
                                 url: urlRef.current?.value,

@@ -1,10 +1,9 @@
 
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { RootState, AppThunk } from "../store"
+import { RootState } from "../store"
 import * as R from "ramda"
 import { AppsInterface, AppStruct, BUILT_IN_APPS } from "../../../constants"
-import { SELECTED_APP } from "../constants"
 
 
 
@@ -53,12 +52,12 @@ interface SelectLayoutParams {
   indexPath: number[]
 }
 
-type LayoutNode = {
+export type LayoutNode = {
   type: LayoutType
   sizes: [number, number],
   [key: number]: Layout
 }
-type LayoutApp = {
+export type LayoutApp = {
   type: "SELECTED_APP",
   appid: string
 }
@@ -69,13 +68,13 @@ interface LayoutChangeParams {
 
 }
 
-type Layout = LayoutNode | LayoutApp
+export type Layout = LayoutNode | LayoutApp | Record<string,never>
 
 interface WindowsState {
   apps: AppsInterface,
   view: View[],
   appDoms: AppDoms,
-  layout: Layout | {},
+  layout: Layout,
   layoutEditEnabled: boolean,
   notificationCount: number,
   notifications: Notification,
@@ -95,8 +94,7 @@ const initialState: WindowsState = {
   apps: BUILT_IN_APPS,
   view: [],
   appDoms: {},
-  layout:
-    {},
+  layout: {},
   layoutEditEnabled: false,
   notificationCount: 0,
   notifications: {},
@@ -567,7 +565,7 @@ export const windowsSlice = createSlice({
       // save the state
       saveLayout(state)
 
-      console.log(state)
+      console.log(state.layout)
 
      // return state
     },
@@ -578,8 +576,8 @@ export const windowsSlice = createSlice({
     selectLayoutApp: (state, action: PayloadAction<SelectLayoutParams>)=> {
       const { appid, indexPath } = action.payload
       if(state.apps[appid].single && state.openApps[appid] > 0) return state
-      state.openApps[appid] += 1
-      assocPathInternal(["layout", ...indexPath, "type"], SELECTED_APP, state)
+      !state.openApps.hasOwnProperty(appid) ? state.openApps[appid] = 1 : state.openApps[appid] += 1
+      assocPathInternal(["layout", ...indexPath, "type"], "SELECTED_APP", state)
       assocPathInternal(["layout", ...indexPath, "appid"], appid, state)
     },
     toggleLayoutEdit: (state)=> {

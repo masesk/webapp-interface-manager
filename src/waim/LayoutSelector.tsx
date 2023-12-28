@@ -1,18 +1,29 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Select, OutlinedInput, Typography, Box, Button, MenuItem, Tooltip } from '@mui/material'
+import { Select, OutlinedInput, Typography, Box, Button, MenuItem, Tooltip, TooltipProps } from '@mui/material'
 import VerticalSplitIcon from '@mui/icons-material/VerticalSplit';
 import HorizontalSplitIcon from '@mui/icons-material/HorizontalSplit';
 import * as R from 'ramda'
-import { HORIZONTAL_LAYOUT, SELECTED_APP, VERTICAL_LAYOUT } from './redux/constants';
 import SplitLayout from './SplitLayout';
 import UndefinedAppImage from "../img/unknown.png"
-import { addLayout, selectLayoutApp, selectWindows } from './redux/reducers/windowsSlice';
+import { LayoutType, addLayout, selectLayoutApp, selectWindows } from './redux/reducers/windowsSlice';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
-
+import { styled } from '@mui/material/styles';
 
 interface LayoutSelectorProps {
     indexPath: number[],
 }
+
+interface WaimTooltipProps extends TooltipProps {
+    title: string,
+    value: any,
+    followCursor: boolean
+
+} 
+
+const WaimToolTip = styled((props: WaimTooltipProps) => <Tooltip {...props} />)(
+    () => ({
+    }),
+  );
 
 const LayoutSelector = ({indexPath} : LayoutSelectorProps) => {
     const [selectedApp, setSelectedApp] = useState("")
@@ -26,14 +37,14 @@ const LayoutSelector = ({indexPath} : LayoutSelectorProps) => {
 
     useEffect(()=> {
         console.log("Index Path: ", indexPath)
-    }, [])
+    }, [windows])
 
     return (
         <>
             {
-                R.path(["layout", ...indexPath, "type"], windows) !== undefined && !R.pathEq("SELETEC_APP", ["layout", ...indexPath, "type"], windows) ?
+                R.path(["layout", ...indexPath, "type"], windows) !== undefined && R.path(["layout", ...indexPath, "type"], windows) !== "SELECTED_APP" ?
                     <>
-                        <SplitLayout layoutType={R.path(["layout", ...indexPath, "type"], windows)} indexPath={indexPath} />
+                        <SplitLayout layoutType={R.path(["layout", ...indexPath, "type"], windows) as LayoutType} indexPath={indexPath} />
                     </> :
                     <Box sx={{ display: "flex", alignItems: "center", flex: 1, flexDirection: "column", height: "100%", overflowY: "auto" }}>
 
@@ -53,20 +64,20 @@ const LayoutSelector = ({indexPath} : LayoutSelectorProps) => {
                                     R.compose(
 
                                         R.map(([key, windowKey]) => {
-
+                                            const canOpen: boolean = R.path(["apps", windowKey, "single"], windows) === true && R.gt(R.path(["openApps", windowKey], windows), 0)
                                             return (
-                                                <Tooltip value={windowKey} key={`${windowKey}tooltip_layout`} followCursor title={R.pathEq(["apps", windowKey, "single"], true, windows) && (R.gt(R.pathOr(0, ["openApps", windowKey], windows), 0)) ? "Only one instance of app can be opened" : ""}>
+                                                <WaimToolTip value={windowKey} key={`${windowKey}tooltip_layout`} followCursor title={canOpen ? "Only one instance of app can be opened" : ""}>
                                                     <span key={`${key}_layout_span`}>
-                                                        <MenuItem disabled={R.pathEq(["apps", windowKey, "single"], true, windows) && R.gt(R.path(["openApps", windowKey], windows), 0)} value={windowKey} onClick={() => { setSelectedApp(windowKey); setSelectOpen(false) }} key={`${key}_layout`}>
+                                                        <MenuItem disabled={canOpen} value={windowKey} onClick={() => { setSelectedApp(windowKey); setSelectOpen(false) }} key={`${key}_layout`}>
                                                             <Box sx={{ display: "flex", flexDirection: "row", flex: 1, alignItems: "center" }}>
                                                                 <Box sx={{ borderRadius: 2, border: "2px solid #9a9a9a", w: 1, h: 1, mr: 1, display: "flex", flex: "column" }}>
-                                                                    <img onError={(e) => (e.target.src = UndefinedAppImage)} style={{ width: "20px", height: "20px", borderRadius: 2 }} src={R.pathOr(UndefinedAppImage, ["apps", windowKey, "imageUrl"], windows)} />
+                                                                    <img onError={(e: any) => (e.target.src = UndefinedAppImage)} style={{ width: "20px", height: "20px", borderRadius: 2 }} src={R.pathOr(UndefinedAppImage, ["apps", windowKey, "imageUrl"], windows)} />
                                                                 </Box>
-                                                                {R.prop("title", R.prop(windowKey, windows.apps))}
+                                                                {R.path([windowKey, "title"], windows.apps)}
                                                             </Box>
                                                         </MenuItem>
                                                     </span>
-                                                </Tooltip>
+                                                </WaimToolTip>
                                             )
                                         }),
                                         R.toPairs,

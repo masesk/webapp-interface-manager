@@ -7,7 +7,8 @@ export interface AppStruct {
     single?: boolean,
     deletable?: boolean,
     editable?: boolean,
-    imageUrl?: string
+    imageUrl?: string,
+    dom?: JSX.Element
 }
 
 export interface AppsInterface{
