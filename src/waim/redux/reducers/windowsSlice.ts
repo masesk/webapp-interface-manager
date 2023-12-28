@@ -155,14 +155,15 @@ const load = (newstate: WindowsState) => {
   const myStorage = window.localStorage;
   const apps = myStorage.getItem(appName);
   const layout: string | null = myStorage.getItem(appNameLayout)
-  const layoutObj = R.assoc("layout", JSON.parse(layout || "{}"), newstate)
+  assocPathInternal(["layout"], JSON.parse(layout || "{}"), newstate)
   const map: Map<string, number> = new Map()
-  countLayoutApps(map, R.prop("layout", layoutObj))
-  let tmpLayoutObj = layoutObj
+  countLayoutApps(map, R.prop("layout", newstate))
+  let tmpLayoutObj = newstate
   for (let [key, value] of map) {
-    tmpLayoutObj = R.assocPath(["openApps", key], value, tmpLayoutObj)
+    assocPathInternal(["openApps", key], value, tmpLayoutObj)
   }
-  return R.assoc("apps", R.isNil(apps) ? BUILT_IN_APPS : JSON.parse(apps), tmpLayoutObj)
+  assocPathInternal(["apps"], R.isNil(apps) ? BUILT_IN_APPS : JSON.parse(apps), tmpLayoutObj)
+
 }
 
 const shiftWindows = (state: WindowsState, viewid: number, zIndex: number, length: number) => {
@@ -200,7 +201,6 @@ const assocPathInternal =  (path: any, val: any, obj: any) => {
           tmpObj[idx] = {}
           tmpObj = tmpObj[idx]
       }
-      console.log("Processing ", idx, obj)
       path.splice(0, 1)
   }
   if (idx !== "") tmpObj[idx] = val
@@ -410,7 +410,6 @@ export const windowsSlice = createSlice({
 
       // loop through and remove all the layouts that use this app
       mapLayoutApp((state.layout as Layout), appid, [], (_1: Layout, path: number[]) => {
-        console.log(path)
         dissocPathInternal(["layout", ...path], state)
       })
 
@@ -421,7 +420,6 @@ export const windowsSlice = createSlice({
       state.view = state.view.filter(view => view.appid !== appid)
 
       // update the app
-      console.log(appid)
       state.apps[appid] = newWindow
 
       // save new layout
@@ -476,7 +474,6 @@ export const windowsSlice = createSlice({
 
       // loop through and remove all the layouts that use this app
       mapLayoutApp((state.layout as Layout), appid, [], (_1: Layout, path: number[]) => {
-          console.log(path)
           dissocPathInternal(["layout", ...path], state)
       })
 
@@ -492,8 +489,14 @@ export const windowsSlice = createSlice({
     },
     resetDefault: (state)=> {
       // reset everything to default
-      console.log(initialState)
-      state = initialState
+  
+      state.apps = BUILT_IN_APPS
+      state.layout = {}
+      state.notificationCount = 0
+      state.notifications = {}
+      state.openApps = {}
+      state.view = []
+      state.layoutEditEnabled = false
       opened = {}
       appView = 0
 
@@ -565,13 +568,13 @@ export const windowsSlice = createSlice({
       // save the state
       saveLayout(state)
 
-      console.log(state.layout)
-
-     // return state
     },
     addLayoutInitial: (state, action: PayloadAction<LayoutType>)=> {
       // set the initial layout type
       (state.layout as LayoutNode).type = action.payload
+
+      // save layout
+      saveLayout(state)
     },
     selectLayoutApp: (state, action: PayloadAction<SelectLayoutParams>)=> {
       const { appid, indexPath } = action.payload
@@ -579,6 +582,8 @@ export const windowsSlice = createSlice({
       !state.openApps.hasOwnProperty(appid) ? state.openApps[appid] = 1 : state.openApps[appid] += 1
       assocPathInternal(["layout", ...indexPath, "type"], "SELECTED_APP", state)
       assocPathInternal(["layout", ...indexPath, "appid"], appid, state)
+
+      saveLayout(state)
     },
     toggleLayoutEdit: (state)=> {
       // toggle if the layout is in edit mode

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import '../css/App.css';
 import * as R from 'ramda'
 import AddWebApp from "../apps/AddWebApp.jsx"
-
 import ChatClient from '../apps/ChatClient.jsx';
 import MainPage from './MainPage';
 import {
@@ -32,7 +31,6 @@ const AppManager = () => {
     dispatch(loadApps())
     dispatch(addAppDom({appid: "chatclient",  appDom: React.createElement(ChatClient as any)}))
     dispatch(addAppDom({appid: "addwebapp", appDom: React.createElement(AddWebApp as any)}))
-    console.log(AddWebApp)
   }, [addAppDom, loadApps])
 
 
