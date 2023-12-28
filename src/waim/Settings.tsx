@@ -39,7 +39,7 @@ const Settings = () => {
 
     const renderButtons = (appid: string, index: string) => {
         return (
-            <ButtonGroup variant="contained">
+            <ButtonGroup variant="contained" >
                 {
                     R.path(["apps", appid, "editable"], windows) && 
                     <Button onClick={() => {
