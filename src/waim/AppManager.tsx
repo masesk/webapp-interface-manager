@@ -20,6 +20,10 @@ interface PageEntry {
   errorElement?: React.ReactElement,
 }
 
+interface FramePageWrapperProps {
+  url: string
+}
+
 const AppManager = () => {
   
   const dispatch = useAppDispatch()
@@ -50,7 +54,7 @@ const AppManager = () => {
 
   // Apps that reside on different domains or pre-built and acecssible through a URL
   // will need to be wrapped aroudn an iframe first
-  const framePageWrapper = (url: string) => {
+  const FramePageWrapper = ({url} : FramePageWrapperProps) => {
     const frameRef = useRef<HTMLIFrameElement>(null)
     return pageWrapper(<iframe ref={frameRef} onLoad={() => {
       try {
@@ -105,7 +109,7 @@ const AppManager = () => {
     R.compose(
       R.map(([key, value]) => {
         if (R.has("url", value)) {
-          pages.push({ path: `${key}`, element: <StandaloneApp>{framePageWrapper(value.url as string)}</StandaloneApp> })
+          pages.push({ path: `${key}`, element: <StandaloneApp>{<FramePageWrapper url={value.url as string}/>}</StandaloneApp> })
         }
       },
       ),
