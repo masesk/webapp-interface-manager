@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import '../css/App.css';
 import * as R from 'ramda'
 import AddWebApp from "../apps/AddWebApp.jsx"
@@ -51,7 +51,16 @@ const AppManager = () => {
   // Apps that reside on different domains or pre-built and acecssible through a URL
   // will need to be wrapped aroudn an iframe first
   const framePageWrapper = (url: string) => {
-    return pageWrapper(<iframe src={url} width="100%" height="100%" style={{ border: "0px" }} />)
+    const frameRef = useRef<HTMLIFrameElement>(null)
+    return pageWrapper(<iframe ref={frameRef} onLoad={() => {
+      try {
+        const contentWindow: any = frameRef!.current!.contentWindow
+        const localWindow: any = window
+        contentWindow.waim = localWindow.waim
+      } catch (e) {
+        console.error(e)
+      }
+    }} src={url} width="100%" height="100%" style={{ border: "0px" }} />)
   }
 
 
