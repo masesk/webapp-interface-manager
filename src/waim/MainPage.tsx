@@ -32,7 +32,9 @@ const MainPage = () => {
         localWindow.addEventListener("storage", (e: any) => {
             if(e.key !== "message") return
             const message = JSON.parse(e.newValue)
-            localWindow.waim.messageHandler.publish(message.channelName, message.data)
+            const event = new WaimEvent(message.channelName, { bubbles: true, cancelable: false })
+            event.data = message.data
+            localWindow.waim._broker.dispatchEvent(event)
 
         })
         localWindow.waim.messageHandler.publish = (channelName: string, data: any) => {

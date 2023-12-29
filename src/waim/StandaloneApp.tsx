@@ -27,9 +27,10 @@ const StandaloneApp = ({children} : StandaloneAppProps) => {
             }
 
             localWindow.localStorage.setItem("message", JSON.stringify(message))
+            const callback = callbackMap.get(message.channelName) as Function
+            callback(message.data)
         }
         localWindow.waim.messageHandler.listen = (channelName: string, callback: Function) => {
-            console.log("Listening...")
             callbackMap.set(channelName, callback)
         }
         console.log("WAIM Standalone Applicaiton Initialized")
