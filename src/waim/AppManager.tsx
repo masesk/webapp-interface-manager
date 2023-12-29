@@ -11,6 +11,7 @@ import {
 import { isRouteErrorResponse, useRouteError } from "react-router-dom";
 import { addAppDom, loadApps, selectWindows } from './redux/reducers/windowsSlice';
 import { useAppSelector, useAppDispatch } from './redux/hooks';
+import StandaloneApp from './StandaloneApp.js';
 
 
 interface PageEntry {
@@ -80,11 +81,14 @@ const AppManager = () => {
   // for all IDs
   const createPages = () => {
     let pages: PageEntry[] = []
+    pages.push({
+      path: "/",
+      element: <MainPage />,
+      errorElement: <ErrorBoundary/>
+    })
     R.compose(
       R.map(([key, value]) => {
-        const s: string = `${key}`
-        pages.push({ path: s, element: pageWrapper(value) })
-        pages = R.append({ path: `${key}`, element: pageWrapper(value) }, pages)
+        pages.push({ path: `${key}`, element: <StandaloneApp>{pageWrapper(value)}</StandaloneApp> })
       }),
       R.toPairs
     )(windows.appDoms)
@@ -92,17 +96,17 @@ const AppManager = () => {
     R.compose(
       R.map(([key, value]) => {
         if (R.has("url", value)) {
-          pages = R.append({ path: `${key}`, element: framePageWrapper(value.url as string) }, pages)
+          pages.push({ path: `${key}`, element: <StandaloneApp>{framePageWrapper(value.url as string)}</StandaloneApp> })
         }
       },
       ),
       R.toPairs
     )(windows.apps)
-    pages = R.append({
+    pages.push({
       path: "*",
-      element: <MainPage />,
+      element: <></>,
       errorElement: <ErrorBoundary/>
-    }, pages)
+    })
     return pages
   }
 

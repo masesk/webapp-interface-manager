@@ -29,10 +29,17 @@ const MainPage = () => {
         localWindow.waim = {}
         localWindow.waim.messageHandler = {}
         localWindow.waim._broker = new EventTarget();
+        localWindow.addEventListener("storage", (e: any) => {
+            if(e.key !== "message") return
+            const message = JSON.parse(e.newValue)
+            localWindow.waim.messageHandler.publish(message.channelName, message.data)
+
+        })
         localWindow.waim.messageHandler.publish = (channelName: string, data: any) => {
             const event = new WaimEvent(channelName, { bubbles: true, cancelable: false })
             event.data = data
             localWindow.waim._broker.dispatchEvent(event)
+            localWindow.localStorage.setItem("message", JSON.stringify({channelName, data, time: Date.now() }))
         }
         localWindow.waim.messageHandler.listen = (channelName: string, callback: Function) => {
             localWindow.waim._broker.addEventListener(channelName, (event: WaimEvent) => {
