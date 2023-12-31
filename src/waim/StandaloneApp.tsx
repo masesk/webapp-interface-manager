@@ -28,7 +28,7 @@ const StandaloneApp = ({children} : StandaloneAppProps) => {
 
             localWindow.localStorage.setItem("message", JSON.stringify(message))
             const callback = callbackMap.get(message.channelName) as Function
-            callback(message.data)
+            if(callback) callback(message.data)
         }
         localWindow.waim.messageHandler.listen = (channelName: string, callback: Function) => {
             callbackMap.set(channelName, callback)
