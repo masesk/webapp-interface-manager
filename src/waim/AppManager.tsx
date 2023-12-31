@@ -119,7 +119,7 @@ const AppManager = () => {
     )(windows.apps)
     pages.push({
       path: "*",
-      element: <></>,
+      element: <MainPage/>,
       errorElement: <ErrorBoundary/>
     })
     return pages
