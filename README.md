@@ -6,7 +6,6 @@
 Web Application Inteface Manager (WAIM) allows the users to show multiple displays served locally or on the web.
 WAIM also supports React components; allowing users to add their render components directly to the app manager.
 
-![Presentation](./capture.jpg)
 
 ## Features
 * Add pre-built apps from the host by providing a URL.
@@ -55,8 +54,8 @@ npm run dev
 
 ### StaticWindow and Constants
 
-StaticWindow requires an `appid` field. `appid` referrences the `src/constants.js` to retrieve information about the app.
-For each new app in `src/constants.js`, provide:
+StaticWindow requires an `appid` field. `appid` referrences the `src/constants.ts` to retrieve information about the app.
+For each new app in `src/constants.ts`, provide:
 
 * `appid`: key of the new object and the `appid` field. Must be unique otherwise it overrides an existing app.
 
@@ -75,10 +74,10 @@ For each new app in `src/constants.js`, provide:
 ### As URL to a page
 
 #### In Code
-Using `src/constants.js` to add your pre-built UI endpoint and URL.
+Using `src/constants.ts` to add your pre-built UI endpoint and URL.
 
 Example:
-Change `src/constants.js` to include your new app
+Change `src/constants.ts` to include your new app
 ```js
 export const BUILT_IN_APPS = {
     .
@@ -102,7 +101,7 @@ After running WAIM, navigate to the top left and open `Add New Web App` window t
 The `Add Web App` React component uses the the built in messaging system and hooks into `window.waim.messageHandler` to publish an object to the `__create_new_app__` channel containing the object below:
 ```js
 {
-    id: sting,
+    appid: sting,
     title: string,
     width: number,
     height: number,
@@ -116,14 +115,14 @@ The `Add Web App` React component uses the the built in messaging system and hoo
 WAIM will respond with the appid and a status object on the `__create_new_app_response__` channel in the following format:
 ```js
 {
-    id: string,
+    appid: string,
     status: "success"|"failure"
 }
 ```
 
 ### As a React Component
 
-1. Change `src/constants.js` to include your new app
+1. Change `src/constants.ts` to include your new app
 ```js
 export const BUILT_IN_APPS = {
     .
@@ -137,25 +136,44 @@ export const BUILT_IN_APPS = {
     },
 }
 ```
-2. Add your app component to the DOM list in the `AppManager.js` useEffect
+2. Add your component(s) to `src/apps`
+
+3. Import your component root to `src/apps/index.js` and export it part of the package 
+
 ```js
-{/* Add all static apps below */}
-addAppDom("mynewapp", <MyNewAppComponent/>)
+.
+..
+...
+
+import MyNewApp from "./MyNewApp"
+.
+..
+...
+export {
+    .
+    ..
+    ...
+    MyNewApp
+}
+
 ```
+
+> **_NOTE:_**  The component name and appid **MUST** match. appid will be the the component name with all the characters in lower case.
+Example: (component name = MyNewApp) and (appid = mynewapp)
 
 ## Modify
 
 ### Header
-* Change `WAIM` to any text or image in `src/main/Header.js`.
+* Change `WAIM` to any text or image in `src/waim/Header.tsx`.
 * Change the header green background in `src/css/App.css`. Refer to `.header` class.
 
 ### Footer
 * Change the footer colors in `src/css/App.css`. Refer to class `.footer`.
-* Change the minimize bar in `src/main/MinBar.js`
+* Change the minimize bar in `src/waim/MinBar.tsx`
 * Change the minimize bar colors in `src/css/App.css`. Refer to `.min-bar`, `.min-bar-close` and `.min-bar-title` classes.
 
 ### Window
-* Change the window structure and buttons from `src/main/Window.js`
+* Change the window structure and buttons from `src/waim/Window.tsx`
 * Change the window layout and colors from `src/css/App.css`. Refer to `.window`.
 
 ## Messaging
@@ -182,7 +200,7 @@ addAppDom("mynewapp", <MyNewAppComponent/>)
 2. `__create_new_app__`: Use this channel to create new apps from other WAIM apps.
 ```js
 {
-    id: sting,
+    appid: sting,
     title: string,
     width: number,
     height: number,
@@ -196,7 +214,7 @@ addAppDom("mynewapp", <MyNewAppComponent/>)
 3. `__create_new_app_response__`: Use this channel to receive a response on an app creation request.
 ```js
 {
-    id: string,
+    appid: string,
     status: "success"|"failure"
 }
 ```
@@ -207,7 +225,7 @@ Run the command
 ```
 npm run build
 ```
-This will generate a directory named `build`. The `build` directory will contain the newly generate WAIM; with all the custom configurations from `src/constants.js` and all your custom React components. 
+This will generate a directory named `build`. The `build` directory will contain the newly generate WAIM; with all the custom configurations from `src/constants.ts` and all your custom React components. 
 
 ## Try
 Try out the latest release:

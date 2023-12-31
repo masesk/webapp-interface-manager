@@ -19,7 +19,7 @@ const ChatClient = () => {
     messageHandlerRef.current.listen("chatbox_messages", ({ name, message }) => {
       setMessages(f => { return f + `${name}: ${message}\n` })
     })
-  }, [window.waim])
+  }, [])
 
   useEffect(()=> {
     chatboxRef.current.scrollTop = chatboxRef.current.scrollHeight
