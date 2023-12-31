@@ -21,7 +21,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import UndefinedAppImage from "../img/unknown.png"
 import { HEADER_BUTTON_SIZE, HEADER_HEIGHT } from './constant';
 import { useAppDispatch, useAppSelector } from './redux/hooks';
-import { LayoutType, addLayoutInitial, createWindow, removeAllLayout, selectWindows } from './redux/reducers/windowsSlice';
+import { LayoutType, addLayoutInitial, createNotificaiton, createWindow, removeAllLayout, selectWindows } from './redux/reducers/windowsSlice';
 import { toggleSettings } from './redux/reducers/settingsSlice';
 
 
@@ -216,7 +216,7 @@ const Header = () => {
           },
         }}>
           <Button sx={{ fontSize: HEADER_BUTTON_SIZE }} onClick={() => dispatch(toggleSettings(true))} startIcon={<SettingsIcon />} size="small">Settings</Button>
-          <Button sx={{ fontSize: HEADER_BUTTON_SIZE }} startIcon={<HelpIcon />} size="small">Help</Button>
+          <Button sx={{ fontSize: HEADER_BUTTON_SIZE }} onClick={() => dispatch(createNotificaiton({message: "No help page has been created!", type: "info", duration: 2000}))} startIcon={<HelpIcon />} size="small">Help</Button>
 
         </ButtonGroup>
       </Box>
