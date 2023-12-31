@@ -93,7 +93,7 @@ const MainPage = () => {
                         return (
                             
                             <StaticWindow key={`static_app_${key}`} appid={key}>
-                                <ErrorBoundary fallback={<ErrorView/>}>
+                                <ErrorBoundary key={`static_app_error_${key}`} fallback={<ErrorView/>}>
                                 {value}
                                 </ErrorBoundary>
                             </StaticWindow>
@@ -118,7 +118,7 @@ const MainPage = () => {
                             return null
                         }
                         const window = R.path(["apps", appid], windows)
-                        return <ErrorBoundary fallback={<ErrorView/>}><Window
+                        return <ErrorBoundary key={`error_${key}`} fallback={<ErrorView/>}><Window
                             appid={window.appid}
                             title={window.title}
                             url={window.url || ""}
@@ -141,7 +141,7 @@ const MainPage = () => {
                     variant="scrollable"
                     scrollButtons="auto"
                     value={false}
-                    sx={{ minHeight: FOOTER_HEIGHT, height: FOOTER_HEIGHT }}
+                    sx={{ minHeight: FOOTER_HEIGHT, height: FOOTER_HEIGHT, width: "100%" }}
                 >
 
                     {

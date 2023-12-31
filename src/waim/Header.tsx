@@ -124,10 +124,9 @@ const Header = () => {
               // loops each app saved and create a menu entry for it
               R.compose(
                 R.map(([key, windowKey]) => {
-                  if (R.isNil(searchString)) return
-
-                  // check first if the app name is included in the search
-                  if (!R.isEmpty(searchString) && windows.apps[windowKey].title.toLowerCase().includes(searchString.toLowerCase())) {
+                  const title = windows.apps[windowKey].title.toLowerCase()
+                 
+                  if (!title.includes(searchString.toLowerCase())) {
                     return
                   }
                   return (

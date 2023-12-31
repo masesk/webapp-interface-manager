@@ -107,7 +107,7 @@ The `Add Web App` React component uses the the built in messaging system and hoo
     height: number,
     url: string,
     single: true|false,
-    deletable: true|false,i
+    deletable: true|false,
     editable: true|false
 }
 ```
