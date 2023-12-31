@@ -6,7 +6,6 @@
 Web Application Inteface Manager (WAIM) allows the users to show multiple displays served locally or on the web.
 WAIM also supports React components; allowing users to add their render components directly to the app manager.
 
-![Presentation](./capture.jpg)
 
 ## Features
 * Add pre-built apps from the host by providing a URL.
@@ -137,11 +136,30 @@ export const BUILT_IN_APPS = {
     },
 }
 ```
-2. Add your app component to the DOM list in the `src/waim/AppManager.tsx` useEffect
+2. Add your component(s) to `src/apps`
+
+3. Import your component root to `src/apps/index.js` and export it part of the package 
+
 ```js
-{/* Add all static apps below */}
-dispatch(addAppDom("mynewapp", React.createElement(MyNewAppComponent as any)))
+.
+..
+...
+
+import MyNewApp from "./MyNewApp"
+.
+..
+...
+export {
+    .
+    ..
+    ...
+    MyNewApp
+}
+
 ```
+
+> **_NOTE:_**  The component name and appid **MUST** match. appid will be the the component name with all the characters in lower case.
+Example: (component name = MyNewApp) and (appid = mynewapp)
 
 ## Modify
 

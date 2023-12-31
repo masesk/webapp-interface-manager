@@ -1,8 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import '../css/App.css';
 import * as R from 'ramda'
-import AddWebApp from "../apps/AddWebApp.jsx"
-import ChatClient from '../apps/ChatClient.jsx';
 import MainPage from './MainPage';
 import {
   createBrowserRouter,
@@ -12,7 +10,7 @@ import { isRouteErrorResponse, useRouteError } from "react-router-dom";
 import { addAppDom, loadApps, selectWindows } from './redux/reducers/windowsSlice';
 import { useAppSelector, useAppDispatch } from './redux/hooks';
 import StandaloneApp from './StandaloneApp.js';
-
+import * as Apps from "../apps/"
 
 interface PageEntry {
   path: string,
@@ -32,10 +30,14 @@ const AppManager = () => {
   // pass your app id and react dom below if you want to render a react component as an app
   // don't forget to add your app in src/constants.js
   useEffect(() => {
-    {/* Add all static apps below */ }
     dispatch(loadApps())
-    dispatch(addAppDom({appid: "chatclient",  appDom: React.createElement(ChatClient as any)}))
-    dispatch(addAppDom({appid: "addwebapp", appDom: React.createElement(AddWebApp as any)}))
+    for (const key in Apps) {
+      const appsObject = Apps as any
+      const appid = key.toLowerCase()
+      const keyId: any = key
+      const appDom: any = appsObject[keyId]
+      dispatch(addAppDom({appid,  appDom: React.createElement(appDom as any)}))
+    }
   }, [addAppDom, loadApps])
 
 
